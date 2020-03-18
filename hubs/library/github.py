@@ -6,11 +6,7 @@ from ..hub_script_utils import get_response_string, match_version_number_string
 class Github(BaseHub):
     """GitHub 软件源"""
 
-    @property
-    def uuid(self):
-        return "fd9b2602-62c5-4d55-bd1e-0d6537714ca0"
-
-    def get_release_info(self, app_info):
+    def get_release_info(self, app_info: list) -> str or None:
         owner_name, repo_name = _get_base_info(app_info)
         if repo_name is None or owner_name is None:
             return
@@ -38,10 +34,10 @@ class Github(BaseHub):
                 assets.append(asset_info)
             release_info["assets"] = assets
             data.append(release_info)
-        return data
+        return str(data)
 
 
-def _get_base_info(app_info):
+def _get_base_info(app_info: list) -> tuple:
     """从 app_info 获取作者名称与仓库名称
     Arg:
         app_info: 客户端上传的信息
@@ -62,7 +58,7 @@ def _get_base_info(app_info):
     return owner_name, repo_name
 
 
-def _get_api_url(owner_name, repo_name):
+def _get_api_url(owner_name: str, repo_name: str) -> str:
     """获取 GitHub API 地址
     Arg:
         owner_name: 所有者名称
@@ -75,7 +71,7 @@ def _get_api_url(owner_name, repo_name):
            + repo_name + "/releases"
 
 
-def _get_response(owner_name, repo_name):
+def _get_response(owner_name: str, repo_name: str) -> json:
     """获取 GitHub API 返回的 JSON 数据
     Arg:
         owner_name: 所有者名称

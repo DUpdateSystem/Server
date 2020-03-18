@@ -2,7 +2,7 @@ import requests
 import re
 
 
-def get_response_string(url, payload=None):
+def get_response_string(url: str, payload=None):
     """简易包装 get 方法
     Args:
         url: 访问的网址
@@ -13,7 +13,7 @@ def get_response_string(url, payload=None):
     return requests.get(url, params=payload).text
 
 
-def match_version_number_string(string):
+def match_version_number_string(string: str):
     """在字符串中匹配 x.y.z 版本号
     Args:
         string: 需匹配的字符串

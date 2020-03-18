@@ -1,19 +1,18 @@
 from flask import Flask, request
 import json
-from .hub_server_manager import HubServerManager
+from .manager.data_manager import DataManager
 
 app = Flask(__name__)
-hub_server_manager = HubServerManager()
+data_manager = DataManager()
 
 
 @app.route('/v1/<hub_uuid>')
-def get_update_by_hub_uuid(hub_uuid):
-    hub = hub_server_manager.get_hub(hub_uuid)
+def get_update_by_hub_uuid(hub_uuid: str):
     app_info_list = json.loads(request.headers.get("app_info_list"))
     return_dict = {}
     for app_info in app_info_list:
         app_id = str(app_info)
-        return_dict[app_id] = hub.get_release_info(app_info)
+        return_dict[app_id] = data_manager.get_release_info(hub_uuid, app_info)
     return json.dumps(return_dict)
 
 
