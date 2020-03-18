@@ -1,6 +1,7 @@
 import json
 from timeloop import Timeloop
 from datetime import timedelta
+from requests.exceptions import RequestException
 from .hub_server_manager import HubServerManager
 from .cache_manager import CacheManager
 
@@ -32,7 +33,9 @@ class DataManager:
                 try:
                     release_info = hub.get_release_info(app_info)
                     self.__cache_manager.add_to_cache_queue(hub_uuid, app_info, release_info)
-                except Exception:
+                except RequestException as e:
+                    print("NETWORK ERROR")
+                    print("Reason: {e}")
                     pass
 
 
@@ -46,4 +49,4 @@ def _auto_refresh():
     data_manager.refresh_data()
 
 
-tl.start()
+tl.start(block=True)
