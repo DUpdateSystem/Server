@@ -1,9 +1,8 @@
 from flask import Flask, request
 import json
-from .manager.data_manager import DataManager
+from .manager.data_manager import data_manager
 
 app = Flask(__name__)
-data_manager = DataManager()
 
 
 @app.route('/v1/<hub_uuid>')

@@ -1,4 +1,8 @@
+import json
+from timeloop import Timeloop
+from datetime import timedelta
 from .hub_server_manager import HubServerManager
+from .cache_manager import CacheManager
 
 
 class DataManager:
@@ -7,7 +11,7 @@ class DataManager:
         self.__hub_server_manager = HubServerManager()
 
     def get_release_info(self, hub_uuid: str, app_info: list) -> str:
-        app_id = str(app_info)
+        app_id = json.dumps(app_info)
         # 尝试获取缓存
         release_info = None
         try:
@@ -21,23 +25,25 @@ class DataManager:
                 self.__cache_manager.add_to_cache_queue(hub_uuid, app_id, release_info)
         return release_info
 
+    def refresh_data(self):
+        for hub_uuid in self.__cache_manager.cache_queue.keys():
+            hub = self.__hub_server_manager.get_hub(hub_uuid)
+            for app_info in self.__cache_manager.cache_queue[hub_uuid]:
+                try:
+                    release_info = hub.get_release_info(app_info)
+                    self.__cache_manager.add_to_cache_queue(hub_uuid, app_info, release_info)
+                except Exception:
+                    pass
 
-class CacheManager:
 
-    def __init__(self):
-        self.__cache_queue = dict()
+tl = Timeloop()
+data_manager = DataManager()
 
-    def add_to_cache_queue(self, hub_uuid: str, app_id: str, release_info: str or None = None):
-        cache_queue = self.__cache_queue
-        hub_cache_queue = {}
-        # 尝试获取目标软件源的缓存队列
-        if hub_uuid in cache_queue:
-            hub_cache_queue = cache_queue[hub_uuid]
-        else:
-            cache_queue[hub_uuid] = hub_cache_queue
-        print("cache " + app_id + ".")
-        hub_cache_queue[app_id] = release_info
 
-    def get_cache(self, hub_uuid: str, app_id: str):
-        hub_cache_queue = self.__cache_queue[hub_uuid]
-        return hub_cache_queue[app_id]
+@tl.job(interval=timedelta(hours=6))
+def _auto_refresh():
+    print("auto refresh data")
+    data_manager.refresh_data()
+
+
+tl.start()
