@@ -14,22 +14,21 @@ class DataManager:
     def get_release_info(self, hub_uuid: str, app_info: list) -> str:
         app_id = json.dumps(app_info)
         # 尝试获取缓存
-        release_info = None
-        try:
-            release_info = self.__cache_manager.get_cache(hub_uuid, app_id)
+        release_info = self.__cache_manager.get_cache(hub_uuid, app_id)
+        if release_info is not None:
             print(app_id + " is cached.")
-        except KeyError:
+        else:
             # 获取云端数据
-            if release_info is None:
-                hub = self.__hub_server_manager.get_hub(hub_uuid)
-                release_info = hub.get_release_info(app_info)
-                self.__cache_manager.add_to_cache_queue(hub_uuid, app_id, release_info)
+            hub = self.__hub_server_manager.get_hub(hub_uuid)
+            release_info = hub.get_release_info(app_info)
+            self.__cache_manager.add_to_cache_queue(hub_uuid, app_id, release_info)
         return release_info
 
     def refresh_data(self):
-        for hub_uuid in self.__cache_manager.cache_queue.keys():
+        cache_queue = self.__cache_manager.cache_queue
+        for hub_uuid in cache_queue.keys():
             hub = self.__hub_server_manager.get_hub(hub_uuid)
-            for app_info in self.__cache_manager.cache_queue[hub_uuid]:
+            for app_info in cache_queue[hub_uuid]:
                 try:
                     release_info = hub.get_release_info(app_info)
                     self.__cache_manager.add_to_cache_queue(hub_uuid, app_info, release_info)
@@ -47,6 +46,3 @@ data_manager = DataManager()
 def _auto_refresh():
     print("auto refresh data")
     data_manager.refresh_data()
-
-
-tl.start(block=True)

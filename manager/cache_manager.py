@@ -21,11 +21,13 @@ class CacheManager:
             hub_cache_queue.append(app_cache_dict)
         app_cache_dict["release_info_cache"] = release_info
 
-    def get_cache(self, hub_uuid: str, app_info: list) -> str:
-        hub_cache_queue = self.__cache_queue[hub_uuid]
-        for app_cache in hub_cache_queue:
-            if app_cache["app_info"] == app_info:
-                return app_cache["release_info_cache"]
+    def get_cache(self, hub_uuid: str, app_info: list) -> str or None:
+        if hub_uuid in self.__cache_queue:
+            hub_cache_queue = self.__cache_queue[hub_uuid]
+            for app_cache in hub_cache_queue:
+                if app_cache["app_info"] == app_info:
+                    return app_cache["release_info_cache"]
+        return None
 
     @property
     def cache_queue(self) -> dict:

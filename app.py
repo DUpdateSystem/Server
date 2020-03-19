@@ -1,6 +1,6 @@
 from flask import Flask, request
 import json
-from .manager.data_manager import data_manager
+from .manager.data_manager import data_manager, tl
 
 app = Flask(__name__)
 
@@ -15,5 +15,10 @@ def get_update_by_hub_uuid(hub_uuid: str):
     return json.dumps(return_dict)
 
 
-if __name__ == '__main__':
+def main():
+    tl.start()
     app.run()
+
+
+if __name__ == '__main__':
+    main()
