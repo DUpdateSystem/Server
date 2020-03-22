@@ -46,3 +46,6 @@ data_manager = DataManager()
 def _auto_refresh():
     print("auto refresh data")
     data_manager.refresh_data()
+
+
+tl.start()

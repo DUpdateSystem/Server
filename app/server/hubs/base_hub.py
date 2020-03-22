@@ -6,7 +6,7 @@ class BaseHub(metaclass=ABCMeta):
     """
 
     @abstractmethod
-    def get_release_info(self, app_info: list) -> str or None:
+    def get_release_info(self, app_info: list) -> list or None:
         """获取更新版本信息
         Args:
             app_info: 客户端上传的信息

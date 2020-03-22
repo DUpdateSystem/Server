@@ -6,7 +6,7 @@ from ..hub_script_utils import get_response_string, match_version_number_string
 class Github(BaseHub):
     """GitHub 软件源"""
 
-    def get_release_info(self, app_info: list) -> str or None:
+    def get_release_info(self, app_info: list) -> list or None:
         owner_name, repo_name = _get_base_info(app_info)
         if repo_name is None or owner_name is None:
             return
@@ -34,7 +34,7 @@ class Github(BaseHub):
                 assets.append(asset_info)
             release_info["assets"] = assets
             data.append(release_info)
-        return str(data)
+        return data
 
 
 def _get_base_info(app_info: list) -> tuple:

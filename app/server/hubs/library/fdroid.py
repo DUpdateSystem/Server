@@ -4,7 +4,7 @@ from ..hub_script_utils import get_response_string, match_version_number_string
 
 
 class FDroid(BaseHub):
-    def get_release_info(self, app_info: list) -> str or None:
+    def get_release_info(self, app_info: list) -> list or None:
         url = self.__get_url(self.__get_package(app_info))
         html = get_response_string(url)
         soup = BeautifulSoup(html, "html5lib")
@@ -32,7 +32,7 @@ class FDroid(BaseHub):
             }]
             release_info["assets"] = assets
             data.append(release_info)
-        return str(data)
+        return data
 
     @staticmethod
     def __get_url(app_package: str) -> str:

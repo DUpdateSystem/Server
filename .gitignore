@@ -1,11 +1,11 @@
 # IDEA
-/.idea
+.idea
 
 # coc-nvim
-/.vim/coc-settings.json
+.vim/coc-settings.json
 
 # python-mode
-/tags
+tags
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
