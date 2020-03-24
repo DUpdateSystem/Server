@@ -3,7 +3,7 @@ import sys
 
 import json
 
-from flask import Flask, request
+from flask import Flask, request, jsonify
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from app.server.manager.data_manager import data_manager
@@ -20,7 +20,7 @@ def get_update_by_hub_uuid(hub_uuid: str):
             "app_info": app_info,
             "release_info": data_manager.get_release_info(hub_uuid, app_info)
         })
-    return json.dumps(return_list)
+    return jsonify(return_list)
 
 
 @app.route("/")
