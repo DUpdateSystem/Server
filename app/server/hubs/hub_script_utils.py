@@ -13,12 +13,14 @@ def get_response_string(url: str, payload=None):
     return requests.get(url, params=payload).text
 
 
-def match_version_number_string(string: str):
+def search_version_number_string(string: str or None) -> str or None:
     """在字符串中匹配 x.y.z 版本号
     Args:
         string: 需匹配的字符串
     Returns:
         匹配到的版本号
         """
+    if string is None:
+        return None
     pattern = "(\\d+(\\.\\d+)*)(([.|\\-|+|_| ]|[0-9A-Za-z])*)"
-    return re.match(pattern, string)
+    return re.search(pattern, string)

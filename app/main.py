@@ -2,6 +2,7 @@ import os
 import sys
 
 import json
+from requests.exceptions import RequestException
 
 from flask import Flask, request, jsonify
 
@@ -16,9 +17,16 @@ def get_update_by_hub_uuid(hub_uuid: str):
     app_info_list = json.loads(request.headers.get("App-Info-List"))
     return_list = []
     for app_info in app_info_list:
+        release_info = None
+        try:
+            release_info = data_manager.get_release_info(hub_uuid, app_info)
+        except Exception as e:
+            print("ERROR")
+            print(f"app_info: {app_info}")
+            print(f"Reason: {e}")
         return_list.append({
             "app_info": app_info,
-            "release_info": data_manager.get_release_info(hub_uuid, app_info)
+            "release_info": release_info
         })
     return jsonify(return_list)
 
@@ -30,7 +38,7 @@ def hello():
 
 def run(debug=True):
     if debug:
-        app.run()
+        app.run(debug=True)
     else:
         app.run(host='0.0.0.0', debug=False, port=80)
 

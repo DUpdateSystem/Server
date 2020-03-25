@@ -1,6 +1,6 @@
 from bs4 import BeautifulSoup
 from ..base_hub import BaseHub
-from ..hub_script_utils import get_response_string, match_version_number_string
+from ..hub_script_utils import get_response_string, search_version_number_string
 
 
 class FDroid(BaseHub):

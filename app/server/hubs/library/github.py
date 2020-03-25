@@ -1,6 +1,6 @@
 import json
 from ..base_hub import BaseHub
-from ..hub_script_utils import get_response_string, match_version_number_string
+from ..hub_script_utils import get_response_string, search_version_number_string
 
 
 class Github(BaseHub):
@@ -17,7 +17,7 @@ class Github(BaseHub):
             release_info = {}
             # 获取名称
             name = release["name"]
-            if match_version_number_string(name) is None:
+            if search_version_number_string(name) is None:
                 name = release["tag_name"]
             # 获取版本号
             release_info["version_number"] = name
