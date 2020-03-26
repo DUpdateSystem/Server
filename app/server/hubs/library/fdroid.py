@@ -1,13 +1,14 @@
-from bs4 import BeautifulSoup
 from ..base_hub import BaseHub
-from ..hub_script_utils import get_response_string, search_version_number_string
+from ..hub_script_utils import get_value_from_app_info, parsing_http_page
 
 
 class FDroid(BaseHub):
     def get_release_info(self, app_info: list) -> list or None:
-        url = self.__get_url(self.__get_package(app_info))
-        html = get_response_string(url)
-        soup = BeautifulSoup(html, "html5lib")
+        package = self.__get_package(app_info)
+        if package is None:
+            return None
+        url = self.__get_url(package)
+        soup = parsing_http_page(url)
         version_number_list = [item.a["name"] for item in soup.find_all(class_="package-version-header")]
         newest_changelog_div = soup.find(class_="package-whats-new")
         newest_changelog = None
@@ -39,7 +40,5 @@ class FDroid(BaseHub):
         return f"https://f-droid.org/packages/{app_package}"
 
     @staticmethod
-    def __get_package(app_info: list) -> str:
-        for i in app_info:
-            if i["key"] == "android_app_package":
-                return i["value"]
+    def __get_package(app_info: list) -> str or None:
+        return get_value_from_app_info(app_info, "android_app_package")
