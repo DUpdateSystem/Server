@@ -1,5 +1,6 @@
 import os
 import sys
+from multiprocessing import Pool
 
 import json
 
@@ -27,21 +28,33 @@ def get_update_by_hub_uuid(hub_uuid: str):
         return "", 400
     app_info_list = json.loads(request.headers.get("App-Info-List"))
     return_list = []
+    args_list = []
     for app_info in app_info_list:
-        release_info = None
-        try:
-            release_info = data_manager.get_release_info(hub_uuid, app_info)
-        except Exception as e:
-            print("ERROR")
-            print(f"app_info: {app_info}")
-            print(f"Reason: {e}")
-            if data.debug_mode:
-                raise e
-        return_list.append({
-            "app_info": app_info,
-            "release_info": release_info
-        })
+        args_list.append([hub_uuid, app_info])
+    with Pool() as p:
+        results = p.starmap(__get_release_info, args_list)
+    for release_info_dict in results:
+        if release_info_dict is not None:
+            return_list.append({
+                "app_info": release_info_dict.get("app_info"),
+                "release_info": release_info_dict.get("release_info")
+            })
     return jsonify(return_list)
+
+
+def __get_release_info(hub_uuid: str, app_info: list) -> dict or None:
+    try:
+        return {
+            "app_info": app_info,
+            "release_info": data_manager.get_release_info(hub_uuid, app_info)
+        }
+    except Exception as e:
+        print("ERROR")
+        print(f"app_info: {app_info}")
+        print(f"Reason: {e}")
+        if data.debug_mode:
+            raise e
+        return None
 
 
 @app.route("/")

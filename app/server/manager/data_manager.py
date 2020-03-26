@@ -11,7 +11,7 @@ class DataManager:
         self.__cache_manager = CacheManager()
         self.__hub_server_manager = HubServerManager()
 
-    def get_release_info(self, hub_uuid: str, app_info: list) -> str:
+    def get_release_info(self, hub_uuid: str, app_info: list) -> list:
         app_id = json.dumps(app_info)
         # 尝试获取缓存
         release_info = self.__cache_manager.get_cache(hub_uuid, app_id)
