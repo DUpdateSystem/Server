@@ -14,7 +14,7 @@ from app.server.hubs.library.hub_list import hub_dict
 class Data:
     def __init__(self):
         self.app = Flask(__name__)
-        self.debug_mode = True
+        self.debug_mode = False
 
 
 data = Data()
@@ -34,15 +34,14 @@ def get_update_by_hub_uuid(hub_uuid: str):
     with Pool() as p:
         results = p.starmap(__get_release_info, args_list)
     for release_info_dict in results:
-        if release_info_dict is not None:
-            return_list.append({
-                "app_info": release_info_dict.get("app_info"),
-                "release_info": release_info_dict.get("release_info")
-            })
+        return_list.append({
+            "app_info": release_info_dict.get("app_info"),
+            "release_info": release_info_dict.get("release_info")
+        })
     return jsonify(return_list)
 
 
-def __get_release_info(hub_uuid: str, app_info: list) -> dict or None:
+def __get_release_info(hub_uuid: str, app_info: list) -> dict:
     try:
         return {
             "app_info": app_info,
@@ -54,7 +53,10 @@ def __get_release_info(hub_uuid: str, app_info: list) -> dict or None:
         print(f"Reason: {e}")
         if data.debug_mode:
             raise e
-        return None
+        return {
+            "app_info": app_info,
+            "release_info": None
+        }
 
 
 @app.route("/")
@@ -63,9 +65,8 @@ def hello():
 
 
 def run(debug=True):
-    data.debug_mode = debug
     if debug:
-        app.run(debug=True)
+        app.run(host='0.0.0.0', debug=True)
     else:
         app.run(host='0.0.0.0', debug=False, port=80)
 
