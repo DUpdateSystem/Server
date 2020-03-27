@@ -1,4 +1,3 @@
-import json
 from timeloop import Timeloop
 from datetime import timedelta
 from requests.exceptions import RequestException
@@ -12,16 +11,13 @@ class DataManager:
         self.__hub_server_manager = HubServerManager()
 
     def get_release_info(self, hub_uuid: str, app_info: list) -> list:
-        app_id = json.dumps(app_info)
         # 尝试获取缓存
-        release_info = self.__cache_manager.get_cache(hub_uuid, app_id)
-        if release_info is not None:
-            print(app_id + " is cached.")
-        else:
+        release_info = self.__cache_manager.get_cache(hub_uuid, app_info)
+        if release_info is None:
             # 获取云端数据
             hub = self.__hub_server_manager.get_hub(hub_uuid)
             release_info = hub.get_release_info(app_info)
-            self.__cache_manager.add_to_cache_queue(hub_uuid, app_id, release_info)
+            self.__cache_manager.add_to_cache_queue(hub_uuid, app_info, release_info)
         return release_info
 
     def refresh_data(self):
