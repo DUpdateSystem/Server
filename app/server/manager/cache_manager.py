@@ -1,17 +1,12 @@
-from multiprocessing import Manager
-
-manager = Manager()
-
-
 class CacheManager:
 
     def __init__(self):
-        self.__cache_queue = manager.dict()
+        self.__cache_queue = dict()
 
     def add_to_cache_queue(self, hub_uuid: str, app_info: list, release_info: list or None = None):
         cache_queue = self.__cache_queue
         # 尝试获取目标软件源的缓存队列
-        hub_cache_queue = manager.list()
+        hub_cache_queue = list()
         if hub_uuid in cache_queue:
             hub_cache_queue = cache_queue[hub_uuid]
         else:
