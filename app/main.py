@@ -29,8 +29,17 @@ def get_update_by_hub_uuid(hub_uuid: str):
         return "", 400
     app_info_list = json.loads(request.headers.get("App-Info-List"))
     return_list = []
+    args_list = []
     for app_info in app_info_list:
-        release_info_dict = __get_release_info(hub_uuid, app_info)
+        args_list.append([hub_uuid, app_info])
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
+    results = loop.run_until_complete(
+        asyncio.gather(
+            *[__get_release_info(hub_uuid, app_info) for app_info in app_info_list]
+        ))
+    loop.close()
+    for release_info_dict in results:
         return_list.append({
             "app_info": release_info_dict.get("app_info"),
             "release_info": release_info_dict.get("release_info")
@@ -38,7 +47,7 @@ def get_update_by_hub_uuid(hub_uuid: str):
     return jsonify(return_list)
 
 
-def __get_release_info(hub_uuid: str, app_info: list) -> dict:
+async def __get_release_info(hub_uuid: str, app_info: list) -> dict:
     try:
         return {
             "app_info": app_info,
