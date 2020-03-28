@@ -1,5 +1,6 @@
 import os
 import sys
+import asyncio
 from multiprocessing import Pool
 
 import json
@@ -28,12 +29,8 @@ def get_update_by_hub_uuid(hub_uuid: str):
         return "", 400
     app_info_list = json.loads(request.headers.get("App-Info-List"))
     return_list = []
-    args_list = []
     for app_info in app_info_list:
-        args_list.append([hub_uuid, app_info])
-    with Pool() as p:
-        results = p.starmap(__get_release_info, args_list)
-    for release_info_dict in results:
+        release_info_dict = __get_release_info(hub_uuid, app_info)
         return_list.append({
             "app_info": release_info_dict.get("app_info"),
             "release_info": release_info_dict.get("release_info")
