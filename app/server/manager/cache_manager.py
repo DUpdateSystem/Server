@@ -1,6 +1,7 @@
 import json
 from redis.client import Redis
 from redis import BlockingConnectionPool
+from app.main import config
 
 key_delimiter = '+'
 value_dict_delimiter = ':'
@@ -10,7 +11,9 @@ cache_db_index = 0
 class CacheManager:
 
     def __init__(self):
-        self.___redis_client = Redis(connection_pool=BlockingConnectionPool(host="ali.xzos.net", db=cache_db_index))
+        self.___redis_client = Redis(
+            connection_pool=BlockingConnectionPool(host=config.redis_server_address, port=config.redis_server_port,
+                                                   db=cache_db_index))
 
     @staticmethod
     def __get_app_info_key(hub_uuid: str, app_info: list) -> str or None:

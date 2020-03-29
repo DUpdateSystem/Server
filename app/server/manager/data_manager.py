@@ -4,6 +4,7 @@ from datetime import timedelta
 from requests.exceptions import RequestException
 from .hub_server_manager import HubServerManager
 from .cache_manager import CacheManager
+from app.main import config
 
 debug_mode = False
 
@@ -79,7 +80,7 @@ tl = Timeloop()
 data_manager = DataManager()
 
 
-@tl.job(interval=timedelta(hours=6))
+@tl.job(interval=timedelta(hours=config.auto_refresh_time))
 def _auto_refresh():
     print("auto refresh data")
     data_manager.refresh_data()

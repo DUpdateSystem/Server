@@ -4,6 +4,13 @@ import json
 from flask import Flask, request, jsonify
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
+# 初始化配置
+from app.server.config import ServerConfig
+
+config = ServerConfig()
+config.init_config("config.ini")
+
 from app.server.manager.data_manager import data_manager
 from app.server.hubs.library.hub_list import hub_dict
 
@@ -25,12 +32,9 @@ def hello():
     return "Hello World from Flask"
 
 
-def run(debug=True):
-    if debug:
-        app.run(host='0.0.0.0', debug=True)
-    else:
-        app.run(host='0.0.0.0', debug=False, port=80)
+def run():
+    app.run(host=config.host, port=config.port, debug=config.debug_mode)
 
 
 if __name__ == "__main__":
-    run(debug=False)
+    run()
