@@ -3,9 +3,14 @@ server_port=80
 docker_container_name="update-server"
 docker_image_name="upgradeall-server"
 
+# Pull Newest Code
+echo "Get Newest Code"
+git pull
 # stop old server
+echo "Stop Old Server"
 docker stop $docker_container_name && docker container rm $docker_container_name
 # build docker image
+echo "Build New Docker Image"
 docker build -t $docker_image_name .
 # run docker container on 80 port
 echo "Start Server"
