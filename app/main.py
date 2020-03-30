@@ -17,7 +17,7 @@ app = Flask(__name__)
 def get_update_by_hub_uuid(hub_uuid: str):
     if hub_uuid not in hub_dict:
         print(f"NO HUB: {hub_uuid}")
-        return "", 400
+        return "NO_HUB", 404
     app_info_list = json.loads(request.headers.get("App-Info-List"))
     return_list = data_manager.get_release_info_list(hub_uuid, app_info_list)
     return jsonify(return_list)
