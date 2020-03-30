@@ -1,7 +1,7 @@
 import json
 from redis.client import Redis
 from redis import BlockingConnectionPool
-from app.main import config
+from ..config import server_config
 
 key_delimiter = '+'
 value_dict_delimiter = ':'
@@ -12,7 +12,8 @@ class CacheManager:
 
     def __init__(self):
         self.___redis_client = Redis(
-            connection_pool=BlockingConnectionPool(host=config.redis_server_address, port=config.redis_server_port,
+            connection_pool=BlockingConnectionPool(host=server_config.redis_server_address,
+                                                   port=server_config.redis_server_port,
                                                    db=cache_db_index))
 
     @staticmethod

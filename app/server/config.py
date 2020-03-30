@@ -22,3 +22,7 @@ class ServerConfig:
         web_api_config = config['web_api']
         self.redis_server_address = web_api_config['RedisServerAddress']
         self.redis_server_port = int(web_api_config['RedisServerPort'])
+
+
+server_config = ServerConfig()
+server_config.init_config("config.ini")
