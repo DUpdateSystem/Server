@@ -24,7 +24,7 @@ class CoolApk(BaseHub):
             "version_number": version_number,
             "change_log": newest_changelog,
             "assets": [{
-                "name": package + ".apk",
+                "file_name": package + ".apk",
                 "download_url": release_download
             }]
         }]

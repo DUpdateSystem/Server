@@ -22,7 +22,7 @@ class CacheManager:
             return None
         key = hub_uuid
         for k in app_info:
-            key += (key_delimiter + k.get('key') + value_dict_delimiter + k.get('value'))
+            key += (key_delimiter + k.key + value_dict_delimiter + k.value)
         return key
 
     @staticmethod

@@ -27,7 +27,7 @@ class Github(BaseHub):
             assets = []
             for asset in release["assets"]:
                 asset_info = {
-                    "name": asset["name"],
+                    "file_name": asset["name"],
                     "download_url": asset["browser_download_url"],
                     "file_type": asset["content_type"]
                 }
@@ -48,8 +48,8 @@ def _get_base_info(app_info: list) -> tuple:
     owner_name = None
     repo_name = None
     for i in app_info:
-        key = i["key"]
-        value = i["value"]
+        key = i.key
+        value = i.value
         if key == "owner":
             owner_name = value
         elif key == "repo":

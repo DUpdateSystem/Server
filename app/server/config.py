@@ -25,4 +25,4 @@ class ServerConfig:
 
 
 server_config = ServerConfig()
-server_config.init_config("config.ini")
+server_config.init_config("../config.ini")

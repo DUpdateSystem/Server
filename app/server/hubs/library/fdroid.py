@@ -28,7 +28,7 @@ class FDroid(BaseHub):
             if i == 0 and newest_changelog is not None:
                 release_info["change_log"] = newest_changelog
             assets = [{
-                "name": download_file_name_list[i],
+                "file_name": download_file_name_list[i],
                 "download_url": download_url_list[i]
             }]
             release_info["assets"] = assets

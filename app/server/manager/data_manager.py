@@ -1,4 +1,3 @@
-import asyncio
 from timeloop import Timeloop
 from datetime import timedelta
 from requests.exceptions import RequestException
@@ -15,30 +14,10 @@ class DataManager:
         self.__cache_manager = CacheManager()
         self.__hub_server_manager = HubServerManager()
 
-    def get_release_info_list(self, hub_uuid: str, app_info_list: list) -> list:
-        loop = asyncio.new_event_loop()
-        asyncio.set_event_loop(loop)
-        results = loop.run_until_complete(
-            asyncio.gather(
-                *[self.__get_release_info(hub_uuid, app_info) for app_info in app_info_list]
-            ))
-        loop.close()
-        return_list = []
-        for release_info_dict in results:
-            return_list.append({
-                "app_info": release_info_dict.get("app_info"),
-                "release_info": release_info_dict.get("release_info")
-            })
-        return return_list
-
     @staticmethod
-    async def __get_release_info(hub_uuid: str, app_info: list) -> dict:
+    def get_release_info(hub_uuid: str, app_info: list) -> list or None:
         try:
-            release_info = data_manager.get_release_info(hub_uuid, app_info)
-            return {
-                "app_info": app_info,
-                "release_info": release_info
-            }
+            return data_manager.__get_release_info(hub_uuid, app_info)
         except Exception as e:
             print(f"""
                     ERROR: {e}
@@ -46,12 +25,9 @@ class DataManager:
                     """)
             if debug_mode:
                 raise e
-            return {
-                "app_info": app_info,
-                "release_info": None
-            }
+            return None
 
-    def get_release_info(self, hub_uuid: str, app_info: list) -> list:
+    def __get_release_info(self, hub_uuid: str, app_info: list) -> list:
         # 尝试获取缓存
         release_info = self.__cache_manager.get_cache(hub_uuid, app_info)
         if release_info is not None:

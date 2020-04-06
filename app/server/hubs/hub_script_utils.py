@@ -47,6 +47,6 @@ def get_value_from_app_info(app_info: list, key: str) -> str or None:
         搜索到的键值，若没有相关键则返回 None
     """
     for i in app_info:
-        if i["key"] == key:
-            return i["value"]
+        if i.key == key:
+            return i.value
     return None
