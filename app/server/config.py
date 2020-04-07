@@ -9,6 +9,7 @@ class ServerConfig:
         self.auto_refresh_time = 6
         self.redis_server_address = "localhost"
         self.redis_server_port = 6379
+        self.max_workers = 16
 
     def init_config(self, file_path: str):
         config = configparser.ConfigParser()
@@ -16,6 +17,7 @@ class ServerConfig:
         base_config = config['base']
         self.host = base_config['Host']
         self.port = int(base_config['Port'])
+        self.max_workers = int(base_config['MaxWorkers'])
         self.debug_mode = bool(base_config['DebugMode'])
         data_config = config['data']
         self.auto_refresh_time = int(data_config['AutoRefreshTime'])

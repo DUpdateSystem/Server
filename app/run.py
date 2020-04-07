@@ -31,7 +31,7 @@ class Greeter(route_pb2_grpc.UpdateServerRouteServicer):
 
 
 def serve():
-    server = grpc.server(futures.ThreadPoolExecutor(max_workers=64))
+    server = grpc.server(futures.ThreadPoolExecutor(max_workers=server_config.max_workers))
     route_pb2_grpc.add_UpdateServerRouteServicer_to_server(Greeter(), server)
     server.add_insecure_port(f'{server_config.host}:{server_config.port}')
     server.start()
