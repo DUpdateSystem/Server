@@ -15,7 +15,7 @@ class DataManager:
         self.__hub_server_manager = HubServerManager()
 
     @staticmethod
-    def get_release_info(hub_uuid: str, app_info: list) -> list or None:
+    def get_release_info(hub_uuid: str, app_info: list, use_cache=True) -> list or None:
         try:
             return data_manager.__get_release_info(hub_uuid, app_info)
         except Exception as e:
@@ -27,11 +27,12 @@ class DataManager:
                 raise e
             return None
 
-    def __get_release_info(self, hub_uuid: str, app_info: list) -> list:
-        # 尝试获取缓存
-        release_info = self.__cache_manager.get_cache(hub_uuid, app_info)
-        if release_info is not None:
-            return release_info
+    def __get_release_info(self, hub_uuid: str, app_info: list, use_cache=True) -> list:
+        if use_cache:
+            # 尝试获取缓存
+            release_info = self.__cache_manager.get_cache(hub_uuid, app_info)
+            if release_info is not None:
+                return release_info
         # 获取云端数据
         hub = self.__hub_server_manager.get_hub(hub_uuid)
         release_info = hub.get_release_info(app_info)
@@ -42,14 +43,8 @@ class DataManager:
     def refresh_data(self):
         cache_queue = self.__cache_manager.cache_queue
         for hub_uuid in cache_queue.keys():
-            hub = self.__hub_server_manager.get_hub(hub_uuid)
             for app_info in cache_queue[hub_uuid]:
-                try:
-                    release_info = hub.get_release_info(app_info)
-                    self.__cache_manager.add_to_cache_queue(hub_uuid, app_info, release_info)
-                except RequestException as e:
-                    print(f"NETWORK ERROR: {e}")
-                    pass
+                self.get_release_info(hub_uuid, app_info, use_cache=False)
 
 
 tl = Timeloop()
