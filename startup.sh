@@ -1,5 +1,5 @@
 #!/bin/bash
-server_port=80
+server_port=5255
 docker_server_port=5255
 docker_container_name="update-server"
 docker_image_name="upgradeall-server"
