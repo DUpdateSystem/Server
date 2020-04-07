@@ -1,7 +1,8 @@
-FROM tiangolo/uwsgi-nginx-flask:python3.7
+FROM python:3
 
-COPY ./app/requirements.txt /app/requirements.txt
-RUN pip install -r /app/requirements.txt
+COPY ./app/requirements.txt ./
+RUN pip install --no-cache-dir -r requirements.txt
 
-COPY ./config.ini /app/config.ini
-COPY ./app /app
+COPY ./app ./
+
+CMD [ "python", "./app/run.py" ]
