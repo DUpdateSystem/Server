@@ -24,8 +24,12 @@ class Greeter(route_pb2_grpc.UpdateServerRouteServicer):
             logging.warning(f"NO HUB: {hub_uuid}")
             return AppStatus(valid_hub_uuid=False)
         app_id: list = request.app_id
-        logging.info(f"已完成单个请求（{str_repeated_composite_container(app_id)}）")
-        return data_manager.get_app_status(hub_uuid, app_id)
+        app_status = data_manager.get_app_status(hub_uuid, app_id)
+        log_str = f"已完成单个请求（{str_repeated_composite_container(app_id)}）"
+        if not app_status.release_info:
+            log_str += "(empty)"
+        logging.info(log_str)
+        return app_status
 
     def GetAppStatusList(self, request, context) -> ResponseList:
         hub_uuid = request.hub_uuid
@@ -37,10 +41,11 @@ class Greeter(route_pb2_grpc.UpdateServerRouteServicer):
         app_id_list = []
         for app_id in request.app_id_list:
             app_id_list.append(app_id.app_id)
-        logging.info(f"已完成批量请求（{len(app_id_list)}）")
-        return ResponseList(
+        release_list = ResponseList(
             response=data_manager.get_response_list(hub_uuid, app_id_list)
         )
+        logging.info(f"已完成批量请求 hub_uuid: {hub_uuid}（{len(app_id_list)}）")
+        return release_list
 
 
 def serve():
