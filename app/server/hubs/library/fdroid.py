@@ -3,8 +3,8 @@ from ..hub_script_utils import get_value_from_app_info, parsing_http_page
 
 
 class FDroid(BaseHub):
-    def get_release_info(self, app_info: list) -> list or None:
-        package = self.__get_package(app_info)
+    def get_release_info(self, app_id: list) -> tuple or None:
+        package = self.__get_package(app_id)
         if package is None:
             return None
         url = self.__get_url(package)

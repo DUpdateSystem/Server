@@ -4,23 +4,42 @@ option java_multiple_files = true;
 option java_package = "net.xzos.upgradeall.core.route";
 option java_outer_classname = "RouteProto";
 
-package routeguide;
+package server_route;
 
 service UpdateServerRoute {
-  rpc GetReleaseInfo(AppInfo) returns (ReturnValue) {}
+  rpc GetAppStatus(Request) returns (AppStatus) {}
+  rpc GetAppStatusList(RequestList) returns (ResponseList) {}
 }
 
-message AppInfo {
+message RequestList {
   string hub_uuid = 1;
-  repeated AppInfoItem app_info = 2;
+  repeated AppId app_id_list = 2;
 }
 
-message AppInfoItem {
+message Request{
+  string hub_uuid = 1;
+  repeated AppIdItem app_id = 2;
+}
+
+message AppId{
+  repeated AppIdItem app_id = 1;
+}
+
+message ResponseList{
+  repeated ResponsePackage response = 1;
+}
+
+message ResponsePackage{
+  repeated AppIdItem app_id = 1;
+  AppStatus app_status = 2;
+}
+
+message AppIdItem {
   string key = 1;
   string value = 2;
 }
 
-message ReturnValue {
+message AppStatus {
   bool valid_hub_uuid = 1;
   bool valid_app = 2;
   repeated ReleaseInfoItem release_info = 3;
@@ -35,5 +54,5 @@ message ReleaseInfoItem {
 message AssetItem {
   string file_name = 1;
   string download_url = 2;
-  string file_type= 3;
+  string file_type = 3;
 }

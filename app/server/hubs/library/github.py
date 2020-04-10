@@ -1,4 +1,5 @@
 import json
+
 from ..base_hub import BaseHub
 from ..hub_script_utils import get_response_string, search_version_number_string
 
@@ -6,8 +7,8 @@ from ..hub_script_utils import get_response_string, search_version_number_string
 class Github(BaseHub):
     """GitHub 软件源"""
 
-    def get_release_info(self, app_info: list) -> list or None:
-        owner_name, repo_name = _get_base_info(app_info)
+    def get_release_info(self, app_id: list) -> tuple or None:
+        owner_name, repo_name = _get_base_info(app_id)
         if repo_name is None or owner_name is None:
             return
         response = _get_response(owner_name, repo_name)

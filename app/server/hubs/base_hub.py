@@ -6,10 +6,10 @@ class BaseHub(metaclass=ABCMeta):
     """
 
     @abstractmethod
-    def get_release_info(self, app_info: list) -> list or None:
+    def get_release_info(self, app_id: list) -> tuple or None:
         """获取更新版本信息
         Args:
-            app_info: 客户端上传的信息
+            app_id: 客户端上传的信息
                 example:
                 [
                     {key : "", value : ""}

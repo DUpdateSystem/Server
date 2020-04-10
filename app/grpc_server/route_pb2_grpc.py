@@ -13,17 +13,28 @@ class UpdateServerRouteStub(object):
         Args:
             channel: A grpc.Channel.
         """
-        self.GetReleaseInfo = channel.unary_unary(
-                '/routeguide.UpdateServerRoute/GetReleaseInfo',
-                request_serializer=app_dot_grpc__server_dot_route__pb2.AppInfo.SerializeToString,
-                response_deserializer=app_dot_grpc__server_dot_route__pb2.ReturnValue.FromString,
+        self.GetAppStatus = channel.unary_unary(
+                '/server_route.UpdateServerRoute/GetAppStatus',
+                request_serializer=app_dot_grpc__server_dot_route__pb2.Request.SerializeToString,
+                response_deserializer=app_dot_grpc__server_dot_route__pb2.AppStatus.FromString,
+                )
+        self.GetAppStatusList = channel.unary_unary(
+                '/server_route.UpdateServerRoute/GetAppStatusList',
+                request_serializer=app_dot_grpc__server_dot_route__pb2.RequestList.SerializeToString,
+                response_deserializer=app_dot_grpc__server_dot_route__pb2.ResponseList.FromString,
                 )
 
 
 class UpdateServerRouteServicer(object):
     """Missing associated documentation comment in .proto file"""
 
-    def GetReleaseInfo(self, request, context):
+    def GetAppStatus(self, request, context):
+        """Missing associated documentation comment in .proto file"""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def GetAppStatusList(self, request, context):
         """Missing associated documentation comment in .proto file"""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
@@ -32,14 +43,19 @@ class UpdateServerRouteServicer(object):
 
 def add_UpdateServerRouteServicer_to_server(servicer, server):
     rpc_method_handlers = {
-            'GetReleaseInfo': grpc.unary_unary_rpc_method_handler(
-                    servicer.GetReleaseInfo,
-                    request_deserializer=app_dot_grpc__server_dot_route__pb2.AppInfo.FromString,
-                    response_serializer=app_dot_grpc__server_dot_route__pb2.ReturnValue.SerializeToString,
+            'GetAppStatus': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetAppStatus,
+                    request_deserializer=app_dot_grpc__server_dot_route__pb2.Request.FromString,
+                    response_serializer=app_dot_grpc__server_dot_route__pb2.AppStatus.SerializeToString,
+            ),
+            'GetAppStatusList': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetAppStatusList,
+                    request_deserializer=app_dot_grpc__server_dot_route__pb2.RequestList.FromString,
+                    response_serializer=app_dot_grpc__server_dot_route__pb2.ResponseList.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
-            'routeguide.UpdateServerRoute', rpc_method_handlers)
+            'server_route.UpdateServerRoute', rpc_method_handlers)
     server.add_generic_rpc_handlers((generic_handler,))
 
 
@@ -48,7 +64,7 @@ class UpdateServerRoute(object):
     """Missing associated documentation comment in .proto file"""
 
     @staticmethod
-    def GetReleaseInfo(request,
+    def GetAppStatus(request,
             target,
             options=(),
             channel_credentials=None,
@@ -57,8 +73,24 @@ class UpdateServerRoute(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/routeguide.UpdateServerRoute/GetReleaseInfo',
-            app_dot_grpc__server_dot_route__pb2.AppInfo.SerializeToString,
-            app_dot_grpc__server_dot_route__pb2.ReturnValue.FromString,
+        return grpc.experimental.unary_unary(request, target, '/server_route.UpdateServerRoute/GetAppStatus',
+            app_dot_grpc__server_dot_route__pb2.Request.SerializeToString,
+            app_dot_grpc__server_dot_route__pb2.AppStatus.FromString,
+            options, channel_credentials,
+            call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def GetAppStatusList(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/server_route.UpdateServerRoute/GetAppStatusList',
+            app_dot_grpc__server_dot_route__pb2.RequestList.SerializeToString,
+            app_dot_grpc__server_dot_route__pb2.ResponseList.FromString,
             options, channel_credentials,
             call_credentials, compression, wait_for_ready, timeout, metadata)

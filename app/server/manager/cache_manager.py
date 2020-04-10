@@ -1,7 +1,11 @@
 import json
-from redis.client import Redis
+import logging
+
 from redis import BlockingConnectionPool
-from ..config import server_config
+from redis.client import Redis
+
+from app.config import server_config
+from app.server.utils import str_repeated_composite_container
 
 key_delimiter = '+'
 value_dict_delimiter = ':'
@@ -43,16 +47,21 @@ class CacheManager:
         if key is not None:
             self.___redis_client.set(key, json.dumps(release_info))
             # 缓存完毕
-            print(f"cache {app_info}.")
+            logging.info(f"cache {str_repeated_composite_container(app_info)}.")
 
     def get_cache(self, hub_uuid: str, app_info: list) -> dict or None:
         key = self.__get_app_info_key(hub_uuid, app_info)
-        if key is not None:
-            release_info = self.___redis_client.get(key)
-            if release_info is not None:
-                print(str(app_info) + " is cached.")
-                return json.loads(release_info)
-        return None
+        if key is None:
+            logging.error(f"""
+WRONG FORMAT
+hub_uuid: {hub_uuid}
+app_info: {str_repeated_composite_container(app_info)}""")
+            raise NameError
+        release_info = self.___redis_client.get(key)
+        if release_info is None:
+            raise KeyError
+        logging.info(f"{str_repeated_composite_container(app_info)} is cached.")
+        return json.loads(release_info)
 
     @property
     def cache_queue(self) -> dict:

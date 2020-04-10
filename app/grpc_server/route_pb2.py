@@ -15,31 +15,31 @@ _sym_db = _symbol_database.Default()
 
 DESCRIPTOR = _descriptor.FileDescriptor(
   name='app/grpc_server/route.proto',
-  package='routeguide',
+  package='server_route',
   syntax='proto3',
   serialized_options=b'\n\036net.xzos.upgradeall.core.routeB\nRouteProtoP\001',
-  serialized_pb=b'\n\x1b\x61pp/grpc_server/route.proto\x12\nrouteguide\"F\n\x07\x41ppInfo\x12\x10\n\x08hub_uuid\x18\x01 \x01(\t\x12)\n\x08\x61pp_info\x18\x02 \x03(\x0b\x32\x17.routeguide.AppInfoItem\")\n\x0b\x41ppInfoItem\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\t\"k\n\x0bReturnValue\x12\x16\n\x0evalid_hub_uuid\x18\x01 \x01(\x08\x12\x11\n\tvalid_app\x18\x02 \x01(\x08\x12\x31\n\x0crelease_info\x18\x03 \x03(\x0b\x32\x1b.routeguide.ReleaseInfoItem\"d\n\x0fReleaseInfoItem\x12\x16\n\x0eversion_number\x18\x01 \x01(\t\x12\x12\n\nchange_log\x18\x02 \x01(\t\x12%\n\x06\x61ssets\x18\x03 \x03(\x0b\x32\x15.routeguide.AssetItem\"G\n\tAssetItem\x12\x11\n\tfile_name\x18\x01 \x01(\t\x12\x14\n\x0c\x64ownload_url\x18\x02 \x01(\t\x12\x11\n\tfile_type\x18\x03 \x01(\t2U\n\x11UpdateServerRoute\x12@\n\x0eGetReleaseInfo\x12\x13.routeguide.AppInfo\x1a\x17.routeguide.ReturnValue\"\x00\x42.\n\x1enet.xzos.upgradeall.core.routeB\nRouteProtoP\x01\x62\x06proto3'
+  serialized_pb=b'\n\x1b\x61pp/grpc_server/route.proto\x12\x0cserver_route\"I\n\x0bRequestList\x12\x10\n\x08hub_uuid\x18\x01 \x01(\t\x12(\n\x0b\x61pp_id_list\x18\x02 \x03(\x0b\x32\x13.server_route.AppId\"D\n\x07Request\x12\x10\n\x08hub_uuid\x18\x01 \x01(\t\x12\'\n\x06\x61pp_id\x18\x02 \x03(\x0b\x32\x17.server_route.AppIdItem\"0\n\x05\x41ppId\x12\'\n\x06\x61pp_id\x18\x01 \x03(\x0b\x32\x17.server_route.AppIdItem\"?\n\x0cResponseList\x12/\n\x08response\x18\x01 \x03(\x0b\x32\x1d.server_route.ResponsePackage\"g\n\x0fResponsePackage\x12\'\n\x06\x61pp_id\x18\x01 \x03(\x0b\x32\x17.server_route.AppIdItem\x12+\n\napp_status\x18\x02 \x01(\x0b\x32\x17.server_route.AppStatus\"\'\n\tAppIdItem\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\t\"k\n\tAppStatus\x12\x16\n\x0evalid_hub_uuid\x18\x01 \x01(\x08\x12\x11\n\tvalid_app\x18\x02 \x01(\x08\x12\x33\n\x0crelease_info\x18\x03 \x03(\x0b\x32\x1d.server_route.ReleaseInfoItem\"f\n\x0fReleaseInfoItem\x12\x16\n\x0eversion_number\x18\x01 \x01(\t\x12\x12\n\nchange_log\x18\x02 \x01(\t\x12\'\n\x06\x61ssets\x18\x03 \x03(\x0b\x32\x17.server_route.AssetItem\"G\n\tAssetItem\x12\x11\n\tfile_name\x18\x01 \x01(\t\x12\x14\n\x0c\x64ownload_url\x18\x02 \x01(\t\x12\x11\n\tfile_type\x18\x03 \x01(\t2\xa2\x01\n\x11UpdateServerRoute\x12@\n\x0cGetAppStatus\x12\x15.server_route.Request\x1a\x17.server_route.AppStatus\"\x00\x12K\n\x10GetAppStatusList\x12\x19.server_route.RequestList\x1a\x1a.server_route.ResponseList\"\x00\x42.\n\x1enet.xzos.upgradeall.core.routeB\nRouteProtoP\x01\x62\x06proto3'
 )
 
 
 
 
-_APPINFO = _descriptor.Descriptor(
-  name='AppInfo',
-  full_name='routeguide.AppInfo',
+_REQUESTLIST = _descriptor.Descriptor(
+  name='RequestList',
+  full_name='server_route.RequestList',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='hub_uuid', full_name='routeguide.AppInfo.hub_uuid', index=0,
+      name='hub_uuid', full_name='server_route.RequestList.hub_uuid', index=0,
       number=1, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='app_info', full_name='routeguide.AppInfo.app_info', index=1,
+      name='app_id_list', full_name='server_route.RequestList.app_id_list', index=1,
       number=2, type=11, cpp_type=10, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
@@ -57,27 +57,165 @@ _APPINFO = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=43,
-  serialized_end=113,
+  serialized_start=45,
+  serialized_end=118,
 )
 
 
-_APPINFOITEM = _descriptor.Descriptor(
-  name='AppInfoItem',
-  full_name='routeguide.AppInfoItem',
+_REQUEST = _descriptor.Descriptor(
+  name='Request',
+  full_name='server_route.Request',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='key', full_name='routeguide.AppInfoItem.key', index=0,
+      name='hub_uuid', full_name='server_route.Request.hub_uuid', index=0,
       number=1, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='value', full_name='routeguide.AppInfoItem.value', index=1,
+      name='app_id', full_name='server_route.Request.app_id', index=1,
+      number=2, type=11, cpp_type=10, label=3,
+      has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=120,
+  serialized_end=188,
+)
+
+
+_APPID = _descriptor.Descriptor(
+  name='AppId',
+  full_name='server_route.AppId',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='app_id', full_name='server_route.AppId.app_id', index=0,
+      number=1, type=11, cpp_type=10, label=3,
+      has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=190,
+  serialized_end=238,
+)
+
+
+_RESPONSELIST = _descriptor.Descriptor(
+  name='ResponseList',
+  full_name='server_route.ResponseList',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='response', full_name='server_route.ResponseList.response', index=0,
+      number=1, type=11, cpp_type=10, label=3,
+      has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=240,
+  serialized_end=303,
+)
+
+
+_RESPONSEPACKAGE = _descriptor.Descriptor(
+  name='ResponsePackage',
+  full_name='server_route.ResponsePackage',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='app_id', full_name='server_route.ResponsePackage.app_id', index=0,
+      number=1, type=11, cpp_type=10, label=3,
+      has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='app_status', full_name='server_route.ResponsePackage.app_status', index=1,
+      number=2, type=11, cpp_type=10, label=1,
+      has_default_value=False, default_value=None,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=305,
+  serialized_end=408,
+)
+
+
+_APPIDITEM = _descriptor.Descriptor(
+  name='AppIdItem',
+  full_name='server_route.AppIdItem',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='key', full_name='server_route.AppIdItem.key', index=0,
+      number=1, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=b"".decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='value', full_name='server_route.AppIdItem.value', index=1,
       number=2, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
@@ -95,34 +233,34 @@ _APPINFOITEM = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=115,
-  serialized_end=156,
+  serialized_start=410,
+  serialized_end=449,
 )
 
 
-_RETURNVALUE = _descriptor.Descriptor(
-  name='ReturnValue',
-  full_name='routeguide.ReturnValue',
+_APPSTATUS = _descriptor.Descriptor(
+  name='AppStatus',
+  full_name='server_route.AppStatus',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='valid_hub_uuid', full_name='routeguide.ReturnValue.valid_hub_uuid', index=0,
+      name='valid_hub_uuid', full_name='server_route.AppStatus.valid_hub_uuid', index=0,
       number=1, type=8, cpp_type=7, label=1,
       has_default_value=False, default_value=False,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='valid_app', full_name='routeguide.ReturnValue.valid_app', index=1,
+      name='valid_app', full_name='server_route.AppStatus.valid_app', index=1,
       number=2, type=8, cpp_type=7, label=1,
       has_default_value=False, default_value=False,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='release_info', full_name='routeguide.ReturnValue.release_info', index=2,
+      name='release_info', full_name='server_route.AppStatus.release_info', index=2,
       number=3, type=11, cpp_type=10, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
@@ -140,34 +278,34 @@ _RETURNVALUE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=158,
-  serialized_end=265,
+  serialized_start=451,
+  serialized_end=558,
 )
 
 
 _RELEASEINFOITEM = _descriptor.Descriptor(
   name='ReleaseInfoItem',
-  full_name='routeguide.ReleaseInfoItem',
+  full_name='server_route.ReleaseInfoItem',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='version_number', full_name='routeguide.ReleaseInfoItem.version_number', index=0,
+      name='version_number', full_name='server_route.ReleaseInfoItem.version_number', index=0,
       number=1, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='change_log', full_name='routeguide.ReleaseInfoItem.change_log', index=1,
+      name='change_log', full_name='server_route.ReleaseInfoItem.change_log', index=1,
       number=2, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='assets', full_name='routeguide.ReleaseInfoItem.assets', index=2,
+      name='assets', full_name='server_route.ReleaseInfoItem.assets', index=2,
       number=3, type=11, cpp_type=10, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
@@ -185,34 +323,34 @@ _RELEASEINFOITEM = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=267,
-  serialized_end=367,
+  serialized_start=560,
+  serialized_end=662,
 )
 
 
 _ASSETITEM = _descriptor.Descriptor(
   name='AssetItem',
-  full_name='routeguide.AssetItem',
+  full_name='server_route.AssetItem',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='file_name', full_name='routeguide.AssetItem.file_name', index=0,
+      name='file_name', full_name='server_route.AssetItem.file_name', index=0,
       number=1, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='download_url', full_name='routeguide.AssetItem.download_url', index=1,
+      name='download_url', full_name='server_route.AssetItem.download_url', index=1,
       number=2, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='file_type', full_name='routeguide.AssetItem.file_type', index=2,
+      name='file_type', full_name='server_route.AssetItem.file_type', index=2,
       number=3, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
@@ -230,52 +368,89 @@ _ASSETITEM = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=369,
-  serialized_end=440,
+  serialized_start=664,
+  serialized_end=735,
 )
 
-_APPINFO.fields_by_name['app_info'].message_type = _APPINFOITEM
-_RETURNVALUE.fields_by_name['release_info'].message_type = _RELEASEINFOITEM
+_REQUESTLIST.fields_by_name['app_id_list'].message_type = _APPID
+_REQUEST.fields_by_name['app_id'].message_type = _APPIDITEM
+_APPID.fields_by_name['app_id'].message_type = _APPIDITEM
+_RESPONSELIST.fields_by_name['response'].message_type = _RESPONSEPACKAGE
+_RESPONSEPACKAGE.fields_by_name['app_id'].message_type = _APPIDITEM
+_RESPONSEPACKAGE.fields_by_name['app_status'].message_type = _APPSTATUS
+_APPSTATUS.fields_by_name['release_info'].message_type = _RELEASEINFOITEM
 _RELEASEINFOITEM.fields_by_name['assets'].message_type = _ASSETITEM
-DESCRIPTOR.message_types_by_name['AppInfo'] = _APPINFO
-DESCRIPTOR.message_types_by_name['AppInfoItem'] = _APPINFOITEM
-DESCRIPTOR.message_types_by_name['ReturnValue'] = _RETURNVALUE
+DESCRIPTOR.message_types_by_name['RequestList'] = _REQUESTLIST
+DESCRIPTOR.message_types_by_name['Request'] = _REQUEST
+DESCRIPTOR.message_types_by_name['AppId'] = _APPID
+DESCRIPTOR.message_types_by_name['ResponseList'] = _RESPONSELIST
+DESCRIPTOR.message_types_by_name['ResponsePackage'] = _RESPONSEPACKAGE
+DESCRIPTOR.message_types_by_name['AppIdItem'] = _APPIDITEM
+DESCRIPTOR.message_types_by_name['AppStatus'] = _APPSTATUS
 DESCRIPTOR.message_types_by_name['ReleaseInfoItem'] = _RELEASEINFOITEM
 DESCRIPTOR.message_types_by_name['AssetItem'] = _ASSETITEM
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
-AppInfo = _reflection.GeneratedProtocolMessageType('AppInfo', (_message.Message,), {
-  'DESCRIPTOR' : _APPINFO,
+RequestList = _reflection.GeneratedProtocolMessageType('RequestList', (_message.Message,), {
+  'DESCRIPTOR' : _REQUESTLIST,
   '__module__' : 'app.grpc_server.route_pb2'
-  # @@protoc_insertion_point(class_scope:routeguide.AppInfo)
+  # @@protoc_insertion_point(class_scope:server_route.RequestList)
   })
-_sym_db.RegisterMessage(AppInfo)
+_sym_db.RegisterMessage(RequestList)
 
-AppInfoItem = _reflection.GeneratedProtocolMessageType('AppInfoItem', (_message.Message,), {
-  'DESCRIPTOR' : _APPINFOITEM,
+Request = _reflection.GeneratedProtocolMessageType('Request', (_message.Message,), {
+  'DESCRIPTOR' : _REQUEST,
   '__module__' : 'app.grpc_server.route_pb2'
-  # @@protoc_insertion_point(class_scope:routeguide.AppInfoItem)
+  # @@protoc_insertion_point(class_scope:server_route.Request)
   })
-_sym_db.RegisterMessage(AppInfoItem)
+_sym_db.RegisterMessage(Request)
 
-ReturnValue = _reflection.GeneratedProtocolMessageType('ReturnValue', (_message.Message,), {
-  'DESCRIPTOR' : _RETURNVALUE,
+AppId = _reflection.GeneratedProtocolMessageType('AppId', (_message.Message,), {
+  'DESCRIPTOR' : _APPID,
   '__module__' : 'app.grpc_server.route_pb2'
-  # @@protoc_insertion_point(class_scope:routeguide.ReturnValue)
+  # @@protoc_insertion_point(class_scope:server_route.AppId)
   })
-_sym_db.RegisterMessage(ReturnValue)
+_sym_db.RegisterMessage(AppId)
+
+ResponseList = _reflection.GeneratedProtocolMessageType('ResponseList', (_message.Message,), {
+  'DESCRIPTOR' : _RESPONSELIST,
+  '__module__' : 'app.grpc_server.route_pb2'
+  # @@protoc_insertion_point(class_scope:server_route.ResponseList)
+  })
+_sym_db.RegisterMessage(ResponseList)
+
+ResponsePackage = _reflection.GeneratedProtocolMessageType('ResponsePackage', (_message.Message,), {
+  'DESCRIPTOR' : _RESPONSEPACKAGE,
+  '__module__' : 'app.grpc_server.route_pb2'
+  # @@protoc_insertion_point(class_scope:server_route.ResponsePackage)
+  })
+_sym_db.RegisterMessage(ResponsePackage)
+
+AppIdItem = _reflection.GeneratedProtocolMessageType('AppIdItem', (_message.Message,), {
+  'DESCRIPTOR' : _APPIDITEM,
+  '__module__' : 'app.grpc_server.route_pb2'
+  # @@protoc_insertion_point(class_scope:server_route.AppIdItem)
+  })
+_sym_db.RegisterMessage(AppIdItem)
+
+AppStatus = _reflection.GeneratedProtocolMessageType('AppStatus', (_message.Message,), {
+  'DESCRIPTOR' : _APPSTATUS,
+  '__module__' : 'app.grpc_server.route_pb2'
+  # @@protoc_insertion_point(class_scope:server_route.AppStatus)
+  })
+_sym_db.RegisterMessage(AppStatus)
 
 ReleaseInfoItem = _reflection.GeneratedProtocolMessageType('ReleaseInfoItem', (_message.Message,), {
   'DESCRIPTOR' : _RELEASEINFOITEM,
   '__module__' : 'app.grpc_server.route_pb2'
-  # @@protoc_insertion_point(class_scope:routeguide.ReleaseInfoItem)
+  # @@protoc_insertion_point(class_scope:server_route.ReleaseInfoItem)
   })
 _sym_db.RegisterMessage(ReleaseInfoItem)
 
 AssetItem = _reflection.GeneratedProtocolMessageType('AssetItem', (_message.Message,), {
   'DESCRIPTOR' : _ASSETITEM,
   '__module__' : 'app.grpc_server.route_pb2'
-  # @@protoc_insertion_point(class_scope:routeguide.AssetItem)
+  # @@protoc_insertion_point(class_scope:server_route.AssetItem)
   })
 _sym_db.RegisterMessage(AssetItem)
 
@@ -284,20 +459,29 @@ DESCRIPTOR._options = None
 
 _UPDATESERVERROUTE = _descriptor.ServiceDescriptor(
   name='UpdateServerRoute',
-  full_name='routeguide.UpdateServerRoute',
+  full_name='server_route.UpdateServerRoute',
   file=DESCRIPTOR,
   index=0,
   serialized_options=None,
-  serialized_start=442,
-  serialized_end=527,
+  serialized_start=738,
+  serialized_end=900,
   methods=[
   _descriptor.MethodDescriptor(
-    name='GetReleaseInfo',
-    full_name='routeguide.UpdateServerRoute.GetReleaseInfo',
+    name='GetAppStatus',
+    full_name='server_route.UpdateServerRoute.GetAppStatus',
     index=0,
     containing_service=None,
-    input_type=_APPINFO,
-    output_type=_RETURNVALUE,
+    input_type=_REQUEST,
+    output_type=_APPSTATUS,
+    serialized_options=None,
+  ),
+  _descriptor.MethodDescriptor(
+    name='GetAppStatusList',
+    full_name='server_route.UpdateServerRoute.GetAppStatusList',
+    index=1,
+    containing_service=None,
+    input_type=_REQUESTLIST,
+    output_type=_RESPONSELIST,
     serialized_options=None,
   ),
 ])
