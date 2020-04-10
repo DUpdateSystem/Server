@@ -1,9 +1,9 @@
 import asyncio
-import logging
 from datetime import timedelta
 
 from timeloop import Timeloop
 
+from app.config import logging
 from app.config import server_config
 from app.grpc_server.route_pb2 import AppStatus, ResponsePackage, RequestList
 from app.server.hubs.library.hub_list import hub_dict
@@ -40,7 +40,7 @@ class DataManager:
         if hub_uuid not in hub_dict:
             logging.warning(f"NO HUB: {hub_uuid}")
             return AppStatus(valid_hub_uuid=False)
-        return_list = self.__get_release_info_without_error(hub_uuid, app_id)
+        return_list = self.__get_release_info(hub_uuid, app_id)
         valid_app = False
         if return_list:
             valid_app = True
@@ -50,35 +50,28 @@ class DataManager:
         cache_queue = self.__cache_manager.cache_queue
         for hub_uuid in cache_queue.keys():
             for app_info in cache_queue[hub_uuid]:
-                self.__get_release_info_without_error(hub_uuid, app_info, use_cache=False)
+                self.__get_release_info(hub_uuid, app_info, use_cache=False)
 
-    def __get_release_info_without_error(self, hub_uuid: str, app_info: list, use_cache=True) -> list or None:
+    def __get_release_info(self, hub_uuid: str, app_info: list, use_cache=True) -> list or None:
+        if use_cache:
+            # 尝试取缓存
+            try:
+                return self.__cache_manager.get_cache(hub_uuid, app_info)
+            except KeyError or NameError:
+                pass
+
+            # 获取云端数据
         release_info = None
         try:
-            release_info = self.__get_release_info(hub_uuid, app_info, use_cache=use_cache)
+            hub = self.__hub_server_manager.get_hub(hub_uuid)
+            release_info = hub.get_release_info(app_info)
         except Exception as e:
-            logging.error(f"""
-ERROR: {e}
+            logging.error(f"""ERROR: {e}
 app_info: {str_repeated_composite_container(app_info)}""")
             if debug_mode:
                 raise e
         # 缓存数据，包括 None 无效数据
         self.__cache_manager.add_to_cache_queue(hub_uuid, app_info, release_info)
-        return release_info
-
-    def __get_release_info(self, hub_uuid: str, app_info: list, use_cache=True) -> list:
-        if use_cache:
-            # 尝试取缓存
-            try:
-                return self.__cache_manager.get_cache(hub_uuid, app_info)
-            except KeyError as ignore:
-                pass
-            except NameError as e:
-                pass
-
-        # 获取云端数据
-        hub = self.__hub_server_manager.get_hub(hub_uuid)
-        release_info = hub.get_release_info(app_info)
         return release_info
 
 

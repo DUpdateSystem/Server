@@ -1,9 +1,9 @@
 import json
-import logging
 
 from redis import BlockingConnectionPool
 from redis.client import Redis
 
+from app.config import logging
 from app.config import server_config
 from app.server.utils import str_repeated_composite_container
 
@@ -47,7 +47,7 @@ class CacheManager:
         if key is not None:
             self.___redis_client.set(key, json.dumps(release_info))
             # 缓存完毕
-            logging.info(f"cache {str_repeated_composite_container(app_info)}.")
+            logging.debug(f"caching: {str_repeated_composite_container(app_info)}")
 
     def get_cache(self, hub_uuid: str, app_info: list) -> dict or None:
         key = self.__get_app_info_key(hub_uuid, app_info)
@@ -60,7 +60,7 @@ app_info: {str_repeated_composite_container(app_info)}""")
         release_info = self.___redis_client.get(key)
         if release_info is None:
             raise KeyError
-        logging.info(f"{str_repeated_composite_container(app_info)} is cached.")
+        logging.debug(f"cached: {str_repeated_composite_container(app_info)}")
         return json.loads(release_info)
 
     @property

@@ -1,4 +1,3 @@
-import logging
 import os
 import sys
 from concurrent import futures
@@ -11,9 +10,10 @@ from app.grpc_server import route_pb2_grpc
 from app.grpc_server.route_pb2 import AppStatus, ResponsePackage, ResponseList
 
 # 初始化配置
-from app.config import server_config
+from app.config import server_config, logging
 from app.server.manager.data_manager import data_manager
 from app.server.hubs.library.hub_list import hub_dict
+from app.server.utils import str_repeated_composite_container
 
 
 class Greeter(route_pb2_grpc.UpdateServerRouteServicer):
@@ -24,7 +24,7 @@ class Greeter(route_pb2_grpc.UpdateServerRouteServicer):
             logging.warning(f"NO HUB: {hub_uuid}")
             return AppStatus(valid_hub_uuid=False)
         app_id: list = request.app_id
-        logging.info(f"已完成单个请求: {app_id}")
+        logging.info(f"已完成单个请求（{str_repeated_composite_container(app_id)}）")
         return data_manager.get_app_status(hub_uuid, app_id)
 
     def GetAppStatusList(self, request, context) -> ResponseList:
@@ -52,5 +52,4 @@ def serve():
 
 
 if __name__ == '__main__':
-    logging.basicConfig()
     serve()
