@@ -5,3 +5,4 @@ html5lib==1.0.1
 requests==2.23.0
 redis==3.4.1
 timeloop==1.0.2
+colorlog==4.1.0
