@@ -1,6 +1,7 @@
 import asyncio
 from datetime import timedelta
 
+from requests import HTTPError
 from timeloop import Timeloop
 
 from app.config import logging
@@ -60,18 +61,27 @@ class DataManager:
             except KeyError or NameError:
                 pass
 
-            # 获取云端数据
+        # 获取云端数据
+        cache_data = False
         release_info = None
         try:
             hub = self.__hub_server_manager.get_hub(hub_uuid)
             release_info = hub.get_release_info(app_info)
+            cache_data = True
+        except HTTPError as e:
+            status_code = e.response.status_code
+            if status_code == 404:
+                logging.warning(f"""ERROR HTTP CODE 404: {e}
+app_info: {str_repeated_composite_container(app_info)}""")
+                cache_data = True
         except Exception as e:
             logging.error(f"""ERROR: {e}
 app_info: {str_repeated_composite_container(app_info)}""")
             if debug_mode:
                 raise e
-        # 缓存数据，包括 None 无效数据
-        self.__cache_manager.add_to_cache_queue(hub_uuid, app_info, release_info)
+        # 缓存数据，包括 404 None 数据
+        if cache_data:
+            self.__cache_manager.add_to_cache_queue(hub_uuid, app_info, release_info)
         return release_info
 
 

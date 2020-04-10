@@ -1,6 +1,7 @@
-from bs4 import BeautifulSoup
-import requests
 import re
+
+import requests
+from bs4 import BeautifulSoup
 
 
 def parsing_http_page(url: str) -> BeautifulSoup:
@@ -22,7 +23,9 @@ def get_response_string(url: str, payload=None) -> str:
     Returns:
         网站的响应主体
     """
-    return requests.get(url, params=payload).text
+    response = requests.get(url, params=payload)
+    response.raise_for_status()
+    return response.text
 
 
 def search_version_number_string(string: str or None) -> str or None:
