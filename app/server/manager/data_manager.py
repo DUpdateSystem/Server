@@ -71,12 +71,12 @@ class DataManager:
         except HTTPError as e:
             status_code = e.response.status_code
             if status_code == 404:
-                logging.warning(f"""ERROR HTTP CODE 404: {e}
-app_info: {str_repeated_composite_container(app_info)}""")
+                logging.warning(f"""app_info: {str_repeated_composite_container(app_info)}
+HTTP CODE 404 ERROR: {e}""")
                 cache_data = True
         except Exception as e:
-            logging.error(f"""ERROR: {e}
-app_info: {str_repeated_composite_container(app_info)}""")
+            logging.error(f"""app_info: {str_repeated_composite_container(app_info)}
+ERROR: {e}""")
             if debug_mode:
                 raise e
         # 缓存数据，包括 404 None 数据
@@ -91,8 +91,9 @@ data_manager = DataManager()
 
 @tl.job(interval=timedelta(hours=server_config.auto_refresh_time))
 def _auto_refresh():
-    print("auto refresh data")
+    logging.info("auto refresh data: start")
     data_manager.refresh_cache()
+    logging.info("auto refresh data: finish")
 
 
 tl.start()
