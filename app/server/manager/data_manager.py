@@ -37,11 +37,11 @@ class DataManager:
             app_status=self.get_app_status(hub_uuid, app_id)
         )
 
-    def get_app_status(self, hub_uuid: str, app_id: list) -> AppStatus:
+    def get_app_status(self, hub_uuid: str, app_id: list, use_cache=True) -> AppStatus:
         if hub_uuid not in hub_dict:
             logging.warning(f"NO HUB: {hub_uuid}")
             return AppStatus(valid_hub_uuid=False)
-        return_list = self.__get_release_info(hub_uuid, app_id)
+        return_list = self.__get_release_info(hub_uuid, app_id, use_cache=use_cache)
         valid_app = False
         if return_list:
             valid_app = True

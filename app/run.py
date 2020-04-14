@@ -27,7 +27,7 @@ class Greeter(route_pb2_grpc.UpdateServerRouteServicer):
             return AppStatus(valid_hub_uuid=False)
         app_id: list = request.app_id
         app_status = data_manager.get_app_status(hub_uuid, app_id)
-        log_str = f"已完成单个请求（{str_repeated_composite_container(app_id)}）"
+        log_str = f"已完成单个请求 app_id: {str_repeated_composite_container(app_id)} hub_uuid: {hub_uuid}"
         if not app_status.release_info:
             log_str += "(empty)"
         logging.info(log_str)
@@ -54,7 +54,11 @@ class Greeter(route_pb2_grpc.UpdateServerRouteServicer):
         hub_uuid = app_id_info.hub_uuid
         app_id = app_id_info.app_id
         asset_index = request.asset_index
-        return data_manager.get_download_info(hub_uuid, app_id, asset_index)
+        logging.info(f"请求下载资源 app_id: {str_repeated_composite_container(app_id)} hub_uuid: {hub_uuid}")
+        download_info = data_manager.get_download_info(hub_uuid, app_id, asset_index)
+        logging.info(f"回应下载资源: download_info: {str_repeated_composite_container(download_info)}")
+
+        return download_info
 
 
 def serve():

@@ -65,7 +65,7 @@ message DownloadInfo{
 
 message DownloadAssetIndex{
   Request app_id_info = 1;
-  int32 asset_index = 2;
+  repeated int32 asset_index = 2;
 }
 
 message Dict{
