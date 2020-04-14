@@ -18,7 +18,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   package='server_route',
   syntax='proto3',
   serialized_options=b'\n\036net.xzos.upgradeall.core.routeB\nRouteProtoP\001',
-  serialized_pb=b'\n\x1b\x61pp/grpc_server/route.proto\x12\x0cserver_route\"I\n\x0bRequestList\x12\x10\n\x08hub_uuid\x18\x01 \x01(\t\x12(\n\x0b\x61pp_id_list\x18\x02 \x03(\x0b\x32\x13.server_route.AppId\"D\n\x07Request\x12\x10\n\x08hub_uuid\x18\x01 \x01(\t\x12\'\n\x06\x61pp_id\x18\x02 \x03(\x0b\x32\x17.server_route.AppIdItem\"0\n\x05\x41ppId\x12\'\n\x06\x61pp_id\x18\x01 \x03(\x0b\x32\x17.server_route.AppIdItem\"?\n\x0cResponseList\x12/\n\x08response\x18\x01 \x03(\x0b\x32\x1d.server_route.ResponsePackage\"g\n\x0fResponsePackage\x12\'\n\x06\x61pp_id\x18\x01 \x03(\x0b\x32\x17.server_route.AppIdItem\x12+\n\napp_status\x18\x02 \x01(\x0b\x32\x17.server_route.AppStatus\"\'\n\tAppIdItem\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\t\"k\n\tAppStatus\x12\x16\n\x0evalid_hub_uuid\x18\x01 \x01(\x08\x12\x11\n\tvalid_app\x18\x02 \x01(\x08\x12\x33\n\x0crelease_info\x18\x03 \x03(\x0b\x32\x1d.server_route.ReleaseInfoItem\"f\n\x0fReleaseInfoItem\x12\x16\n\x0eversion_number\x18\x01 \x01(\t\x12\x12\n\nchange_log\x18\x02 \x01(\t\x12\'\n\x06\x61ssets\x18\x03 \x03(\x0b\x32\x17.server_route.AssetItem\"G\n\tAssetItem\x12\x11\n\tfile_name\x18\x01 \x01(\t\x12\x14\n\x0c\x64ownload_url\x18\x02 \x01(\t\x12\x11\n\tfile_type\x18\x03 \x01(\t2\xa2\x01\n\x11UpdateServerRoute\x12@\n\x0cGetAppStatus\x12\x15.server_route.Request\x1a\x17.server_route.AppStatus\"\x00\x12K\n\x10GetAppStatusList\x12\x19.server_route.RequestList\x1a\x1a.server_route.ResponseList\"\x00\x42.\n\x1enet.xzos.upgradeall.core.routeB\nRouteProtoP\x01\x62\x06proto3'
+  serialized_pb=b'\n\x1b\x61pp/grpc_server/route.proto\x12\x0cserver_route\"I\n\x0bRequestList\x12\x10\n\x08hub_uuid\x18\x01 \x01(\t\x12(\n\x0b\x61pp_id_list\x18\x02 \x03(\x0b\x32\x13.server_route.AppId\"D\n\x07Request\x12\x10\n\x08hub_uuid\x18\x01 \x01(\t\x12\'\n\x06\x61pp_id\x18\x02 \x03(\x0b\x32\x17.server_route.AppIdItem\"0\n\x05\x41ppId\x12\'\n\x06\x61pp_id\x18\x01 \x03(\x0b\x32\x17.server_route.AppIdItem\"?\n\x0cResponseList\x12/\n\x08response\x18\x01 \x03(\x0b\x32\x1d.server_route.ResponsePackage\"g\n\x0fResponsePackage\x12\'\n\x06\x61pp_id\x18\x01 \x03(\x0b\x32\x17.server_route.AppIdItem\x12+\n\napp_status\x18\x02 \x01(\x0b\x32\x17.server_route.AppStatus\"\'\n\tAppIdItem\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\t\"k\n\tAppStatus\x12\x16\n\x0evalid_hub_uuid\x18\x01 \x01(\x08\x12\x11\n\tvalid_app\x18\x02 \x01(\x08\x12\x33\n\x0crelease_info\x18\x03 \x03(\x0b\x32\x1d.server_route.ReleaseInfoItem\"f\n\x0fReleaseInfoItem\x12\x16\n\x0eversion_number\x18\x01 \x01(\t\x12\x12\n\nchange_log\x18\x02 \x01(\t\x12\'\n\x06\x61ssets\x18\x03 \x03(\x0b\x32\x17.server_route.AssetItem\"G\n\tAssetItem\x12\x11\n\tfile_name\x18\x01 \x01(\t\x12\x14\n\x0c\x64ownload_url\x18\x02 \x01(\t\x12\x11\n\tfile_type\x18\x03 \x01(\t\"G\n\x0c\x44ownloadInfo\x12\x0b\n\x03url\x18\x01 \x01(\t\x12*\n\x0erequest_header\x18\x02 \x03(\x0b\x32\x12.server_route.Dict\"U\n\x12\x44ownloadAssetIndex\x12*\n\x0b\x61pp_id_info\x18\x01 \x01(\x0b\x32\x15.server_route.Request\x12\x13\n\x0b\x61sset_index\x18\x02 \x01(\x05\"\"\n\x04\x44ict\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\t2\xf5\x01\n\x11UpdateServerRoute\x12@\n\x0cGetAppStatus\x12\x15.server_route.Request\x1a\x17.server_route.AppStatus\"\x00\x12K\n\x10GetAppStatusList\x12\x19.server_route.RequestList\x1a\x1a.server_route.ResponseList\"\x00\x12Q\n\x0fGetDownloadInfo\x12 .server_route.DownloadAssetIndex\x1a\x1a.server_route.DownloadInfo\"\x00\x42.\n\x1enet.xzos.upgradeall.core.routeB\nRouteProtoP\x01\x62\x06proto3'
 )
 
 
@@ -372,6 +372,120 @@ _ASSETITEM = _descriptor.Descriptor(
   serialized_end=735,
 )
 
+
+_DOWNLOADINFO = _descriptor.Descriptor(
+  name='DownloadInfo',
+  full_name='server_route.DownloadInfo',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='url', full_name='server_route.DownloadInfo.url', index=0,
+      number=1, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=b"".decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='request_header', full_name='server_route.DownloadInfo.request_header', index=1,
+      number=2, type=11, cpp_type=10, label=3,
+      has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=737,
+  serialized_end=808,
+)
+
+
+_DOWNLOADASSETINDEX = _descriptor.Descriptor(
+  name='DownloadAssetIndex',
+  full_name='server_route.DownloadAssetIndex',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='app_id_info', full_name='server_route.DownloadAssetIndex.app_id_info', index=0,
+      number=1, type=11, cpp_type=10, label=1,
+      has_default_value=False, default_value=None,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='asset_index', full_name='server_route.DownloadAssetIndex.asset_index', index=1,
+      number=2, type=5, cpp_type=1, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=810,
+  serialized_end=895,
+)
+
+
+_DICT = _descriptor.Descriptor(
+  name='Dict',
+  full_name='server_route.Dict',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='key', full_name='server_route.Dict.key', index=0,
+      number=1, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=b"".decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='value', full_name='server_route.Dict.value', index=1,
+      number=2, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=b"".decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=897,
+  serialized_end=931,
+)
+
 _REQUESTLIST.fields_by_name['app_id_list'].message_type = _APPID
 _REQUEST.fields_by_name['app_id'].message_type = _APPIDITEM
 _APPID.fields_by_name['app_id'].message_type = _APPIDITEM
@@ -380,6 +494,8 @@ _RESPONSEPACKAGE.fields_by_name['app_id'].message_type = _APPIDITEM
 _RESPONSEPACKAGE.fields_by_name['app_status'].message_type = _APPSTATUS
 _APPSTATUS.fields_by_name['release_info'].message_type = _RELEASEINFOITEM
 _RELEASEINFOITEM.fields_by_name['assets'].message_type = _ASSETITEM
+_DOWNLOADINFO.fields_by_name['request_header'].message_type = _DICT
+_DOWNLOADASSETINDEX.fields_by_name['app_id_info'].message_type = _REQUEST
 DESCRIPTOR.message_types_by_name['RequestList'] = _REQUESTLIST
 DESCRIPTOR.message_types_by_name['Request'] = _REQUEST
 DESCRIPTOR.message_types_by_name['AppId'] = _APPID
@@ -389,6 +505,9 @@ DESCRIPTOR.message_types_by_name['AppIdItem'] = _APPIDITEM
 DESCRIPTOR.message_types_by_name['AppStatus'] = _APPSTATUS
 DESCRIPTOR.message_types_by_name['ReleaseInfoItem'] = _RELEASEINFOITEM
 DESCRIPTOR.message_types_by_name['AssetItem'] = _ASSETITEM
+DESCRIPTOR.message_types_by_name['DownloadInfo'] = _DOWNLOADINFO
+DESCRIPTOR.message_types_by_name['DownloadAssetIndex'] = _DOWNLOADASSETINDEX
+DESCRIPTOR.message_types_by_name['Dict'] = _DICT
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
 RequestList = _reflection.GeneratedProtocolMessageType('RequestList', (_message.Message,), {
@@ -454,6 +573,27 @@ AssetItem = _reflection.GeneratedProtocolMessageType('AssetItem', (_message.Mess
   })
 _sym_db.RegisterMessage(AssetItem)
 
+DownloadInfo = _reflection.GeneratedProtocolMessageType('DownloadInfo', (_message.Message,), {
+  'DESCRIPTOR' : _DOWNLOADINFO,
+  '__module__' : 'app.grpc_server.route_pb2'
+  # @@protoc_insertion_point(class_scope:server_route.DownloadInfo)
+  })
+_sym_db.RegisterMessage(DownloadInfo)
+
+DownloadAssetIndex = _reflection.GeneratedProtocolMessageType('DownloadAssetIndex', (_message.Message,), {
+  'DESCRIPTOR' : _DOWNLOADASSETINDEX,
+  '__module__' : 'app.grpc_server.route_pb2'
+  # @@protoc_insertion_point(class_scope:server_route.DownloadAssetIndex)
+  })
+_sym_db.RegisterMessage(DownloadAssetIndex)
+
+Dict = _reflection.GeneratedProtocolMessageType('Dict', (_message.Message,), {
+  'DESCRIPTOR' : _DICT,
+  '__module__' : 'app.grpc_server.route_pb2'
+  # @@protoc_insertion_point(class_scope:server_route.Dict)
+  })
+_sym_db.RegisterMessage(Dict)
+
 
 DESCRIPTOR._options = None
 
@@ -463,8 +603,8 @@ _UPDATESERVERROUTE = _descriptor.ServiceDescriptor(
   file=DESCRIPTOR,
   index=0,
   serialized_options=None,
-  serialized_start=738,
-  serialized_end=900,
+  serialized_start=934,
+  serialized_end=1179,
   methods=[
   _descriptor.MethodDescriptor(
     name='GetAppStatus',
@@ -482,6 +622,15 @@ _UPDATESERVERROUTE = _descriptor.ServiceDescriptor(
     containing_service=None,
     input_type=_REQUESTLIST,
     output_type=_RESPONSELIST,
+    serialized_options=None,
+  ),
+  _descriptor.MethodDescriptor(
+    name='GetDownloadInfo',
+    full_name='server_route.UpdateServerRoute.GetDownloadInfo',
+    index=2,
+    containing_service=None,
+    input_type=_DOWNLOADASSETINDEX,
+    output_type=_DOWNLOADINFO,
     serialized_options=None,
   ),
 ])

@@ -1,7 +1,11 @@
 import re
+from http.cookies import SimpleCookie
+from urllib.parse import urlparse
 
 import requests
 from bs4 import BeautifulSoup
+
+__session = requests.Session()
 
 
 def parsing_http_page(url: str) -> BeautifulSoup:
@@ -15,17 +19,43 @@ def parsing_http_page(url: str) -> BeautifulSoup:
     return BeautifulSoup(html, "html5lib")
 
 
-def get_response_string(url: str, payload=None) -> str:
+def get_response_string(url: str, payload=None, throw_error=True) -> str or None:
     """简易包装 get 方法
     Args:
         url: 访问的网址
         payload: 请求头
+        throw_error: 是否抛出网络故障
     Returns:
         网站的响应主体
     """
-    response = requests.get(url, params=payload)
-    response.raise_for_status()
-    return response.text
+    try:
+        response = __session.get(url, params=payload, timeout=15)
+        response.raise_for_status()
+        return response.text
+    except Exception as e:
+        if e is requests.HTTPError:
+            raise e
+        if throw_error:
+            raise e
+        return None
+
+
+def get_session() -> requests.Session:
+    return __session
+
+
+def get_session_cookies_str(url: str) -> str:
+    parsed_uri = urlparse(url)
+    cookies = __session.cookies
+    domain = None
+    for i in cookies.list_domains():
+        if i[1:] in parsed_uri.hostname:
+            domain = i
+    cookies_dict = cookies.get_dict(domain)
+    cookies = SimpleCookie()
+    for key in cookies_dict:
+        cookies[key] = cookies_dict[key]
+    return cookies.output(header="")[1:]
 
 
 def search_version_number_string(string: str or None) -> str or None:

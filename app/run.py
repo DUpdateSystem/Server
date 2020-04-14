@@ -6,14 +6,16 @@ import grpc
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-from app.grpc_server import route_pb2_grpc
-from app.grpc_server.route_pb2 import AppStatus, ResponsePackage, ResponseList
-
 # 初始化配置
 from app.config import server_config, logging
+
+from app.grpc_server import route_pb2_grpc
+from app.grpc_server.route_pb2 import AppStatus, ResponsePackage, ResponseList, DownloadInfo, Dict
+
+from app.server.utils import str_repeated_composite_container
+
 from app.server.manager.data_manager import data_manager
 from app.server.hubs.library.hub_list import hub_dict
-from app.server.utils import str_repeated_composite_container
 
 
 class Greeter(route_pb2_grpc.UpdateServerRouteServicer):
@@ -46,6 +48,13 @@ class Greeter(route_pb2_grpc.UpdateServerRouteServicer):
         )
         logging.info(f"已完成批量请求 hub_uuid: {hub_uuid}（{len(app_id_list)}）")
         return release_list
+
+    def GetDownloadInfo(self, request, context) -> DownloadInfo:
+        app_id_info = request.app_id_info
+        hub_uuid = app_id_info.hub_uuid
+        app_id = app_id_info.app_id
+        asset_index = request.asset_index
+        return data_manager.get_download_info(hub_uuid, app_id, asset_index)
 
 
 def serve():

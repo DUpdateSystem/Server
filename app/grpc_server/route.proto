@@ -9,6 +9,7 @@ package server_route;
 service UpdateServerRoute {
   rpc GetAppStatus(Request) returns (AppStatus) {}
   rpc GetAppStatusList(RequestList) returns (ResponseList) {}
+  rpc GetDownloadInfo(DownloadAssetIndex) returns (DownloadInfo) {}
 }
 
 message RequestList {
@@ -55,4 +56,19 @@ message AssetItem {
   string file_name = 1;
   string download_url = 2;
   string file_type = 3;
+}
+
+message DownloadInfo{
+  string url = 1;
+  repeated Dict request_header = 2;
+}
+
+message DownloadAssetIndex{
+  Request app_id_info = 1;
+  int32 asset_index = 2;
+}
+
+message Dict{
+  string key = 1;
+  string value = 2;
 }

@@ -4,10 +4,10 @@ from ..hub_script_utils import get_value_from_app_info, parsing_http_page
 
 class FDroid(BaseHub):
     def get_release_info(self, app_id: list) -> tuple or None:
-        package = self.__get_package(app_id)
+        package = _get_package(app_id)
         if package is None:
             return None
-        url = self.__get_url(package)
+        url = _get_url(package)
         soup = parsing_http_page(url)
         version_number_list = [item.a["name"] for item in soup.find_all(class_="package-version-header")]
         newest_changelog_div = soup.find(class_="package-whats-new")
@@ -35,10 +35,10 @@ class FDroid(BaseHub):
             data.append(release_info)
         return data
 
-    @staticmethod
-    def __get_url(app_package: str) -> str:
-        return f"https://f-droid.org/packages/{app_package}"
 
-    @staticmethod
-    def __get_package(app_info: list) -> str or None:
-        return get_value_from_app_info(app_info, "android_app_package")
+def _get_url(app_package: str) -> str:
+    return f"https://f-droid.org/packages/{app_package}"
+
+
+def _get_package(app_info: list) -> str or None:
+    return get_value_from_app_info(app_info, "android_app_package")

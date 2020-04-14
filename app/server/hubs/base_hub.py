@@ -1,4 +1,5 @@
 from abc import ABCMeta, abstractmethod
+from app.grpc_server.route_pb2 import DownloadInfo
 
 
 class BaseHub(metaclass=ABCMeta):
@@ -23,4 +24,7 @@ class BaseHub(metaclass=ABCMeta):
                 assets: [{ name: "", download_url: "", file_type: "" }]
             }]
         """
+        pass
+
+    def get_download_info(self, app_id: list, asset_index: list) -> DownloadInfo or None:
         pass
