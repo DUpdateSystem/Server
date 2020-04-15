@@ -27,10 +27,10 @@ class Greeter(route_pb2_grpc.UpdateServerRouteServicer):
             return AppStatus(valid_hub_uuid=False)
         app_id: list = request.app_id
         app_status = data_manager.get_app_status(hub_uuid, app_id)
-        log_str = f"已完成单个请求 app_id: {str_repeated_composite_container(app_id)} hub_uuid: {hub_uuid}"
+        log_str = ""
         if not app_status.release_info:
             log_str += "(empty)"
-        logging.info(log_str)
+        logging.info(f"已完成单个请求 app_id: {str_repeated_composite_container(app_id)}{log_str} hub_uuid: {hub_uuid}")
         return app_status
 
     def GetAppStatusList(self, request, context) -> ResponseList:
