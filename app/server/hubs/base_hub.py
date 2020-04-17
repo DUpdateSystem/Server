@@ -1,5 +1,4 @@
 from abc import ABCMeta, abstractmethod
-from app.grpc_server.route_pb2 import DownloadInfo
 
 
 class BaseHub(metaclass=ABCMeta):
@@ -26,5 +25,5 @@ class BaseHub(metaclass=ABCMeta):
         """
         pass
 
-    def get_download_info(self, app_id: list, asset_index: list) -> DownloadInfo or None:
+    def get_download_info(self, app_id: list, asset_index: list) -> dict or None:
         pass

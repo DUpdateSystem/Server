@@ -6,7 +6,6 @@ from redis.client import Redis
 from app.config import logging
 from app.config import server_config
 from app.grpc_server.route_pb2 import AppIdItem
-from app.server.utils import str_repeated_composite_container
 
 key_delimiter = '+'
 value_dict_delimiter = ':'
@@ -28,19 +27,19 @@ class CacheManager:
             self.__redis_release_cache_client.set(key, json.dumps(release_info),
                                                   ex=ex_h * 3600)
             # 缓存完毕
-            logging.debug(f"release caching: {str_repeated_composite_container(app_info)}")
+            logging.debug(f"release caching: {app_info}")
 
     def get_release_cache(self, hub_uuid: str, app_info: list) -> dict or None:
         key = self.__get_app_cache_key(hub_uuid, app_info)
         if key is None:
             logging.error(f"""WRONG FORMAT
 hub_uuid: {hub_uuid}
-app_info: {str_repeated_composite_container(app_info)}""")
+app_info: {app_info}""")
             raise NameError
         if self.__redis_release_cache_client.exists(key) == 0:
             raise KeyError
         release_info = self.__redis_release_cache_client.get(key)
-        logging.debug(f"release cached: {str_repeated_composite_container(app_info)}")
+        logging.debug(f"release cached: {app_info}")
         return json.loads(release_info)
 
     @property
@@ -61,7 +60,7 @@ app_info: {str_repeated_composite_container(app_info)}""")
             return None
         key = hub_uuid
         for k in app_id:
-            key += (key_delimiter + k.key + value_dict_delimiter + k.value)
+            key += (key_delimiter + k["key"] + value_dict_delimiter + k["value"])
         return key
 
     @staticmethod

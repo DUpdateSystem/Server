@@ -3,7 +3,6 @@ import re
 from requests import HTTPError
 
 from app.config import logging
-from app.grpc_server.route_pb2 import DownloadInfo
 from ..base_hub import BaseHub
 from ..hub_script_utils import get_value_from_app_info, parsing_http_page, get_session
 
@@ -36,26 +35,23 @@ class CoolApk(BaseHub):
         }]
         return data
 
-    def get_download_info(self, app_id: list, asset_index: list) -> DownloadInfo or None:
+    def get_download_info(self, app_id: list, asset_index: list) -> dict or None:
         from app.server.manager.data_manager import data_manager
         from app.server.hubs.library.hub_list import hub_dict
         hub_uuid = None
         for uuid in hub_dict:
             if self is hub_dict[uuid]:
                 hub_uuid = uuid
-        release_info = data_manager.get_app_status(hub_uuid, app_id).release_info
-        download_url = release_info[asset_index[0]] \
-            .assets[asset_index[1]] \
-            .download_url
+        release_info = data_manager.get_app_status(hub_uuid, app_id)["release_info"]
+        download_url = release_info[asset_index[0]]["assets"][asset_index[1]]["download_url"]
         try:
             get_session().head(download_url).raise_for_status()
             logging.debug("网址验证正确")
-            return None
         except HTTPError:
             logging.debug("网址错误，尝试重新获取")
             release_info = data_manager.get_app_status(hub_uuid, app_id, use_cache=False)["release_info"]
             download_url = release_info[asset_index[0]]["assets"][asset_index[1]]["download_url"]
-            return DownloadInfo(url=download_url)
+        return {"url": download_url}
 
 
 def _get_url(app_package: str) -> str:

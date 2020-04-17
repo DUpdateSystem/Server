@@ -6,12 +6,9 @@ from timeloop import Timeloop
 
 from app.config import logging
 from app.config import server_config
-from app.grpc_server.route_pb2 import AppStatus, ResponsePackage, RequestList
-from app.grpc_server.route_pb2 import DownloadInfo
 from app.server.hubs.library.hub_list import hub_dict
 from app.server.manager.cache_manager import cache_manager
 from app.server.manager.hub_server_manager import HubServerManager
-from app.server.utils import str_repeated_composite_container
 
 debug_mode = False
 
@@ -21,7 +18,7 @@ class DataManager:
     def __init__(self):
         self.__hub_server_manager = HubServerManager()
 
-    def get_response_list(self, hub_uuid: str, app_id_list: list) -> RequestList:
+    def get_response_list(self, hub_uuid: str, app_id_list: list) -> tuple:
         loop = asyncio.new_event_loop()
         asyncio.set_event_loop(loop)
         response_list = loop.run_until_complete(
@@ -31,23 +28,27 @@ class DataManager:
         loop.close()
         return response_list
 
-    async def __get_response_package(self, hub_uuid: str, app_id: list) -> ResponsePackage:
-        return ResponsePackage(
-            app_id=app_id,
-            app_status=self.get_app_status(hub_uuid, app_id)
-        )
+    async def __get_response_package(self, hub_uuid: str, app_id: list) -> dict:
+        return {
+            "app_id": app_id,
+            "app_status": self.get_app_status(hub_uuid, app_id)
+        }
 
-    def get_app_status(self, hub_uuid: str, app_id: list, use_cache=True) -> AppStatus:
+    def get_app_status(self, hub_uuid: str, app_id: list, use_cache=True) -> dict:
         if hub_uuid not in hub_dict:
             logging.warning(f"NO HUB: {hub_uuid}")
-            return AppStatus(valid_hub_uuid=False)
+            return {"valid_hub_uuid": False}
         return_list = self.__get_release_info(hub_uuid, app_id, use_cache=use_cache)
         valid_app = False
         if return_list:
             valid_app = True
-        return AppStatus(valid_hub_uuid=True, valid_app=valid_app, release_info=return_list)
+        return {
+            "valid_hub_uuid": True,
+            "valid_app": valid_app,
+            "release_info": return_list
+        }
 
-    def get_download_info(self, hub_uuid: str, app_id: list, asset_index: list) -> DownloadInfo or None:
+    def get_download_info(self, hub_uuid: str, app_id: list, asset_index: list) -> dict or None:
         if hub_uuid not in hub_dict:
             logging.warning(f"NO HUB: {hub_uuid}")
             return None
@@ -55,7 +56,7 @@ class DataManager:
         try:
             return hub.get_download_info(app_id, asset_index)
         except Exception as e:
-            logging.error(f"""app_info: {str_repeated_composite_container(app_id)}
+            logging.error(f"""app_info: {app_id}
     ERROR: {e}""")
             return None
 
@@ -87,11 +88,11 @@ class DataManager:
         except HTTPError as e:
             status_code = e.response.status_code
             if status_code == 404:
-                logging.warning(f"""app_info: {str_repeated_composite_container(app_id)}
+                logging.warning(f"""app_info: {app_id}
 HTTP CODE 404 ERROR: {e}""")
                 cache_data = True
         except Exception as e:
-            logging.error(f"""app_info: {str_repeated_composite_container(app_id)}
+            logging.error(f"""app_info: {app_id}
 ERROR: {e}""")
             if debug_mode:
                 raise e
