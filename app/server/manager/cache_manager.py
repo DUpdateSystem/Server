@@ -5,7 +5,6 @@ from redis.client import Redis
 
 from app.config import logging
 from app.config import server_config
-from app.grpc_server.route_pb2 import AppIdItem
 
 key_delimiter = '+'
 value_dict_delimiter = ':'
@@ -71,7 +70,7 @@ app_info: {app_info}""")
         for k in key_list[1:]:
             key, value = k.split(value_dict_delimiter, 1)
             app_info.append(
-                AppIdItem(key=key, value=value)
+                {"key": key, "value": value}
             )
         return hub_uuid, app_info
 

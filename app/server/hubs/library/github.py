@@ -49,8 +49,8 @@ def _get_base_info(app_info: list) -> tuple:
     owner_name = None
     repo_name = None
     for i in app_info:
-        key = i.key
-        value = i.value
+        key = i["key"]
+        value = i["value"]
         if key == "owner":
             owner_name = value
         elif key == "repo":
