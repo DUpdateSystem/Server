@@ -1,5 +1,6 @@
 import os
 import sys
+import traceback
 from concurrent import futures
 
 import grpc
@@ -25,8 +26,8 @@ class Greeter(route_pb2_grpc.UpdateServerRouteServicer):
             hub_uuid: str = request['hub_uuid']
             app_id: list = request['app_id']
             return self.__get_app_status(hub_uuid, app_id)
-        except Exception as e:
-            logging.error(e)
+        except Exception:
+            logging.error(traceback.format_exc())
             return None
 
     def GetAppStatusList(self, request, context) -> ResponseList:
@@ -35,8 +36,8 @@ class Greeter(route_pb2_grpc.UpdateServerRouteServicer):
             hub_uuid: str = request["hub_uuid"]
             app_id_list: list = request["app_id_list"]
             return self.__get_app_status_list(hub_uuid, app_id_list)
-        except Exception as e:
-            logging.error(e)
+        except Exception:
+            logging.error(traceback.format_exc())
             return None
 
     def GetDownloadInfo(self, request, context) -> DownloadInfo:
@@ -47,8 +48,8 @@ class Greeter(route_pb2_grpc.UpdateServerRouteServicer):
             app_id = app_id_info["app_id"]
             asset_index = request["asset_index"]
             return self.__get_download_info(hub_uuid, app_id, asset_index)
-        except Exception as e:
-            logging.error(e)
+        except Exception:
+            logging.error(traceback.format_exc())
             return None
 
     @staticmethod
