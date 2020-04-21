@@ -3,7 +3,7 @@ import sys
 from concurrent import futures
 
 import grpc
-from google.protobuf.json_format import MessageToDict, ParseDict, Parse
+from google.protobuf.json_format import MessageToDict, ParseDict
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
@@ -20,12 +20,42 @@ from app.server.hubs.library.hub_list import hub_dict
 class Greeter(route_pb2_grpc.UpdateServerRouteServicer):
 
     def GetAppStatus(self, request, context) -> AppStatus:
-        request = MessageToDict(request, preserving_proto_field_name=True)
-        hub_uuid = request['hub_uuid']
+        try:
+            request = MessageToDict(request, preserving_proto_field_name=True)
+            hub_uuid: str = request['hub_uuid']
+            app_id: list = request['app_id']
+            return self.__get_app_status(hub_uuid, app_id)
+        except Exception as e:
+            logging.error(e)
+            return None
+
+    def GetAppStatusList(self, request, context) -> ResponseList:
+        try:
+            request = MessageToDict(request, preserving_proto_field_name=True)
+            hub_uuid: str = request["hub_uuid"]
+            app_id_list: list = request["app_id_list"]
+            return self.__get_app_status_list(hub_uuid, app_id_list)
+        except Exception as e:
+            logging.error(e)
+            return None
+
+    def GetDownloadInfo(self, request, context) -> DownloadInfo:
+        try:
+            request = MessageToDict(request, preserving_proto_field_name=True)
+            app_id_info = request["app_id_info"]
+            hub_uuid = app_id_info["hub_uuid"]
+            app_id = app_id_info["app_id"]
+            asset_index = request["asset_index"]
+            return self.__get_download_info(hub_uuid, app_id, asset_index)
+        except Exception as e:
+            logging.error(e)
+            return None
+
+    @staticmethod
+    def __get_app_status(hub_uuid: str, app_id: list) -> AppStatus:
         if hub_uuid not in hub_dict:
             logging.warning(f"NO HUB: {hub_uuid}")
             return AppStatus(valid_hub_uuid=False)
-        app_id: list = request['app_id']
         app_status = data_manager.get_app_status(hub_uuid, app_id)
         log_str = ""
         if not app_status['release_info']:
@@ -33,27 +63,21 @@ class Greeter(route_pb2_grpc.UpdateServerRouteServicer):
         logging.info(f"已完成单个请求 app_id: {app_id}{log_str} hub_uuid: {hub_uuid}")
         return ParseDict(app_status, AppStatus())
 
-    def GetAppStatusList(self, request, context) -> ResponseList:
-        request = MessageToDict(request, preserving_proto_field_name=True)
-        hub_uuid = request["hub_uuid"]
+    @staticmethod
+    def __get_app_status_list(hub_uuid: str, app_id_list: list) -> ResponseList:
         if hub_uuid not in hub_dict:
             logging.warning(f"NO HUB: {hub_uuid}")
             return {
                 "response": [{"app_status": {"valid_hub_uuid": False}}]
             }
-        app_id_list = request["app_id_list"]
         release_list = {
             "response": data_manager.get_response_list(hub_uuid, app_id_list)
         }
         logging.info(f"已完成批量请求 hub_uuid: {hub_uuid}（{len(app_id_list)}）")
         return ParseDict(release_list, ResponseList())
 
-    def GetDownloadInfo(self, request, context) -> DownloadInfo:
-        request = MessageToDict(request, preserving_proto_field_name=True)
-        app_id_info = request["app_id_info"]
-        hub_uuid = app_id_info["hub_uuid"]
-        app_id = app_id_info["app_id"]
-        asset_index = request["asset_index"]
+    @staticmethod
+    def __get_download_info(hub_uuid: str, app_id: list, asset_index: list) -> AppStatus:
         logging.info(f"请求下载资源 app_id: {app_id} hub_uuid: {hub_uuid}")
         download_info = data_manager.get_download_info(hub_uuid, app_id, asset_index)
         logging.info(f"回应下载资源: download_info: {download_info}")
