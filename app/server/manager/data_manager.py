@@ -75,7 +75,7 @@ class DataManager:
             # 尝试取缓存
             try:
                 return cache_manager.get_release_cache(hub_uuid, app_id)
-            except KeyError or NameError:
+            except (KeyError, NameError):
                 pass
 
         # 获取云端数据
