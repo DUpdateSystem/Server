@@ -60,7 +60,10 @@ app_info: {app_info}""")
             return None
         key = hub_uuid
         for k in app_id:
-            key += (key_delimiter + k["key"] + value_dict_delimiter + k["value"])
+            try:
+                key += (key_delimiter + k["key"] + value_dict_delimiter + k["value"])
+            except TypeError:
+                return None
         return key
 
     @staticmethod
