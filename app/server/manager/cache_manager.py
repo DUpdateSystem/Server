@@ -17,6 +17,7 @@ class CacheManager:
         self.__redis_release_cache_client = Redis(
             connection_pool=BlockingConnectionPool(host=server_config.redis_server_address,
                                                    port=server_config.redis_server_port,
+                                                   password=server_config.redis_server_password,
                                                    db=release_cache_db_index))
 
     def add_release_cache(self, hub_uuid: str, app_info: list, release_info: list or None = None):

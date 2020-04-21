@@ -11,11 +11,12 @@ class ServerConfig:
     def __init__(self):
         self.host = "localhost"
         self.port = 5000
+        self.max_workers = 16
         self.debug_mode = True
         self.auto_refresh_time = 6
         self.redis_server_address = "localhost"
         self.redis_server_port = 6379
-        self.max_workers = 16
+        self.redis_server_password = ""
         self.log = logging.getLogger('base_logger')
         self.init_logging()
 
@@ -32,6 +33,7 @@ class ServerConfig:
         web_api_config = config['web_api']
         self.redis_server_address = web_api_config['RedisServerAddress']
         self.redis_server_port = int(web_api_config['RedisServerPort'])
+        self.redis_server_password = web_api_config['RedisServerPassword']
 
     def init_logging(self):
         logging.root.setLevel(LOG_LEVEL)
