@@ -1,37 +1,37 @@
 import re
-from http.cookies import SimpleCookie
-from urllib.parse import urlparse
 
 import requests
 from bs4 import BeautifulSoup
+from requests import Request, Session
 
 __session = requests.Session()
 
 
-def parsing_http_page(url: str) -> BeautifulSoup:
-    """简易包装获取并解析网页操作
+def parsing_http_page(url: str, payload=None) -> BeautifulSoup:
+    """简易包装的获取并解析网页操作
     Args:
         url: 目标网页
+        payload: 请求头
     Returns:
         由 BeautifulSoup4 解析的网页节点
     """
-    html = get_response_string(url)
+    html = get_response(url, payload=payload).text
     return BeautifulSoup(html, "html5lib")
 
 
-def get_response_string(url: str, payload=None, throw_error=True) -> str or None:
-    """简易包装 get 方法
+def get_response(url: str, payload=None, throw_error=True) -> Request or None:
+    """简易包装的 get 方法
     Args:
         url: 访问的网址
         payload: 请求头
-        throw_error: 是否抛出网络故障
+        throw_error: 是否抛出 HTTP 状态码异常
     Returns:
-        网站的响应主体
+        包装网站响应的 Request 对象
     """
     try:
         response = __session.get(url, params=payload, timeout=15)
         response.raise_for_status()
-        return response.text
+        return response
     except Exception as e:
         if e is requests.HTTPError:
             raise e
@@ -40,22 +40,11 @@ def get_response_string(url: str, payload=None, throw_error=True) -> str or None
         return None
 
 
-def get_session() -> requests.Session:
+def get_session() -> Session:
+    """获取默认 Session 对象
+    Returns: Session
+    """
     return __session
-
-
-def get_session_cookies_str(url: str) -> str:
-    parsed_uri = urlparse(url)
-    cookies = __session.cookies
-    domain = None
-    for i in cookies.list_domains():
-        if i[1:] in parsed_uri.hostname:
-            domain = i
-    cookies_dict = cookies.get_dict(domain)
-    cookies = SimpleCookie()
-    for key in cookies_dict:
-        cookies[key] = cookies_dict[key]
-    return cookies.output(header="")[1:]
 
 
 def search_version_number_string(string: str or None) -> str or None:
@@ -71,15 +60,15 @@ def search_version_number_string(string: str or None) -> str or None:
     return re.search(pattern, string)
 
 
-def get_value_from_app_info(app_info: list, key: str) -> str or None:
-    """获取 app_info 中的值
+def get_value_from_app_id(app_id: list, key: str) -> str or None:
+    """获取 app_id 中的值
     Args:
-        app_info: 应用信息列表
+        app_id: 应用信息列表
         key: 搜索的键
     Returns:
-        搜索到的键值，若没有相关键则返回 None
+        搜索到的键值，若没有符合的键则返回 None
     """
-    for i in app_info:
+    for i in app_id:
         if i["key"] == key:
             return i["value"]
     return None

@@ -2,9 +2,9 @@ import re
 
 from requests import HTTPError
 
-from app.config import logging
+from app.server.utils import logging
 from ..base_hub import BaseHub
-from ..hub_script_utils import get_value_from_app_info, parsing_http_page, get_session
+from ..hub_script_utils import get_value_from_app_id, parsing_http_page, get_session
 
 
 class CoolApk(BaseHub):
@@ -59,4 +59,4 @@ def _get_url(app_package: str) -> str:
 
 
 def _get_package(app_info: list) -> str or None:
-    return get_value_from_app_info(app_info, "android_app_package")
+    return get_value_from_app_id(app_info, "android_app_package")

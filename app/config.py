@@ -1,10 +1,4 @@
 import configparser
-import logging
-
-from colorlog import ColoredFormatter
-
-LOG_LEVEL = logging.DEBUG
-LOG_FORMAT = "  %(log_color)s%(levelname)-8s%(reset)s | %(log_color)s%(message)s%(reset)s"
 
 
 class ServerConfig:
@@ -17,8 +11,6 @@ class ServerConfig:
         self.redis_server_address = "localhost"
         self.redis_server_port = 6379
         self.redis_server_password = ""
-        self.log = logging.getLogger('base_logger')
-        self.init_logging()
 
     def init_config_file(self, file_path: str):
         config = configparser.ConfigParser()
@@ -35,16 +27,6 @@ class ServerConfig:
         self.redis_server_port = int(web_api_config['RedisServerPort'])
         self.redis_server_password = web_api_config['RedisServerPassword']
 
-    def init_logging(self):
-        logging.root.setLevel(LOG_LEVEL)
-        formatter = ColoredFormatter(LOG_FORMAT)
-        stream = logging.StreamHandler()
-        stream.setLevel(LOG_LEVEL)
-        stream.setFormatter(formatter)
-        self.log.setLevel(LOG_LEVEL)
-        self.log.addHandler(stream)
-
 
 server_config = ServerConfig()
 server_config.init_config_file("../config.ini")
-logging = server_config.log

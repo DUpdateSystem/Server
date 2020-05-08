@@ -9,7 +9,8 @@ from google.protobuf.json_format import MessageToDict, ParseDict
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 # 初始化配置
-from app.config import server_config, logging
+from app.config import server_config
+from app.server.utils import logging
 
 from app.grpc_server import route_pb2_grpc
 from app.grpc_server.route_pb2 import AppStatus, ResponseList, DownloadInfo

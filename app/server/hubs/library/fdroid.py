@@ -1,5 +1,5 @@
 from ..base_hub import BaseHub
-from ..hub_script_utils import get_value_from_app_info, parsing_http_page
+from ..hub_script_utils import get_value_from_app_id, parsing_http_page
 
 
 class FDroid(BaseHub):
@@ -44,5 +44,5 @@ def _get_url(app_package: str, language: str or None) -> str:
 
 
 def _get_key(app_info: list) -> str or None:
-    return get_value_from_app_info(app_info, "android_app_package"), \
-           get_value_from_app_info(app_info, "language")
+    return get_value_from_app_id(app_info, "android_app_package"), \
+           get_value_from_app_id(app_info, "language")

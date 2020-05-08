@@ -4,11 +4,11 @@ from datetime import timedelta
 from requests import HTTPError
 from timeloop import Timeloop
 
-from app.config import logging
 from app.config import server_config
 from app.server.hubs.library.hub_list import hub_dict
 from app.server.manager.cache_manager import cache_manager
 from app.server.manager.hub_server_manager import HubServerManager
+from app.server.utils import logging
 
 debug_mode = False
 

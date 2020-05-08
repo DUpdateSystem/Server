@@ -3,8 +3,8 @@ import json
 from redis import BlockingConnectionPool
 from redis.client import Redis
 
-from app.config import logging
 from app.config import server_config
+from app.server.utils import logging
 
 key_delimiter = '+'
 value_dict_delimiter = ':'
