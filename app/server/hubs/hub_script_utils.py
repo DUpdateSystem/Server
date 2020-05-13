@@ -52,12 +52,25 @@ def search_version_number_string(string: str or None) -> str or None:
     Args:
         string: 需匹配的字符串
     Returns:
-        匹配到的版本号
+        一个 Match object（详见 re 库）, 若无匹配项则返回 None
     """
     if string is None:
         return None
     pattern = "(\\d+(\\.\\d+)*)(([.|\\-|+|_| ]|[0-9A-Za-z])*)"
     return re.search(pattern, string)
+
+
+def search_url_string(string: str or None) -> str or None:
+    """在字符串中匹配 x.y.z 版本号
+    Args:
+        string: 需匹配的字符串
+    Returns:
+        匹配到的 URL
+    """
+    if string is None:
+        return None
+    pattern = '((ht|f)tps?:)//[-A-Za-z0-9+&@#/%?=~_|!:,.;]+[-A-Za-z0-9+&@#/%=~_|]'
+    return re.search(pattern, string).lastgroup
 
 
 def get_value_from_app_id(app_id: list, key: str) -> str or None:
