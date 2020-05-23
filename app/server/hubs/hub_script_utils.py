@@ -7,29 +7,29 @@ from requests import Request, Session
 __session = requests.Session()
 
 
-def parsing_http_page(url: str, payload=None) -> BeautifulSoup:
+def parsing_http_page(url: str, params=None) -> BeautifulSoup:
     """简易包装的获取并解析网页操作
     Args:
         url: 目标网页
-        payload: 请求头
+        params: 请求头
     Returns:
         由 BeautifulSoup4 解析的网页节点
     """
-    html = get_response(url, payload=payload).text
+    html = get_response(url, params=params).text
     return BeautifulSoup(html, "html5lib")
 
 
-def get_response(url: str, payload=None, throw_error=True) -> Request or None:
+def get_response(url: str, throw_error=True, **kwargs) -> Request or None:
     """简易包装的 get 方法
     Args:
         url: 访问的网址
-        payload: 请求头
+        **kwargs: Optional arguments that ``request`` takes.
         throw_error: 是否抛出 HTTP 状态码异常
     Returns:
         包装网站响应的 Request 对象
     """
     try:
-        response = __session.get(url, params=payload, timeout=15)
+        response = __session.get(url, **kwargs, timeout=15)
         response.raise_for_status()
         return response
     except Exception as e:

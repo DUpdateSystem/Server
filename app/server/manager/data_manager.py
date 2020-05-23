@@ -1,4 +1,5 @@
 import asyncio
+import traceback
 from datetime import timedelta
 
 from requests import HTTPError
@@ -34,11 +35,11 @@ class DataManager:
             "app_status": self.get_app_status(hub_uuid, app_id)
         }
 
-    def get_app_status(self, hub_uuid: str, app_id: list, use_cache=True) -> dict:
+    def get_app_status(self, hub_uuid: str, app_id: list, use_cache=True, cache_data=True) -> dict:
         if hub_uuid not in hub_dict:
             logging.warning(f"NO HUB: {hub_uuid}")
             return {"valid_hub_uuid": False}
-        return_list = self.__get_release_info(hub_uuid, app_id, use_cache=use_cache)
+        return_list = self.__get_release_info(hub_uuid, app_id, use_cache=use_cache, cache_data=cache_data)
         valid_app = False
         if return_list:
             valid_app = True
@@ -57,7 +58,7 @@ class DataManager:
             return hub.get_download_info(app_id, asset_index)
         except Exception as e:
             logging.error(f"""app_info: {app_id}
-    ERROR: {e}""")
+    ERROR: {traceback.format_exc()}""")
             return None
 
     def refresh_cache(self):
@@ -70,7 +71,7 @@ class DataManager:
                 self.__get_release_info(hub_uuid, app_info, use_cache=False)
         logging.info(f"refresh all data: finish({i})")
 
-    def __get_release_info(self, hub_uuid: str, app_id: list, use_cache=True) -> list or None:
+    def __get_release_info(self, hub_uuid: str, app_id: list, use_cache=True, cache_data=True) -> list or None:
         if use_cache:
             # 尝试取缓存
             try:
@@ -79,25 +80,25 @@ class DataManager:
                 pass
 
         # 获取云端数据
-        cache_data = False
+        data_valid = False
         release_info = None
         try:
             hub = self.__hub_server_manager.get_hub(hub_uuid)
             release_info = hub.get_release_info(app_id)
-            cache_data = True
+            data_valid = True
         except HTTPError as e:
             status_code = e.response.status_code
             if status_code == 404:
                 logging.warning(f"""app_info: {app_id}
 HTTP CODE 404 ERROR: {e}""")
-                cache_data = True
+                data_valid = True
         except Exception as e:
             logging.error(f"""app_info: {app_id}
-ERROR: {e}""")
+ERROR: {traceback.format_exc()}""")
             if debug_mode:
                 raise e
         # 缓存数据，包括 404 None 数据
-        if cache_data:
+        if cache_data and data_valid:
             cache_manager.add_release_cache(hub_uuid, app_id, release_info)
         return release_info
 
@@ -111,4 +112,3 @@ def _auto_refresh():
     logging.info("auto refresh data: start")
     data_manager.refresh_cache()
     logging.info("auto refresh data: finish")
-
