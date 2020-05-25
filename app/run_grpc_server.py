@@ -57,7 +57,9 @@ class Greeter(route_pb2_grpc.UpdateServerRouteServicer):
     def __get_app_status_list(hub_uuid: str, app_id_list: list) -> ResponseList:
         app_status_list = get_app_status_list(hub_uuid, app_id_list)
         if app_status_list is None:
-            return ResponseList(app_status=AppStatus(valid_hub_uuid=False))
+            app_status_list = {
+                "response": [{"app_status": {"valid_hub_uuid": False}}]
+            }
         return ParseDict(app_status_list, ResponseList())
 
     @staticmethod

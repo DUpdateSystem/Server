@@ -12,7 +12,7 @@ class LocalCache:
                 return value
 
     def add(self, key: str, value):
-        self.cache_dict[key] = (time.time(), value)
+        self.cache_dict[key] = (value, time.time())
 
 
 local_cache = LocalCache()
