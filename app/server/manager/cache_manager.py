@@ -5,10 +5,12 @@ from redis.client import Redis
 
 from app.config import server_config
 from app.server.utils import logging
+from .data.local_cache import local_cache
 
 key_delimiter = '+'
 value_dict_delimiter = ':'
 release_cache_db_index = 0
+tmp_cache_db_index = 1
 
 
 class CacheManager:
@@ -19,15 +21,43 @@ class CacheManager:
                                                    port=server_config.redis_server_port,
                                                    password=server_config.redis_server_password,
                                                    db=release_cache_db_index))
+        self.__redis_tmp_cache_client = Redis(
+            connection_pool=BlockingConnectionPool(host=server_config.redis_server_address,
+                                                   port=server_config.redis_server_port,
+                                                   password=server_config.redis_server_password,
+                                                   db=release_cache_db_index))
+
+    @staticmethod
+    def __cache(redis_db: Redis, key: str, value: str, ex_h: int = None):
+        if key:
+            ex = None
+            if ex_h:
+                ex = ex_h * 3600
+            redis_db.set(key, value, ex=ex)
+
+    @staticmethod
+    def __get(redis_db: Redis, key: str) -> str:
+        if redis_db.exists(key) == 0:
+            raise KeyError
+        return redis_db.get(key)
+
+    def add_tmp_cache(self, key, value: str, ex_h: int = server_config.auto_refresh_time * 2):
+        local_cache.add(key, value)
+        self.__cache(self.__redis_tmp_cache_client, key, value, ex_h)
+
+    def get_tmp_cache(self, key) -> str:
+        value = local_cache.get(key)
+        if not value:
+            value = self.__get(self.__redis_tmp_cache_client, key)
+            local_cache.add(key, value)
+        return value
 
     def add_release_cache(self, hub_uuid: str, app_info: list, release_info: list or None = None):
         key = self.__get_app_cache_key(hub_uuid, app_info)
-        if key is not None:
-            ex_h = server_config.auto_refresh_time + 4
-            self.__redis_release_cache_client.set(key, json.dumps(release_info),
-                                                  ex=ex_h * 3600)
-            # 缓存完毕
-            logging.debug(f"release caching: {app_info}")
+        value = json.dumps(release_info)
+        self.__cache(self.__redis_release_cache_client, key, value, server_config.auto_refresh_time * 2)
+        # 缓存完毕
+        logging.debug(f"release caching: {app_info}")
 
     def get_release_cache(self, hub_uuid: str, app_info: list) -> dict or None:
         key = self.__get_app_cache_key(hub_uuid, app_info)
@@ -36,9 +66,7 @@ class CacheManager:
 hub_uuid: {hub_uuid}
 app_info: {app_info}""")
             raise NameError
-        if self.__redis_release_cache_client.exists(key) == 0:
-            raise KeyError
-        release_info = self.__redis_release_cache_client.get(key)
+        release_info = self.__get(self.__redis_release_cache_client, key)
         logging.debug(f"release cached: {app_info}")
         return json.loads(release_info)
 

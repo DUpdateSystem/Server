@@ -2,7 +2,7 @@ import re
 
 import requests
 from bs4 import BeautifulSoup
-from requests import Request, Session
+from requests import Response, Session
 
 __session = requests.Session()
 
@@ -19,7 +19,7 @@ def parsing_http_page(url: str, params=None) -> BeautifulSoup:
     return BeautifulSoup(html, "html5lib")
 
 
-def get_response(url: str, throw_error=True, **kwargs) -> Request or None:
+def get_response(url: str, throw_error=True, **kwargs) -> Response or None:
     """简易包装的 get 方法
     Args:
         url: 访问的网址
