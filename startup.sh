@@ -9,21 +9,27 @@ dockerfile_debug="Dockerfile_debug"
 
 BLUE='\033[0;31m'
 NC='\033[0m' # No Color
+
+# pull newest code
+if [ "$1" == "--normal" ] || [ -z "$1" ]
+then
+	echo "Get Newest Code"
+	git pull
+fi
+
+# build docker image
+echo "Build New Docker Image"
 if [ "$1" == "--debug" ]
 then
 	Dockerfile=$dockerfile_debug
 else
 	Dockerfile=$dockerfile
 fi
-# build docker image
-echo "Build New Docker Image"
 docker build -f$Dockerfile -t $docker_image_name .
+
 if [ "$1" == "--normal" ] || [ -z "$1" ]
 # normal run in server mode
 then
-	# Pull Newest Code
-	echo "Get Newest Code"
-	git pull
 	# stop old server
 	echo "Stop Old Server"
 	docker stop $docker_container_name && docker container rm $docker_container_name
