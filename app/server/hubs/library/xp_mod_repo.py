@@ -31,7 +31,9 @@ class XpModRepo(BaseHub):
             f.seek(0)
             with gzip.GzipFile(mode='r', fileobj=f) as gzip_file:
                 tree = ElementTree.parse(gzip_file)
-        module = tree.find(f'//module[@package="{package}"]')
+        module = tree.find(f'.//module[@package="{package}"]')
+        if not module:
+            return None
         version_list = module.findall('version')
         data = []
         for i in range(len(version_list)):

@@ -13,6 +13,11 @@ class UpdateServerRouteStub(object):
         Args:
             channel: A grpc.Channel.
         """
+        self.GetCloudConfig = channel.unary_unary(
+                '/server_route.UpdateServerRoute/GetCloudConfig',
+                request_serializer=app_dot_grpc__template_dot_route__pb2.Empty.SerializeToString,
+                response_deserializer=app_dot_grpc__template_dot_route__pb2.String.FromString,
+                )
         self.GetAppStatus = channel.unary_unary(
                 '/server_route.UpdateServerRoute/GetAppStatus',
                 request_serializer=app_dot_grpc__template_dot_route__pb2.Request.SerializeToString,
@@ -32,6 +37,12 @@ class UpdateServerRouteStub(object):
 
 class UpdateServerRouteServicer(object):
     """Missing associated documentation comment in .proto file"""
+
+    def GetCloudConfig(self, request, context):
+        """Missing associated documentation comment in .proto file"""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
 
     def GetAppStatus(self, request, context):
         """Missing associated documentation comment in .proto file"""
@@ -54,6 +65,11 @@ class UpdateServerRouteServicer(object):
 
 def add_UpdateServerRouteServicer_to_server(servicer, server):
     rpc_method_handlers = {
+            'GetCloudConfig': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetCloudConfig,
+                    request_deserializer=app_dot_grpc__template_dot_route__pb2.Empty.FromString,
+                    response_serializer=app_dot_grpc__template_dot_route__pb2.String.SerializeToString,
+            ),
             'GetAppStatus': grpc.unary_unary_rpc_method_handler(
                     servicer.GetAppStatus,
                     request_deserializer=app_dot_grpc__template_dot_route__pb2.Request.FromString,
@@ -78,6 +94,22 @@ def add_UpdateServerRouteServicer_to_server(servicer, server):
  # This class is part of an EXPERIMENTAL API.
 class UpdateServerRoute(object):
     """Missing associated documentation comment in .proto file"""
+
+    @staticmethod
+    def GetCloudConfig(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/server_route.UpdateServerRoute/GetCloudConfig',
+            app_dot_grpc__template_dot_route__pb2.Empty.SerializeToString,
+            app_dot_grpc__template_dot_route__pb2.String.FromString,
+            options, channel_credentials,
+            call_credentials, compression, wait_for_ready, timeout, metadata)
 
     @staticmethod
     def GetAppStatus(request,

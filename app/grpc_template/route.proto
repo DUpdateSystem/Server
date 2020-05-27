@@ -1,36 +1,35 @@
 syntax = "proto3";
 
-option java_multiple_files = true;
 option java_package = "net.xzos.upgradeall.core.route";
+option java_multiple_files = true;
 option java_outer_classname = "RouteProto";
 
 package server_route;
 
 service UpdateServerRoute {
+  rpc GetCloudConfig(Empty) returns (Str) {}
   rpc GetAppStatus(Request) returns (AppStatus) {}
   rpc GetAppStatusList(RequestList) returns (ResponseList) {}
   rpc GetDownloadInfo(DownloadAssetIndex) returns (DownloadInfo) {}
 }
 
+message Empty {}
+message Str {string s = 1;}
 message RequestList {
   string hub_uuid = 1;
   repeated AppId app_id_list = 2;
 }
 
-message Request{
+message Request {
   string hub_uuid = 1;
   repeated AppIdItem app_id = 2;
 }
 
-message AppId{
-  repeated AppIdItem app_id = 1;
-}
+message AppId {repeated AppIdItem app_id = 1;}
 
-message ResponseList{
-  repeated ResponsePackage response = 1;
-}
+message ResponseList {repeated ResponsePackage response = 1;}
 
-message ResponsePackage{
+message ResponsePackage {
   repeated AppIdItem app_id = 1;
   AppStatus app_status = 2;
 }
@@ -58,17 +57,17 @@ message AssetItem {
   string file_type = 3;
 }
 
-message DownloadInfo{
+message DownloadInfo {
   string url = 1;
   repeated Dict request_header = 2;
 }
 
-message DownloadAssetIndex{
+message DownloadAssetIndex {
   Request app_id_info = 1;
   repeated int32 asset_index = 2;
 }
 
-message Dict{
+message Dict {
   string key = 1;
   string value = 2;
 }

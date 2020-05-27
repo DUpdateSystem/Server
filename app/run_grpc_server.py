@@ -7,12 +7,17 @@ from google.protobuf.json_format import MessageToDict, ParseDict
 # 初始化配置
 from app.config import server_config
 from app.grpc_template import route_pb2_grpc
-from app.grpc_template.route_pb2 import AppStatus, ResponseList, DownloadInfo
+from app.grpc_template.route_pb2 import AppStatus, ResponseList, DownloadInfo, String
 from app.server.api import init, get_app_status, get_app_status_list, get_download_info
-from app.server.utils import logging
+from app.server.utils import logging, get_response
 
 
 class Greeter(route_pb2_grpc.UpdateServerRouteServicer):
+
+    def GetCloudConfig(self, request, context) -> String:
+        response = get_response(server_config.cloud_rule_hub_url)
+        if response:
+            return String(s=response.text)
 
     def GetAppStatus(self, request, context) -> AppStatus:
         try:
