@@ -8,7 +8,7 @@ class ServerConfig:
         self.max_workers = 16
         self.debug_mode = True
         self.auto_refresh_time = 6
-        self.cloud_rule_hub_url = "https://cdn.jsdelivr.net/gh/DUpdateSystem/UpgradeAll-rules@dev/rules/rules.json"
+        self.cloud_rule_hub_url = ""
         self.redis_server_address = "localhost"
         self.redis_server_port = 6379
         self.redis_server_password = ""

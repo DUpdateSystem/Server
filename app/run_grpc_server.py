@@ -1,4 +1,3 @@
-import traceback
 from concurrent import futures
 
 import grpc
@@ -17,29 +16,33 @@ class Greeter(route_pb2_grpc.UpdateServerRouteServicer):
     def GetCloudConfig(self, request, context) -> String:
         response = get_response(server_config.cloud_rule_hub_url)
         if response:
+            logging.info("已完成获取云端配置仓库数据请求")
             return String(s=response.text)
 
     def GetAppStatus(self, request, context) -> AppStatus:
+        # noinspection PyBroadException
         try:
             request = MessageToDict(request, preserving_proto_field_name=True)
             hub_uuid: str = request['hub_uuid']
             app_id: list = request['app_id']
             return self.__get_app_status(hub_uuid, app_id)
         except Exception:
-            logging.error(traceback.format_exc())
+            logging.exception('gRPC: GetAppStatus')
             return None
 
     def GetAppStatusList(self, request, context) -> ResponseList:
+        # noinspection PyBroadException
         try:
             request = MessageToDict(request, preserving_proto_field_name=True)
             hub_uuid: str = request["hub_uuid"]
             app_id_list: list = [item['app_id'] for item in request["app_id_list"]]
             return self.__get_app_status_list(hub_uuid, app_id_list)
         except Exception:
-            logging.error(traceback.format_exc())
+            logging.exception('gRPC: GetAppStatusList')
             return None
 
     def GetDownloadInfo(self, request, context) -> DownloadInfo:
+        # noinspection PyBroadException
         try:
             request = MessageToDict(request, preserving_proto_field_name=True)
             app_id_info = request["app_id_info"]
@@ -48,7 +51,7 @@ class Greeter(route_pb2_grpc.UpdateServerRouteServicer):
             asset_index = request["asset_index"]
             return self.__get_download_info(hub_uuid, app_id, asset_index)
         except Exception:
-            logging.error(traceback.format_exc())
+            logging.exception('gRPC: GetDownloadInfo')
             return None
 
     @staticmethod

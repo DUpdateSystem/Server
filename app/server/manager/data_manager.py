@@ -1,5 +1,4 @@
 import asyncio
-import traceback
 from datetime import timedelta
 
 from requests import HTTPError
@@ -10,8 +9,6 @@ from app.server.hubs.library.hub_list import hub_dict
 from app.server.manager.cache_manager import cache_manager
 from app.server.manager.hub_server_manager import HubServerManager
 from app.server.utils import logging
-
-debug_mode = False
 
 
 class DataManager:
@@ -54,11 +51,11 @@ class DataManager:
             logging.warning(f"NO HUB: {hub_uuid}")
             return None
         hub = self.__hub_server_manager.get_hub(hub_uuid)
+        # noinspection PyBroadException
         try:
             return hub.get_download_info(app_id, asset_index)
-        except Exception as e:
-            logging.error(f"""app_info: {app_id}
-    ERROR: {traceback.format_exc()}""")
+        except Exception:
+            logging.error(f"""app_info: {app_id} \nERROR: """, exc_info=server_config.debug_mode)
             return None
 
     def refresh_cache(self):
@@ -82,6 +79,7 @@ class DataManager:
         # 获取云端数据
         data_valid = False
         release_info = None
+        # noinspection PyBroadException
         try:
             hub = self.__hub_server_manager.get_hub(hub_uuid)
             release_info = hub.get_release_info(app_id)
@@ -92,11 +90,8 @@ class DataManager:
                 logging.warning(f"""app_info: {app_id}
 HTTP CODE 404 ERROR: {e}""")
                 data_valid = True
-        except Exception as e:
-            logging.error(f"""app_info: {app_id}
-ERROR: {traceback.format_exc()}""")
-            if debug_mode:
-                raise e
+        except Exception:
+            logging.error(f"""app_info: {app_id} \nERROR: """, exc_info=server_config.debug_mode)
         # 缓存数据，包括 404 None 数据
         if cache_data and data_valid:
             cache_manager.add_release_cache(hub_uuid, app_id, release_info)
