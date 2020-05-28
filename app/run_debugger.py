@@ -8,7 +8,7 @@ from .server.utils import logging
 def debug(hub_uuid: str, app_id_option):
     server_config.debug_mode = True
     app_id = []
-    for i in range(int(len(app_id_option) / 2)):
+    for i in range(0, len(app_id_option), 2):
         app_id.append({
             "key": app_id_option[i],
             "value": app_id_option[i + 1]
