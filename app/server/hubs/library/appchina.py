@@ -1,15 +1,6 @@
 from ..base_hub import BaseHub
 from ..hub_script_utils import get_value_from_app_id, get_session
 
-newest_json = {"type": "app.detailInfo", "packagename": "com.example.app"}
-history_json = {"type": "app.pastdetails", "id": 0, "packagename": "com.example.app"}
-
-format_json = {
-    "param": "",
-    "api": "market.MarketAPI",
-    "\n": ""
-}
-
 headers = {
     "User-Agent": "Dalvik/2.1.0 (Linux; U; Android 10; ONEPLUS A6013 Build/QQ2A.200501.001.B2)"
 }
@@ -21,6 +12,9 @@ class AppChina(BaseHub):
 
         if package is None:
             return None
+
+        newest_json = {"type": "app.detailInfo", "packagename": "com.example.app"}
+        history_json = {"type": "app.pastdetails", "id": 0, "packagename": "com.example.app"}
 
         data_json = []
         newest_json["packagename"] = package
@@ -49,7 +43,7 @@ def _get_release(raw_dict: dict) -> dict:
 def _send_api(param: dict) -> dict:
     session = get_session()
     api_url = "https://mobile.appchina.com/market/api"
-    format_json["param"] = str(param)
+    format_json = {"param": str(param), "api": "market.MarketAPI", "\n": ""}
     return session.post(url=api_url, headers=headers, data=format_json).json()
 
 
