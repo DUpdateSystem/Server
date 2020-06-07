@@ -15,7 +15,10 @@ def parsing_http_page(url: str, params=None) -> BeautifulSoup:
     Returns:
         由 BeautifulSoup4 解析的网页节点
     """
-    html = get_response(url, params=params).text
+    headers = {
+        'User-Agent': "Mozilla/5.0 (X11; Linux x86_64; rv:67.0) Gecko/20100101 Firefox/67.0"
+    }
+    html = get_response(url, headers=headers, params=params).text
     return BeautifulSoup(html, "html5lib")
 
 

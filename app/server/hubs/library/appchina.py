@@ -1,5 +1,18 @@
 from ..base_hub import BaseHub
-from ..hub_script_utils import get_value_from_app_id, parsing_http_page, search_version_number_string
+from ..hub_script_utils import get_value_from_app_id, get_session
+
+newest_json = {"type": "app.detailInfo", "packagename": "com.example.app"}
+history_json = {"type": "app.pastdetails", "id": 0, "packagename": "com.example.app"}
+
+format_json = {
+    "param": "",
+    "api": "market.MarketAPI",
+    "\n": ""
+}
+
+headers = {
+    "User-Agent": "Dalvik/2.1.0 (Linux; U; Android 10; ONEPLUS A6013 Build/QQ2A.200501.001.B2)"
+}
 
 
 class AppChina(BaseHub):
@@ -9,38 +22,35 @@ class AppChina(BaseHub):
         if package is None:
             return None
 
-        url = _get_url(package)
-        soup = parsing_http_page(url)
-
-        newest_version = soup.find(name="div", attrs={
-            "class": "intro app-other-info-intro"}).find_all(name="p", attrs={"class": "art-content"})[2].text
-        row_version_number_list = [newest_version] + [item.text for item in
-                                                      soup.find_all(class_='history-verison-app-versionName')]
-
-        version_number_list = [search_version_number_string(item).group(0) for item in row_version_number_list]
-        changelog_div = [soup.find_all(
-            name="p", attrs={"class": "art-content"})[1]] + soup.find_all(
-            class_='history-version-app-updateMsg')
-        changelog = [item.text for item in changelog_div]
-        newest_download_url = soup.find(name="a", attrs={"class": "download_app"})['onclick'].split("\'")[1]
-
-        download_url_list = [newest_download_url] + [item["href"] for item in soup.find_all(name="a",
-                                                                                            class_='historyVerison-download fright download_app')]
-        data = []
-        for i in range(len(version_number_list)):
-            release_info = {"version_number": version_number_list[i],
-                            "change_log": changelog[i]}
-            assets = [{
-                "file_name": package + ".apk",
-                "download_url": download_url_list[i]
-            }]
-            release_info["assets"] = assets
-            data.append(release_info)
-        return data
+        data_json = []
+        newest_json["packagename"] = package
+        response_json = _send_api(newest_json)
+        release_info = _get_release(response_json)
+        data_json.append(release_info)
+        history_json["packagename"] = package
+        response_json = _send_api(history_json)
+        for i in response_json["list"]:
+            release_info = _get_release(i)
+            data_json.append(release_info)
+        return data_json
 
 
-def _get_url(app_package: str) -> str:
-    return f"http://www.appchina.com/app/{app_package}"
+def _get_release(raw_dict: dict) -> dict:
+    return {
+        "version_number": raw_dict["versionName"],
+        "change_log": raw_dict["updateMsg"],
+        "assets": [{
+            "file_name": raw_dict["packageName"] + ".apk",
+            "download_url": raw_dict["apkUrl"]
+        }]
+    }
+
+
+def _send_api(param: dict) -> dict:
+    session = get_session()
+    api_url = "https://mobile.appchina.com/market/api"
+    format_json["param"] = str(param)
+    return session.post(url=api_url, headers=headers, data=format_json).json()
 
 
 def _get_package(app_info: list) -> str or None:
