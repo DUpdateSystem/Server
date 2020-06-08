@@ -1,4 +1,4 @@
-from .hubs.library.hub_list import hub_dict
+from app.server.hubs.hub_list import hub_dict
 from .manager.data_manager import data_manager, tl
 from .utils import logging
 

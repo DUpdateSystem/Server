@@ -37,7 +37,7 @@ class CoolApk(BaseHub):
 
     def get_download_info(self, app_id: list, asset_index: list) -> dict or None:
         from app.server.manager.data_manager import data_manager
-        from app.server.hubs.library.hub_list import hub_dict
+        from app.server.hubs.hub_list import hub_dict
         hub_uuid = None
         for uuid in hub_dict:
             if self is hub_dict[uuid]:

@@ -1,11 +1,11 @@
-from .appchina import AppChina
-from .coolapk import CoolApk
-from .fdroid import FDroid
-from .github import Github
-from .gitlab import Gitlab
-from .sjly import Sjly
-from .xp_mod_repo import XpModRepo
-from .zlive_official import ZLiveOfficial
+from app.server.hubs.library.appchina import AppChina
+from app.server.hubs.library.coolapk import CoolApk
+from app.server.hubs.library.fdroid import FDroid
+from app.server.hubs.library.github import Github
+from app.server.hubs.library.gitlab import Gitlab
+from app.server.hubs.library.sjly import Sjly
+from app.server.hubs.library.xp_mod_repo import XpModRepo
+from app.server.hubs.library.zlive_official import ZLiveOfficial
 
 hub_dict = {
     "fd9b2602-62c5-4d55-bd1e-0d6537714ca0": Github(),
