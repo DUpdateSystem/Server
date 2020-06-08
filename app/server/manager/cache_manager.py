@@ -64,7 +64,7 @@ class CacheManager:
         if key is None:
             logging.error(f"""WRONG FORMAT
 hub_uuid: {hub_uuid}
-app_info: {app_info}""")
+app_info: {app_info}""", exc_info=server_config.debug_mode)
             raise NameError
         release_info = self.__get(self.__redis_release_cache_client, key)
         logging.debug(f"release cached: {app_info}")
@@ -84,8 +84,6 @@ app_info: {app_info}""")
 
     @staticmethod
     def __get_app_cache_key(hub_uuid: str, app_id: list) -> str or None:
-        if not app_id:
-            return None
         key = hub_uuid
         for k in app_id:
             try:

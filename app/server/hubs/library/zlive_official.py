@@ -4,7 +4,7 @@ from ..hub_script_utils import get_response
 
 class ZLiveOfficial(BaseHub):
     def get_release_info(self, app_id: list) -> tuple or None:
-        data = get_response(_get_url())
+        data = get_response(_get_url()).json()
         return [{
             "version_number": data["version_name"],
             "change_log": data["changelog"],
