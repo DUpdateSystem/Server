@@ -11,6 +11,8 @@ service UpdateServerRoute {
   rpc GetAppStatus(Request) returns (AppStatus) {}
   rpc GetAppStatusList(RequestList) returns (ResponseList) {}
   rpc GetDownloadInfo(DownloadAssetIndex) returns (DownloadInfo) {}
+  rpc NewClientProxyCall(Empty) returns (stream HttpRequestItem) {}
+  rpc NewClientProxyReturn(stream HttpResponseItem) returns (Empty) {}
 }
 
 message Empty {}
@@ -70,4 +72,16 @@ message DownloadAssetIndex {
 message Dict {
   string key = 1;
   string value = 2;
+}
+
+message HttpRequestItem{
+  string method = 1;
+  string url = 2;
+  repeated Dict headers = 3;
+}
+
+message HttpResponseItem{
+  string url = 1;
+  int32 code = 2;
+  string text = 3;
 }

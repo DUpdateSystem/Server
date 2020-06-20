@@ -6,18 +6,19 @@ from google.protobuf.json_format import MessageToDict, ParseDict
 # 初始化配置
 from app.config import server_config
 from app.grpc_template import route_pb2_grpc
-from app.grpc_template.route_pb2 import AppStatus, ResponseList, DownloadInfo, String
+from app.grpc_template.route_pb2 import AppStatus, ResponseList, DownloadInfo, Str, HttpRequestItem
 from app.server.api import init, get_app_status, get_app_status_list, get_download_info
+from app.server.client_proxy.client_proxy_manager import ClientProxyManager
 from app.server.utils import logging, get_response
 
 
 class Greeter(route_pb2_grpc.UpdateServerRouteServicer):
 
-    def GetCloudConfig(self, request, context) -> String:
+    def GetCloudConfig(self, request, context) -> Str:
         response = get_response(server_config.cloud_rule_hub_url)
         if response:
             logging.info("已完成获取云端配置仓库数据请求")
-            return String(s=response.text)
+            return Str(s=response.text)
 
     def GetAppStatus(self, request, context) -> AppStatus:
         # noinspection PyBroadException
@@ -44,7 +45,9 @@ class Greeter(route_pb2_grpc.UpdateServerRouteServicer):
             logging.exception('gRPC: GetAppStatusList')
             return None
 
-    def GetDownloadInfo(self, request, context) -> DownloadInfo:
+    def GetDownloadInfo(self, request, context: grpc.RpcContext) -> DownloadInfo:
+        if context.cancel():
+            return
         # noinspection PyBroadException
         try:
             request = MessageToDict(request, preserving_proto_field_name=True)
@@ -56,6 +59,32 @@ class Greeter(route_pb2_grpc.UpdateServerRouteServicer):
         except Exception:
             logging.exception('gRPC: GetDownloadInfo')
             return None
+
+    def NewClientProxyCall(self, request, context):
+        # noinspection PyBroadException
+        try:
+            client_proxy = ClientProxyManager.new_client_proxy()
+            yield ParseDict(client_proxy.get_first_request_item(), HttpRequestItem())
+            # 发送客户端 id
+            for http_request in client_proxy:
+                if http_request:
+                    yield ParseDict(http_request[0], HttpRequestItem())
+        except Exception:
+            logging.exception('gRPC: NewClientProxyCall')
+
+    def NewClientProxyReturn(self, request_iterator, context):
+        client_proxy = None
+        # noinspection PyBroadException
+        try:
+            for request in request_iterator:
+                if request.code == 0:
+                    index = int(request.url)
+                    client_proxy = ClientProxyManager.get_client(index)
+                else:
+                    client_proxy.push_response(request.url, request.code, request.text)
+        except Exception:
+            ClientProxyManager.remove_proxy(client_proxy)
+            logging.exception('gRPC: NewClientProxyReturn')
 
     @staticmethod
     def __get_app_status(hub_uuid: str, app_id: list) -> AppStatus:
