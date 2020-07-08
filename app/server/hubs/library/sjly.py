@@ -1,7 +1,7 @@
 from bs4 import BeautifulSoup
 
 from ..base_hub import BaseHub
-from ..hub_script_utils import get_value_from_app_id, get_response
+from ..hub_script_utils import get_value_from_app_id, http_get
 
 
 class Sjly(BaseHub):
@@ -10,7 +10,7 @@ class Sjly(BaseHub):
         if app_id is None:
             return None
         url = _get_url(app_id)
-        response = get_response(url, verify=False)
+        response = http_get(url, verify=False)
         response.encoding = 'utf-8'
         html = response.text
         soup = BeautifulSoup(html, "html5lib")

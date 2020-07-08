@@ -78,6 +78,12 @@ message HttpRequestItem{
   string method = 1;
   string url = 2;
   repeated Dict headers = 3;
+  HttpPostRequestBody body = 4;
+}
+
+message HttpPostRequestBody{
+  string type = 1;
+  string text = 2;
 }
 
 message HttpResponseItem{

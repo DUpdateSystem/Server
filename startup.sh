@@ -43,10 +43,10 @@ elif [ "$1" == "--debug" ]
 then
 	echo "Start Server"
 	echo -e "${BLUE}---------------the following is the program output---------------${NC}\n"
-	docker run --rm -v $PWD/app:/app $docker_image_name $@
+	docker run --rm -v $PWD/app:/app -p $docker_server_port:$server_port $docker_image_name $@
 else
 	echo "Start Server"
 	echo -e "${BLUE}---------------the following is the program output---------------${NC}\n"
-	docker run --rm $docker_image_name $@
+	docker run --rm $docker_image_name -p $docker_server_port:$server_port $docker_image_name $@
 fi
 

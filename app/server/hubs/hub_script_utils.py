@@ -4,6 +4,8 @@ import requests
 from bs4 import BeautifulSoup
 from requests import Response, Session
 
+from app.server.client_proxy.client_proxy_manager import ClientProxyManager
+
 __session = requests.Session()
 
 
@@ -18,11 +20,49 @@ def parsing_http_page(url: str, params=None) -> BeautifulSoup:
     headers = {
         'User-Agent': "Mozilla/5.0 (X11; Linux x86_64; rv:67.0) Gecko/20100101 Firefox/67.0"
     }
-    html = get_response(url, headers=headers, params=params).text
+    html = http_get(url, headers=headers, params=params).text
     return BeautifulSoup(html, "html5lib")
 
 
-def get_response(url: str, throw_error=True, **kwargs) -> Response or None:
+def proxy_post(url: str, headers: dict or None = None,
+               body_type: str or None = None, body_text: str or None = None,
+               throw_error=True) -> str or None:
+    """简易包装的客户端代理 post 方法
+    Args:
+        url: 访问的网址
+        headers: 请求头参数字典
+        body_type: 请求主体数据类型
+        body_text: 请求主体
+        throw_error: 是否抛出 HTTP 状态码异常
+    Returns:
+        响应的字符串数据
+    """
+    try:
+        text = ClientProxyManager.proxy_post(url, headers, body_type, body_text)
+        return text
+    except Exception as e:
+        if throw_error:
+            raise e
+
+
+def proxy_get(url: str, headers: dict or None = None, throw_error=True) -> str or None:
+    """简易包装的客户端代理 get 方法
+    Args:
+        url: 访问的网址
+        headers: 请求头参数字典
+        throw_error: 是否抛出 HTTP 状态码异常
+    Returns:
+        响应的字符串数据
+    """
+    try:
+        text = ClientProxyManager.proxy_get(url, headers)
+        return text
+    except Exception as e:
+        if throw_error:
+            raise e
+
+
+def http_get(url: str, throw_error=True, **kwargs) -> Response or None:
     """简易包装的 get 方法
     Args:
         url: 访问的网址

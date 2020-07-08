@@ -5,7 +5,7 @@ from xml.etree import ElementTree
 from bs4 import BeautifulSoup
 
 from ..base_hub import BaseHub
-from ..hub_script_utils import get_response, get_value_from_app_id
+from ..hub_script_utils import http_get, get_value_from_app_id
 from ...manager.cache_manager import cache_manager
 
 cache_key = "xposed_full_module_xml_file_bytes"
@@ -22,7 +22,7 @@ class XpModRepo(BaseHub):
         except KeyError:
             pass
         if not raw:
-            raw = get_response("https://dl-xda.xposed.info/repo/full.xml.gz", stream=True).raw.data
+            raw = http_get("https://dl-xda.xposed.info/repo/full.xml.gz", stream=True).raw.data
             if raw:
                 cache_manager.add_tmp_cache(cache_key, raw)
         with tempfile.TemporaryFile(mode='w+b') as f:

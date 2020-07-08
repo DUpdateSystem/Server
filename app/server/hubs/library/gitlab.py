@@ -4,7 +4,7 @@ from bs4 import BeautifulSoup
 
 from .github import _get_base_info
 from ..base_hub import BaseHub
-from ..hub_script_utils import get_response
+from ..hub_script_utils import http_get
 
 
 class Gitlab(BaseHub):
@@ -63,4 +63,4 @@ def _get_response(owner_name: str, repo_name: str) -> json:
     Return: JSON
     """
     api_url = _get_api_url(owner_name, repo_name)
-    return get_response(api_url).json()
+    return http_get(api_url).json()

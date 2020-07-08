@@ -1,14 +1,18 @@
+import threading
 from concurrent import futures
+from threading import Thread
 
 import grpc
 from google.protobuf.json_format import MessageToDict, ParseDict
+from grpc import Server
 
 # 初始化配置
 from app.config import server_config
 from app.grpc_template import route_pb2_grpc
 from app.grpc_template.route_pb2 import AppStatus, ResponseList, DownloadInfo, Str, HttpRequestItem
-from app.server.api import init, get_app_status, get_app_status_list, get_download_info
+from app.server.api import get_app_status, get_app_status_list, get_download_info
 from app.server.client_proxy.client_proxy_manager import ClientProxyManager
+from app.server.manager.data_manager import tl
 from app.server.utils import logging, get_response
 
 
@@ -64,8 +68,7 @@ class Greeter(route_pb2_grpc.UpdateServerRouteServicer):
         # noinspection PyBroadException
         try:
             client_proxy = ClientProxyManager.new_client_proxy()
-            yield ParseDict(client_proxy.get_first_request_item(), HttpRequestItem())
-            # 发送客户端 id
+            yield ParseDict(client_proxy.get_first_request_item(), HttpRequestItem())  # 发送客户端 id
             for http_request in client_proxy:
                 if http_request:
                     yield ParseDict(http_request[0], HttpRequestItem())
@@ -77,6 +80,7 @@ class Greeter(route_pb2_grpc.UpdateServerRouteServicer):
         # noinspection PyBroadException
         try:
             for request in request_iterator:
+                logging.info(request)
                 if request.code == 0:
                     index = int(request.url)
                     client_proxy = ClientProxyManager.get_client(index)
@@ -107,10 +111,17 @@ class Greeter(route_pb2_grpc.UpdateServerRouteServicer):
         return ParseDict(get_download_info(hub_uuid, app_id, asset_index), DownloadInfo())
 
 
-def serve():
+def init():
+    if not server_config.debug_mode:
+        tl.start()
+
+
+def serve() -> [Thread, Server]:
     init()
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=server_config.max_workers))
     route_pb2_grpc.add_UpdateServerRouteServicer_to_server(Greeter(), server)
     server.add_insecure_port(f'{server_config.host}:{server_config.port}')
     server.start()
-    server.wait_for_termination()
+    t = threading.Thread(target=server.wait_for_termination)
+    t.start()
+    return t, server

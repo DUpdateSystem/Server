@@ -26,12 +26,34 @@ class ClientProxy:
     def get_index(self):
         return self.__index
 
-    def http_request(self, method: str, url: str, headers: list) -> dict:
-        response = self.__http_request_async(method, url, headers)
+    def http_request(self, method: str, url: str, headers: dict or None,
+                     body_type: str or None, body_text: str or None) -> dict:
+        if headers is None:
+            headers = {}
+        response = self.__http_request_async(method, url, headers, body_type, body_text)
         return response
 
-    def __http_request_async(self, method: str, url: str, headers: list) -> dict or None:
-        request = {"method": method, "url": url, "headers": headers}
+    def __http_request_async(self, method: str, url: str, headers: dict,
+                             body_type: str or None, body_text: str or None) -> dict:
+        headers_list = []
+        for key, value in headers.items():
+            headers_list.append({
+                "key": key,
+                "value": value
+            })
+        if not body_type or not body_text:
+            body = None
+        else:
+            body = {
+                "type": body_type,
+                "text": body_text
+            }
+        request = {
+            "method": method,
+            "url": url,
+            "headers": headers_list,
+            "body": body
+        }
         # 输入队列
         self.__add_request_queue(request),
         # 等待返回
@@ -47,22 +69,28 @@ class ClientProxy:
             "text": response
         }
         self._call_def_in_loop(
-            self.__unlock_request_wait(url, status_code, response),
+            self.__unlock_request_wait(url),
             self.__loop
         )
-
-    async def __unlock_request_wait(self, url: str, status_code: int, response: str):
-        async with self.__lock_dict_lock:
-            d = self.__lock_dict[url]
-            loop = d["loop"]
-            task = d["task"]
-            loop.call_soon_threadsafe(task.set())  # 解锁
 
     def get_first_request_item(self):
         return {
             "method": "id",
             "url": str(self.get_index())
         }
+
+    def __iter__(self):
+        return self
+
+    def __next__(self):
+        return self.__get_request(),
+
+    async def __unlock_request_wait(self, url: str):
+        async with self.__lock_dict_lock:
+            d = self.__lock_dict[url]
+            loop = d["loop"]
+            task = d["task"]
+            loop.call_soon_threadsafe(task.set())  # 解锁
 
     def __set_url_lock(self, url):
         loop, task = self._call_def_in_loop_return_result(
@@ -91,7 +119,7 @@ class ClientProxy:
                 }
         return loop, task
 
-    async def __get_response(self, url) -> dict or None:
+    async def __get_response(self, url) -> dict:
         with await self.__lock_dict_lock:
             lock_dict = self.__lock_dict
             if url in lock_dict:
@@ -102,12 +130,6 @@ class ClientProxy:
                 else:
                     lock_dict.pop(url)["loop"].close()
                     return self.__response_dict.pop(url)
-
-    def __iter__(self):
-        return self
-
-    def __next__(self):
-        return self.__get_request(),
 
     def __get_request(self):
         request_queue = self.__request_queue

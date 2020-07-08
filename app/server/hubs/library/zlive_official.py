@@ -1,10 +1,10 @@
 from ..base_hub import BaseHub
-from ..hub_script_utils import get_response
+from ..hub_script_utils import http_get
 
 
 class ZLiveOfficial(BaseHub):
     def get_release_info(self, app_id: list) -> tuple or None:
-        data = get_response(_get_url()).json()
+        data = http_get(_get_url()).json()
         return [{
             "version_number": data["version_name"],
             "change_log": data["changelog"],

@@ -1,7 +1,7 @@
 import json
 
 from ..base_hub import BaseHub
-from ..hub_script_utils import get_response, search_version_number_string
+from ..hub_script_utils import http_get, search_version_number_string
 
 
 class Github(BaseHub):
@@ -78,4 +78,4 @@ def _get_response(owner_name: str, repo_name: str) -> json:
     Return: JSON
     """
     api_url = _get_api_url(owner_name, repo_name)
-    return get_response(api_url).json()
+    return http_get(api_url).json()

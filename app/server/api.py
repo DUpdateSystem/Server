@@ -1,10 +1,6 @@
 from app.server.hubs.hub_list import hub_dict
-from .manager.data_manager import data_manager, tl
+from .manager.data_manager import data_manager
 from .utils import logging
-
-
-def init():
-    tl.start()
 
 
 def get_app_status(hub_uuid: str, app_id: list, use_cache=True, cache_data=True) -> dict or None:

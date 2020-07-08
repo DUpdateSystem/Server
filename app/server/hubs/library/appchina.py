@@ -1,8 +1,10 @@
+from json import loads
 from ..base_hub import BaseHub
-from ..hub_script_utils import get_value_from_app_id, get_session
+from ..hub_script_utils import get_value_from_app_id, proxy_post
 
 headers = {
-    "User-Agent": "Dalvik/2.1.0 (Linux; U; Android 10; ONEPLUS A6013 Build/QQ2A.200501.001.B2)"
+    "User-Agent": "Dalvik/2.1.0 (Linux; U; Android 10; ONEPLUS A6013 Build/QQ2A.200501.001.B2)",
+    "Content-Type": "application/x-www-form-urlencoded"
 }
 
 
@@ -41,10 +43,11 @@ def _get_release(raw_dict: dict) -> dict:
 
 
 def _send_api(param: dict) -> dict:
-    session = get_session()
     api_url = "https://mobile.appchina.com/market/api"
     format_json = {"param": str(param), "api": "market.MarketAPI", "\n": ""}
-    return session.post(url=api_url, headers=headers, data=format_json).json()
+    response_text = proxy_post(url=api_url, headers=headers, body_type='multipart/form-data',
+                               body_text=str(format_json))
+    return loads(response_text)
 
 
 def _get_package(app_info: list) -> str or None:

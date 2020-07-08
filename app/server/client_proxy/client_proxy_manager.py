@@ -21,17 +21,15 @@ class ClientProxyManager:
         ClientProxyManager.add_proxy(client_proxy)
         return client_proxy
 
-    def proxy_get(self, url: str, headers: list or None = None):
-        if headers is None:
-            headers = []
-        return self.call_proxy("get", url, headers)
+    def proxy_get(self, url: str, headers: dict or None = None):
+        return self.__call_proxy("get", url, headers, None, None)
 
-    def proxy_post(self, url: str, headers: list or None = None):
-        if headers is None:
-            headers = []
-        return self.call_proxy("post", url, headers)
+    def proxy_post(self, url: str, headers: dict or None = None,
+                   body_type: str or None = None, body_text: str or None = None):
+        return self.__call_proxy("post", url, headers, body_type, body_text)
 
-    def call_proxy(self, method: str, url: str, headers: list) -> str:
+    def __call_proxy(self, method: str, url: str, headers: dict or None,
+                     body_type: str or None, body_text: str or None) -> str:
         if not self.__proxy_pool:
             self.__loop.run_until_complete(
                 self.__wait_pool_task.wait()
@@ -41,7 +39,7 @@ class ClientProxyManager:
                 self.__wait_pool_task.clear()
             )
         client_proxy: ClientProxy = random.choice(self.__proxy_pool)
-        response = client_proxy.http_request(method, url, headers)
+        response = client_proxy.http_request(method, url, headers, body_type, body_text)
         status_code = response["code"]
         if status_code < 200 or status_code >= 400:
             raise HTTPError()

@@ -24,7 +24,7 @@ def init_logging():
 
 
 def get_response(url: str, throw_error=False, **kwargs) -> Response or None:
-    return hub_script_utils.get_response(url, throw_error, **kwargs)
+    return hub_script_utils.http_get(url, throw_error, **kwargs)
 
 
 def set_new_asyncio_loop():
