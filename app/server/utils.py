@@ -1,7 +1,6 @@
 import asyncio
 import logging
 
-import nest_asyncio
 from colorlog import ColoredFormatter
 from requests import Response
 
@@ -29,7 +28,6 @@ def get_response(url: str, throw_error=False, **kwargs) -> Response or None:
 
 def set_new_asyncio_loop():
     loop = asyncio.new_event_loop()
-    nest_asyncio.apply(loop)
     asyncio.set_event_loop(loop)
     return loop
 

@@ -21,4 +21,5 @@ def run():
     if run_args.debug:
         debug(run_args.hub_uuid, run_args.hub_options)
         server.stop(5).wait()
-    serve_thread.join()
+    else:
+        serve_thread.join()

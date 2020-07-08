@@ -75,10 +75,11 @@ message Dict {
 }
 
 message HttpRequestItem{
-  string method = 1;
-  string url = 2;
-  repeated Dict headers = 3;
-  HttpPostRequestBody body = 4;
+  string key = 1;
+  string method = 2;
+  string url = 3;
+  repeated Dict headers = 4;
+  HttpPostRequestBody body = 5;
 }
 
 message HttpPostRequestBody{
@@ -87,7 +88,7 @@ message HttpPostRequestBody{
 }
 
 message HttpResponseItem{
-  string url = 1;
+  string key= 1;
   int32 code = 2;
   string text = 3;
 }

@@ -71,7 +71,7 @@ class Greeter(route_pb2_grpc.UpdateServerRouteServicer):
             yield ParseDict(client_proxy.get_first_request_item(), HttpRequestItem())  # 发送客户端 id
             for http_request in client_proxy:
                 if http_request:
-                    yield ParseDict(http_request[0], HttpRequestItem())
+                    yield ParseDict(http_request, HttpRequestItem())
         except Exception:
             logging.exception('gRPC: NewClientProxyCall')
 
@@ -80,12 +80,11 @@ class Greeter(route_pb2_grpc.UpdateServerRouteServicer):
         # noinspection PyBroadException
         try:
             for request in request_iterator:
-                logging.info(request)
                 if request.code == 0:
-                    index = int(request.url)
+                    index = int(request.key)
                     client_proxy = ClientProxyManager.get_client(index)
                 else:
-                    client_proxy.push_response(request.url, request.code, request.text)
+                    client_proxy.push_response(request.key, request.code, request.text)
         except Exception:
             ClientProxyManager.remove_proxy(client_proxy)
             logging.exception('gRPC: NewClientProxyReturn')
