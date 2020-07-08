@@ -32,4 +32,19 @@ def set_new_asyncio_loop():
     return loop
 
 
+def call_def_in_loop_return_result(core, loop):
+    if loop.is_running():
+        future = asyncio.run_coroutine_threadsafe(core, loop)
+        return future.result()
+    else:
+        return loop.run_until_complete(core)
+
+
+def call_def_in_loop(core, loop):
+    if loop.is_running():
+        asyncio.run_coroutine_threadsafe(core, loop)
+    else:
+        loop.run_until_complete(core)
+
+
 logging = init_logging()

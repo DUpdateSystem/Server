@@ -115,7 +115,7 @@ def init():
         tl.start()
 
 
-def serve() -> [Thread, Server]:
+def serve() -> [Server, Thread]:
     init()
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=server_config.max_workers))
     route_pb2_grpc.add_UpdateServerRouteServicer_to_server(Greeter(), server)
@@ -123,4 +123,4 @@ def serve() -> [Thread, Server]:
     server.start()
     t = threading.Thread(target=server.wait_for_termination)
     t.start()
-    return t, server
+    return server, t

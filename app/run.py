@@ -1,10 +1,16 @@
 import argparse
+import sys
+from threading import Thread
+
+from grpc import Server
 
 from app.run_debugger import debug
 from app.run_grpc_server import serve
+from app.server.client_proxy.client_proxy_manager import ClientProxyManager
+from app.server.utils import logging
 
 
-def run():
+def __run() -> [Server, Thread, Thread or None]:
     parser = argparse.ArgumentParser(
         prog="DUpdateSystem Server",
         description='DUpdateSystem 服务端'
@@ -17,9 +23,27 @@ def run():
                         help='测试软件源脚本的运行选项，以 key value 为组，例如：android_app_package net.xzos.upgradeall')
 
     run_args = parser.parse_args()
-    serve_thread, server = serve()
+    # 运行服务程序
+    server, server_thread = serve()
+    # 运行 debug 程序
+    debug_thread = None
     if run_args.debug:
-        debug(run_args.hub_uuid, run_args.hub_options)
+        debug_thread = Thread(target=debug, args=(run_args.hub_uuid, run_args.hub_options))
+        debug_thread.start()
+    return server, server_thread, debug_thread
+
+
+def run():
+    server = None
+    try:
+        server, server_thread, debug_thread = __run()
+        if debug_thread:
+            debug_thread.join()
+        server_thread.join()
+    except KeyboardInterrupt:
+        logging.info("正在停止")
+    finally:
+        ClientProxyManager.stop()
         server.stop(5).wait()
-    else:
-        serve_thread.join()
+        logging.info("已停止")
+        sys.exit(0)

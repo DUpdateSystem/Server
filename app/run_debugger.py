@@ -5,7 +5,7 @@ from .server.api import get_app_status, get_download_info
 from .server.utils import logging
 
 
-def debug(hub_uuid: str, app_id_option):
+def _debug(hub_uuid: str, app_id_option):
     server_config.debug_mode = True
     app_id = []
     for i in range(0, len(app_id_option), 2):
@@ -22,3 +22,10 @@ def debug(hub_uuid: str, app_id_option):
     row_download_info = get_download_info(hub_uuid, app_id, [0, 0])
     js = json.dumps(row_download_info, sort_keys=True, indent=4, ensure_ascii=False)
     logging.debug(js)
+
+
+def debug(hub_uuid: str, app_id_option):
+    try:
+        _debug(hub_uuid, app_id_option)
+    except KeyboardInterrupt:
+        logging.info("手动停止 DEBUG")

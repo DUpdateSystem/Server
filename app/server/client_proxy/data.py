@@ -1,13 +1,15 @@
 from multiprocessing import Manager
 
-manager = Manager()
+__manager = Manager()
 
-client_proxy_index = manager.Value("client_proxy_index", 0)
+
+def get_manager_value(key, value):
+    return __manager.Value(key, value)
 
 
 def get_manager_list():
-    return manager.list()
+    return __manager.list()
 
 
 def get_manager_dict():
-    return manager.dict()
+    return __manager.dict()
