@@ -36,7 +36,7 @@ class ClientProxyManager:
             )
         else:
             self.__loop.call_soon_threadsafe(
-                self.__wait_pool_task.clear()
+                self.__wait_pool_task.clear
             )
         client_proxy: ClientProxy = random.choice(self.__proxy_pool)
         response = client_proxy.http_request(method, url, headers, body_type, body_text)
@@ -48,7 +48,7 @@ class ClientProxyManager:
     def add_proxy(self, client_proxy: ClientProxy):
         self.__proxy_pool.append(client_proxy)
         self.__loop.call_soon_threadsafe(
-            self.__wait_pool_task.set()
+            self.__wait_pool_task.set
         )
 
     def remove_proxy(self, client_proxy: ClientProxy):

@@ -72,7 +72,7 @@ class ClientProxy:
             d = self.__lock_dict[url]
             loop = d["loop"]
             task = d["task"]
-            loop.call_soon_threadsafe(task.set())  # 解锁
+            loop.call_soon_threadsafe(task.set)  # 解锁
 
     def __set_url_lock(self, key: str):
         loop, task = self._call_def_in_loop_return_result(
@@ -152,7 +152,7 @@ class ClientProxy:
         }
         self.__request_queue.append(request)
         self.__wait_next_loop.call_soon_threadsafe(
-            self.__wait_next_task.set()
+            self.__wait_next_task.set
         )
 
     @staticmethod
