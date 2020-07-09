@@ -1,7 +1,7 @@
 import asyncio
 
 from app.server.utils import set_new_asyncio_loop, call_def_in_loop, call_def_in_loop_return_result
-from .data import get_manager_value, get_manager_list, get_manager_dict
+from .utils import get_manager_value, get_manager_list, get_manager_dict, get_key, ProxyKilledError
 
 
 class ClientProxy:
@@ -48,16 +48,19 @@ class ClientProxy:
         response = self.__http_request_async(method, url, headers, body_type, body_text)
         return response
 
+    def check_proxy_status(self, key: str) -> bool:
+        return key in self.__lock_dict and self.__running.value
+
     def __http_request_async(self, method: str, url: str, headers: dict,
                              body_type: str or None, body_text: str or None) -> dict:
-        key = self.__get_key(method, url, headers, body_type, body_text)
+        key = get_key(method, url, headers, body_type, body_text)
         # 输入队列
         self.__add_request_queue(key, method, url, headers, body_type, body_text)
         # 等待返回
         self.__set_request_lock(key)
         # 检查运行状态
         if not self.__running.value:
-            raise KeyboardInterrupt
+            raise ProxyKilledError
         # 获取返回数据
         return call_def_in_loop_return_result(
             self.__get_response(key),
@@ -115,10 +118,11 @@ class ClientProxy:
             lock_dict = self.__lock_dict
             if key in lock_dict:
                 d = lock_dict[key]
-                if d["used"]:
-                    d["used"] -= 1
+                d["used"] -= 1
+                if d["used"] > 0:
                     return self.__response_dict[key]
                 else:
+                    del lock_dict[key]
                     return self.__response_dict.pop(key)
 
     def __get_request(self):
@@ -162,11 +166,3 @@ class ClientProxy:
         self.__loop.call_soon_threadsafe(
             self.__wait_next_task.set
         )
-
-    @staticmethod
-    def __get_key(method: str, url: str, headers: dict or None,
-                  body_type: str or None, body_text: str or None) -> str:
-        key = f"{method}-{url}-{headers}"
-        if body_type and body_text:
-            key += f"-{body_type}-{body_text}"
-        return key
