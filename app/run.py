@@ -39,6 +39,7 @@ def run():
         server, server_thread, debug_thread = __run()
         if debug_thread:
             debug_thread.join()
+            server.stop(5).wait()
         server_thread.join()
     except KeyboardInterrupt:
         logging.info("正在停止")
