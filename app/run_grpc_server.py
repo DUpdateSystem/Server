@@ -12,6 +12,7 @@ from app.grpc_template import route_pb2_grpc
 from app.grpc_template.route_pb2 import AppStatus, ResponseList, DownloadInfo, Str, HttpRequestItem
 from app.server.api import get_app_status, get_app_status_list, get_download_info
 from app.server.client_proxy.client_proxy_manager import ClientProxyManager
+from app.server.client_proxy.utils import ProxyKilledError
 from app.server.manager.data_manager import tl
 from app.server.utils import logging, get_response
 
@@ -72,6 +73,8 @@ class Greeter(route_pb2_grpc.UpdateServerRouteServicer):
             for http_request in client_proxy:
                 if http_request:
                     yield ParseDict(http_request, HttpRequestItem())
+        except ProxyKilledError:
+            pass
         except Exception:
             logging.exception('gRPC: NewClientProxyCall')
 

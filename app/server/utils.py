@@ -29,22 +29,23 @@ def get_response(url: str, throw_error=False, **kwargs) -> Response or None:
 def set_new_asyncio_loop():
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
+    loop.set_debug(True)
     return loop
 
 
 def call_def_in_loop_return_result(core, loop):
-    if loop.is_running():
-        future = asyncio.run_coroutine_threadsafe(core, loop)
-        return future.result()
-    else:
+    try:
         return loop.run_until_complete(core)
+    except RuntimeError:
+        future = asyncio.run_coroutine_threadsafe(core, loop)
+    return future.result()
 
 
 def call_def_in_loop(core, loop):
-    if loop.is_running():
-        asyncio.run_coroutine_threadsafe(core, loop)
-    else:
+    try:
         loop.run_until_complete(core)
+    except RuntimeError:
+        asyncio.run_coroutine_threadsafe(core, loop)
 
 
 logging = init_logging()

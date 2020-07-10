@@ -3,6 +3,10 @@ from multiprocessing import Manager
 __manager = Manager()
 
 
+def get_manager_lock():
+    return __manager.Lock()
+
+
 def get_manager_value(key, value):
     return __manager.Value(key, value)
 
@@ -24,4 +28,5 @@ def get_key(method: str, url: str, headers: dict or None,
 
 
 class ProxyKilledError(Exception):
-    pass
+    def __init__(self, index):
+        self.client_index = index

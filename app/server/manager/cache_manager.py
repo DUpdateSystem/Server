@@ -29,6 +29,8 @@ class CacheManager:
 
     @staticmethod
     def __cache(redis_db: Redis, key: str, value: str, ex_h: int = None):
+        if server_config.debug_mode:
+            return
         if key:
             ex = None
             if ex_h:
@@ -37,19 +39,15 @@ class CacheManager:
 
     @staticmethod
     def __get(redis_db: Redis, key: str) -> str:
-        if redis_db.exists(key) == 0:
+        if server_config.debug_mode or redis_db.exists(key) == 0:
             raise KeyError
         return redis_db.get(key)
 
     def add_tmp_cache(self, key, value: str, ex_h: int = server_config.auto_refresh_time * 2):
-        if server_config.debug_mode:
-            return
         local_cache.add(key, value)
         self.__cache(self.__redis_tmp_cache_client, key, value, ex_h)
 
     def get_tmp_cache(self, key) -> str:
-        if server_config.debug_mode:
-            raise KeyError
         value = local_cache.get(key)
         if not value:
             value = self.__get(self.__redis_tmp_cache_client, key)
@@ -57,8 +55,6 @@ class CacheManager:
         return value
 
     def add_release_cache(self, hub_uuid: str, app_info: list, release_info: list or None = None):
-        if server_config.debug_mode:
-            return
         key = self.__get_app_cache_key(hub_uuid, app_info)
         value = json.dumps(release_info)
         self.__cache(self.__redis_release_cache_client, key, value, server_config.auto_refresh_time * 2)
@@ -66,8 +62,6 @@ class CacheManager:
         logging.debug(f"release caching: {app_info}")
 
     def get_release_cache(self, hub_uuid: str, app_info: list) -> dict or None:
-        if server_config.debug_mode:
-            return None
         key = self.__get_app_cache_key(hub_uuid, app_info)
         if key is None:
             logging.error(f"""WRONG FORMAT
