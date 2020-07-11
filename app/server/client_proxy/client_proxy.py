@@ -43,6 +43,7 @@ class ClientProxy:
             self.__wait_next_task.set
         )
         self.__loop.stop()
+        self.__wait_loop.stop()
 
     @property
     def index(self):
@@ -143,6 +144,7 @@ class ClientProxy:
         if not self.__running.value:
             raise ProxyKilledError(self.index)
         self.__wait_next_task.clear()
+        print(self.__request_queue)
         return self.__request_queue.pop(0)
 
     def __add_request_queue(self, key: str, method: str, url: str, headers: dict,

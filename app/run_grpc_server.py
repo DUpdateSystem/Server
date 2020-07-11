@@ -88,6 +88,7 @@ class Greeter(route_pb2_grpc.UpdateServerRouteServicer):
                     client_proxy = ClientProxyManager.get_client(index)
                 else:
                     client_proxy.push_response(request.key, request.code, request.text)
+            ClientProxyManager.remove_proxy(client_proxy)
         except Exception:
             ClientProxyManager.remove_proxy(client_proxy)
             logging.exception('gRPC: NewClientProxyReturn')

@@ -8,25 +8,24 @@ from app.config import server_config
 from app.server.hubs.hub_list import hub_dict
 from app.server.manager.cache_manager import cache_manager
 from app.server.manager.hub_server_manager import HubServerManager
-from app.server.utils import logging
+from app.server.utils import logging, set_new_asyncio_loop, call_def_in_loop_return_result
 
 
 class DataManager:
+    __loop = set_new_asyncio_loop()
 
     def __init__(self):
         self.__hub_server_manager = HubServerManager()
 
     def get_response_list(self, hub_uuid: str, app_id_list: list) -> tuple:
-        loop = asyncio.new_event_loop()
-        asyncio.set_event_loop(loop)
-        response_list = loop.run_until_complete(
+        response_list = call_def_in_loop_return_result(
             asyncio.gather(
                 *[self.__get_response_package(hub_uuid, app_id) for app_id in app_id_list]
-            ))
-        loop.close()
+            ), self.__loop
+        )
         return response_list
 
-    async def __get_response_package(self, hub_uuid: str, app_id: list) -> dict:
+    def __get_response_package(self, hub_uuid: str, app_id: list) -> dict:
         return {
             "app_id": app_id,
             "app_status": self.get_app_status(hub_uuid, app_id)
