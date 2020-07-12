@@ -3,9 +3,10 @@ import random
 
 from requests import HTTPError
 
-from app.server.utils import logging, set_new_asyncio_loop, call_def_in_loop_return_result
+from app.server.utils import (logging, set_new_asyncio_loop, call_def_in_loop_return_result,
+                              get_manager_value, get_manager_lock)
 from .client_proxy import ClientProxy
-from .utils import get_manager_value, get_manager_lock, get_key, ProxyKilledError
+from .utils import get_key, ProxyKilledError
 
 
 class ClientProxyManager:

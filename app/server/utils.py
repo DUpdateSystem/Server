@@ -1,5 +1,6 @@
 import asyncio
 import logging
+from multiprocessing import Manager
 
 from colorlog import ColoredFormatter
 from requests import Response
@@ -10,7 +11,7 @@ LOG_LEVEL = logging.DEBUG
 LOG_FORMAT = "  %(log_color)s%(levelname)-8s%(reset)s | %(log_color)s%(message)s%(reset)s"
 
 
-def init_logging():
+def __init_logging():
     logging.root.setLevel(LOG_LEVEL)
     formatter = ColoredFormatter(LOG_FORMAT)
     stream = logging.StreamHandler()
@@ -20,6 +21,9 @@ def init_logging():
     log.setLevel(LOG_LEVEL)
     log.addHandler(stream)
     return log
+
+
+logging = __init_logging()
 
 
 def get_response(url: str, throw_error=False, **kwargs) -> Response or None:
@@ -48,4 +52,20 @@ def call_def_in_loop(core, loop):
         asyncio.run_coroutine_threadsafe(core, loop)
 
 
-logging = init_logging()
+__manager = Manager()
+
+
+def get_manager_lock():
+    return __manager.Lock()
+
+
+def get_manager_value(key, value):
+    return __manager.Value(key, value)
+
+
+def get_manager_list():
+    return __manager.list()
+
+
+def get_manager_dict():
+    return __manager.dict()

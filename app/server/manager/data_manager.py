@@ -8,7 +8,7 @@ from app.config import server_config
 from app.server.hubs.hub_list import hub_dict
 from app.server.manager.cache_manager import cache_manager
 from app.server.manager.hub_server_manager import HubServerManager
-from app.server.utils import logging, set_new_asyncio_loop, call_def_in_loop_return_result
+from app.server.utils import logging, set_new_asyncio_loop, call_def_in_loop_return_result, get_manager_list
 
 
 class DataManager:
@@ -17,19 +17,26 @@ class DataManager:
     def __init__(self):
         self.__hub_server_manager = HubServerManager()
 
-    def get_response_list(self, hub_uuid: str, app_id_list: list) -> tuple:
-        response_list = call_def_in_loop_return_result(
-            asyncio.gather(
-                *[self.__get_response_package(hub_uuid, app_id) for app_id in app_id_list]
-            ), self.__loop
+    def get_response_list(self, hub_uuid: str, app_id_list: list) -> list:
+        response_list = get_manager_list()
+        call_def_in_loop_return_result(
+            self.__get_response_package(hub_uuid, app_id_list, response_list)
+            , self.__loop
         )
-        return response_list
+        return list(response_list)
 
-    def __get_response_package(self, hub_uuid: str, app_id: list) -> dict:
-        return {
-            "app_id": app_id,
-            "app_status": self.get_app_status(hub_uuid, app_id)
-        }
+    async def __get_response_package(self, hub_uuid: str, app_id_list: list, return_list: list):
+        await asyncio.gather(
+            *[self.___async_get_response_package(hub_uuid, app_id, return_list) for app_id in app_id_list]
+        )
+
+    async def ___async_get_response_package(self, hub_uuid: str, app_id: list, return_list: list):
+        return_list.append(
+            {
+                "app_id": app_id,
+                "app_status": self.get_app_status(hub_uuid, app_id)
+            }
+        )
 
     def get_app_status(self, hub_uuid: str, app_id: list, use_cache=True, cache_data=True) -> dict:
         if hub_uuid not in hub_dict:

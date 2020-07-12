@@ -1,15 +1,15 @@
 import asyncio
 
-from app.server.utils import logging, set_new_asyncio_loop, call_def_in_loop, call_def_in_loop_return_result
-from .utils import get_manager_value, get_manager_list, get_manager_dict, get_key, ProxyKilledError
+from app.server.utils import (logging, set_new_asyncio_loop, call_def_in_loop, call_def_in_loop_return_result,
+                              get_manager_value, get_manager_list, get_manager_dict)
+from .utils import get_key, ProxyKilledError
 
 
 class ClientProxy:
     # 获取 http 请求主协程
     __loop = set_new_asyncio_loop()
-    __wait_loop = set_new_asyncio_loop()
     # 发送下一个请求协程
-    __wait_next_task = asyncio.Event()
+    __wait_cond = asyncio.Condition()
     # 等待客户端回应协程存储字典
     __lock_dict = {}  # 请求数据字典
     __lock_dict_lock = asyncio.Lock()
@@ -28,7 +28,9 @@ class ClientProxy:
         return self
 
     def __next__(self):
-        request = self.__get_request()
+        request = call_def_in_loop_return_result(
+            self.__get_request(), self.__loop
+        )
         logging.info(f'c{self.index}：发送代理请求')
         return request
 
@@ -39,11 +41,8 @@ class ClientProxy:
                 self.__unlock_request_wait(key),
                 self.__loop
             )
-        self.__wait_loop.call_soon_threadsafe(
-            self.__wait_next_task.set
-        )
+        self.__wait_cond.notify()
         self.__loop.stop()
-        self.__wait_loop.stop()
 
     @property
     def index(self):
@@ -53,27 +52,27 @@ class ClientProxy:
                      body_type: str or None, body_text: str or None) -> dict:
         if headers is None:
             headers = {}
-        response = self.__http_request(method, url, headers, body_type, body_text)
-        return response
+        return call_def_in_loop_return_result(
+            self.__http_request(method, url, headers, body_type, body_text),
+            self.__loop
+        )
 
     def check_proxy_status(self, key: str) -> bool:
         return key in self.__lock_dict and self.__running.value
 
-    def __http_request(self, method: str, url: str, headers: dict,
-                       body_type: str or None, body_text: str or None) -> dict:
+    async def __http_request(self, method: str, url: str, headers: dict,
+                             body_type: str or None, body_text: str or None) -> dict:
+        logging.info("input")
         key = get_key(method, url, headers, body_type, body_text)
         # 输入队列
         self.__add_request_queue(key, method, url, headers, body_type, body_text)
         # 等待返回
-        self.__set_request_lock(key)
+        await self.__set_request_lock(key)
         # 检查运行状态
         if not self.__running.value:
             raise ProxyKilledError(self.index)
         # 获取返回数据
-        return call_def_in_loop_return_result(
-            self.__get_response(key),
-            self.__loop
-        )
+        return await self.__get_response(key)
 
     def push_response(self, key: str, status_code: int, response: str):
         logging.info(f'c{self.index}：接收代理返回')
@@ -95,17 +94,16 @@ class ClientProxy:
     async def __unlock_request_wait(self, key: str):
         async with self.__lock_dict_lock:
             d = self.__lock_dict[key]
-            task = d["task"]
-            self.__loop.call_soon_threadsafe(task.set)  # 解锁
+            cond = d["cond"]
+            cond.notify_all()  # 解锁
 
-    def __set_request_lock(self, key: str):
-        task = call_def_in_loop_return_result(
+    async def __set_request_lock(self, key: str):
+        cond = call_def_in_loop_return_result(
             self.__get_request_lock(key),
             self.__loop
         )
-        call_def_in_loop_return_result(
-            task.wait(), self.__loop
-        )
+        async with cond:
+            await cond.wait()
 
     async def __get_request_lock(self, key: str):
         with await self.__lock_dict_lock:
@@ -113,14 +111,14 @@ class ClientProxy:
             if key in lock_dict:
                 d = lock_dict[key]
                 d["used"] += 1
-                task = d["task"]
+                cond = d["cond"]
             else:
-                task = asyncio.Event(loop=self.__loop)
+                cond = asyncio.Condition()
                 lock_dict[key] = {
-                    "task": task,
-                    "used": 1
+                    "used": 1,
+                    "cond": cond
                 }
-        return task
+        return cond
 
     async def __get_response(self, key: str) -> dict:
         with await self.__lock_dict_lock:
@@ -134,17 +132,14 @@ class ClientProxy:
                     del lock_dict[key]
                     return self.__response_dict.pop(key)
 
-    def __get_request(self):
+    async def __get_request(self):
         if not self.__request_queue:
-            call_def_in_loop_return_result(
-                self.__wait_next_task.wait(),
-                self.__wait_loop
-            )
+            wait = self.__wait_cond
+            async with wait:
+                await wait.wait()
         # 检查运行状态
         if not self.__running.value:
             raise ProxyKilledError(self.index)
-        self.__wait_next_task.clear()
-        print(self.__request_queue)
         return self.__request_queue.pop(0)
 
     def __add_request_queue(self, key: str, method: str, url: str, headers: dict,
@@ -175,6 +170,4 @@ class ClientProxy:
             "body": body
         }
         self.__request_queue.append(request)
-        self.__wait_loop.call_soon_threadsafe(
-            self.__wait_next_task.set
-        )
+        self.__wait_cond.notify()
