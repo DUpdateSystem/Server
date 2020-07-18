@@ -8,11 +8,8 @@ package server_route;
 
 service UpdateServerRoute {
   rpc GetCloudConfig(Empty) returns (Str) {}
-  rpc GetAppStatus(Request) returns (AppStatus) {}
-  rpc GetAppStatusList(RequestList) returns (ResponseList) {}
+  rpc GetAppStatus(Request) returns (Response) {}
   rpc GetDownloadInfo(DownloadAssetIndex) returns (DownloadInfo) {}
-  rpc NewClientProxyCall(Empty) returns (stream HttpRequestItem) {}
-  rpc NewClientProxyReturn(stream HttpResponseItem) returns (Empty) {}
 }
 
 message Empty {}
@@ -25,6 +22,8 @@ message RequestList {
 message Request {
   string hub_uuid = 1;
   repeated AppIdItem app_id = 2;
+  int32 fun_id = 3;
+  HttpResponseItem http_response = 4;
 }
 
 message AppId {repeated AppIdItem app_id = 1;}
@@ -41,6 +40,12 @@ message AppIdItem {
   string value = 2;
 }
 
+message Response{
+  AppStatus app_status = 1;
+  bool need_proxy = 2;
+  int32 next_fun_id = 3;
+  HttpRequestItem http_proxy_request = 4;
+}
 message AppStatus {
   bool valid_hub_uuid = 1;
   bool valid_app = 2;
@@ -75,11 +80,10 @@ message Dict {
 }
 
 message HttpRequestItem{
-  string key = 1;
-  string method = 2;
-  string url = 3;
-  repeated Dict headers = 4;
-  HttpPostRequestBody body = 5;
+  string method = 1;
+  string url = 2;
+  repeated Dict headers = 3;
+  HttpPostRequestBody body = 4;
 }
 
 message HttpPostRequestBody{
@@ -88,7 +92,6 @@ message HttpPostRequestBody{
 }
 
 message HttpResponseItem{
-  string key= 1;
-  int32 code = 2;
-  string text = 3;
+  int32 status_code = 1;
+  string text = 2;
 }

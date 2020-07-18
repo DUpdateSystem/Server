@@ -4,7 +4,7 @@ import requests
 from bs4 import BeautifulSoup
 from requests import Response, Session
 
-from app.server.client_proxy.client_proxy_manager import ClientProxyManager
+from app.server.client_proxy.client_proxy_utils import proxy_get as __proxy_get, proxy_post as __proxy_post
 
 __session = requests.Session()
 
@@ -24,42 +24,29 @@ def parsing_http_page(url: str, params=None) -> BeautifulSoup:
     return BeautifulSoup(html, "html5lib")
 
 
+def proxy_get(url: str, headers: dict or None = None):
+    """简易包装的客户端代理 get 方法
+    Args:
+        url: 访问的网址
+        headers: 请求头参数字典
+    Returns:
+        抛出包含请求数据的请求代理对象的错误
+    """
+    __proxy_get(url, headers)
+
+
 def proxy_post(url: str, headers: dict or None = None,
-               body_type: str or None = None, body_text: str or None = None,
-               throw_error=True) -> str or None:
+               body_type: str or None = None, body_text: str or None = None):
     """简易包装的客户端代理 post 方法
     Args:
         url: 访问的网址
         headers: 请求头参数字典
         body_type: 请求主体数据类型
         body_text: 请求主体
-        throw_error: 是否抛出 HTTP 状态码异常
     Returns:
-        响应的字符串数据
+        抛出包含请求数据的请求代理对象的错误
     """
-    try:
-        text = ClientProxyManager.proxy_post(url, headers, body_type, body_text)
-        return text
-    except Exception as e:
-        if throw_error:
-            raise e
-
-
-def proxy_get(url: str, headers: dict or None = None, throw_error=True) -> str or None:
-    """简易包装的客户端代理 get 方法
-    Args:
-        url: 访问的网址
-        headers: 请求头参数字典
-        throw_error: 是否抛出 HTTP 状态码异常
-    Returns:
-        响应的字符串数据
-    """
-    try:
-        text = ClientProxyManager.proxy_get(url, headers)
-        return text
-    except Exception as e:
-        if throw_error:
-            raise e
+    __proxy_post(url, headers, body_type, body_text)
 
 
 def http_get(url: str, throw_error=True, **kwargs) -> Response or None:

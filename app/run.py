@@ -6,7 +6,6 @@ from grpc import Server
 
 from app.run_debugger import debug
 from app.run_grpc_server import serve
-from app.server.client_proxy.client_proxy_manager import ClientProxyManager
 from app.server.utils import logging
 
 
@@ -44,7 +43,6 @@ def run():
     except KeyboardInterrupt:
         logging.info("正在停止")
     finally:
-        ClientProxyManager.stop()
         server.stop(5).wait()
         logging.info("已停止")
         sys.exit(0)

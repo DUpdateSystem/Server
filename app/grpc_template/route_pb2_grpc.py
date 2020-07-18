@@ -22,27 +22,12 @@ class UpdateServerRouteStub(object):
         self.GetAppStatus = channel.unary_unary(
                 '/server_route.UpdateServerRoute/GetAppStatus',
                 request_serializer=app_dot_grpc__template_dot_route__pb2.Request.SerializeToString,
-                response_deserializer=app_dot_grpc__template_dot_route__pb2.AppStatus.FromString,
-                )
-        self.GetAppStatusList = channel.unary_unary(
-                '/server_route.UpdateServerRoute/GetAppStatusList',
-                request_serializer=app_dot_grpc__template_dot_route__pb2.RequestList.SerializeToString,
-                response_deserializer=app_dot_grpc__template_dot_route__pb2.ResponseList.FromString,
+                response_deserializer=app_dot_grpc__template_dot_route__pb2.Response.FromString,
                 )
         self.GetDownloadInfo = channel.unary_unary(
                 '/server_route.UpdateServerRoute/GetDownloadInfo',
                 request_serializer=app_dot_grpc__template_dot_route__pb2.DownloadAssetIndex.SerializeToString,
                 response_deserializer=app_dot_grpc__template_dot_route__pb2.DownloadInfo.FromString,
-                )
-        self.NewClientProxyCall = channel.unary_stream(
-                '/server_route.UpdateServerRoute/NewClientProxyCall',
-                request_serializer=app_dot_grpc__template_dot_route__pb2.Empty.SerializeToString,
-                response_deserializer=app_dot_grpc__template_dot_route__pb2.HttpRequestItem.FromString,
-                )
-        self.NewClientProxyReturn = channel.stream_unary(
-                '/server_route.UpdateServerRoute/NewClientProxyReturn',
-                request_serializer=app_dot_grpc__template_dot_route__pb2.HttpResponseItem.SerializeToString,
-                response_deserializer=app_dot_grpc__template_dot_route__pb2.Empty.FromString,
                 )
 
 
@@ -61,25 +46,7 @@ class UpdateServerRouteServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
-    def GetAppStatusList(self, request, context):
-        """Missing associated documentation comment in .proto file."""
-        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details('Method not implemented!')
-        raise NotImplementedError('Method not implemented!')
-
     def GetDownloadInfo(self, request, context):
-        """Missing associated documentation comment in .proto file."""
-        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details('Method not implemented!')
-        raise NotImplementedError('Method not implemented!')
-
-    def NewClientProxyCall(self, request, context):
-        """Missing associated documentation comment in .proto file."""
-        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details('Method not implemented!')
-        raise NotImplementedError('Method not implemented!')
-
-    def NewClientProxyReturn(self, request_iterator, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
@@ -96,27 +63,12 @@ def add_UpdateServerRouteServicer_to_server(servicer, server):
             'GetAppStatus': grpc.unary_unary_rpc_method_handler(
                     servicer.GetAppStatus,
                     request_deserializer=app_dot_grpc__template_dot_route__pb2.Request.FromString,
-                    response_serializer=app_dot_grpc__template_dot_route__pb2.AppStatus.SerializeToString,
-            ),
-            'GetAppStatusList': grpc.unary_unary_rpc_method_handler(
-                    servicer.GetAppStatusList,
-                    request_deserializer=app_dot_grpc__template_dot_route__pb2.RequestList.FromString,
-                    response_serializer=app_dot_grpc__template_dot_route__pb2.ResponseList.SerializeToString,
+                    response_serializer=app_dot_grpc__template_dot_route__pb2.Response.SerializeToString,
             ),
             'GetDownloadInfo': grpc.unary_unary_rpc_method_handler(
                     servicer.GetDownloadInfo,
                     request_deserializer=app_dot_grpc__template_dot_route__pb2.DownloadAssetIndex.FromString,
                     response_serializer=app_dot_grpc__template_dot_route__pb2.DownloadInfo.SerializeToString,
-            ),
-            'NewClientProxyCall': grpc.unary_stream_rpc_method_handler(
-                    servicer.NewClientProxyCall,
-                    request_deserializer=app_dot_grpc__template_dot_route__pb2.Empty.FromString,
-                    response_serializer=app_dot_grpc__template_dot_route__pb2.HttpRequestItem.SerializeToString,
-            ),
-            'NewClientProxyReturn': grpc.stream_unary_rpc_method_handler(
-                    servicer.NewClientProxyReturn,
-                    request_deserializer=app_dot_grpc__template_dot_route__pb2.HttpResponseItem.FromString,
-                    response_serializer=app_dot_grpc__template_dot_route__pb2.Empty.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -156,23 +108,7 @@ class UpdateServerRoute(object):
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/server_route.UpdateServerRoute/GetAppStatus',
             app_dot_grpc__template_dot_route__pb2.Request.SerializeToString,
-            app_dot_grpc__template_dot_route__pb2.AppStatus.FromString,
-            options, channel_credentials,
-            call_credentials, compression, wait_for_ready, timeout, metadata)
-
-    @staticmethod
-    def GetAppStatusList(request,
-            target,
-            options=(),
-            channel_credentials=None,
-            call_credentials=None,
-            compression=None,
-            wait_for_ready=None,
-            timeout=None,
-            metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/server_route.UpdateServerRoute/GetAppStatusList',
-            app_dot_grpc__template_dot_route__pb2.RequestList.SerializeToString,
-            app_dot_grpc__template_dot_route__pb2.ResponseList.FromString,
+            app_dot_grpc__template_dot_route__pb2.Response.FromString,
             options, channel_credentials,
             call_credentials, compression, wait_for_ready, timeout, metadata)
 
@@ -189,37 +125,5 @@ class UpdateServerRoute(object):
         return grpc.experimental.unary_unary(request, target, '/server_route.UpdateServerRoute/GetDownloadInfo',
             app_dot_grpc__template_dot_route__pb2.DownloadAssetIndex.SerializeToString,
             app_dot_grpc__template_dot_route__pb2.DownloadInfo.FromString,
-            options, channel_credentials,
-            call_credentials, compression, wait_for_ready, timeout, metadata)
-
-    @staticmethod
-    def NewClientProxyCall(request,
-            target,
-            options=(),
-            channel_credentials=None,
-            call_credentials=None,
-            compression=None,
-            wait_for_ready=None,
-            timeout=None,
-            metadata=None):
-        return grpc.experimental.unary_stream(request, target, '/server_route.UpdateServerRoute/NewClientProxyCall',
-            app_dot_grpc__template_dot_route__pb2.Empty.SerializeToString,
-            app_dot_grpc__template_dot_route__pb2.HttpRequestItem.FromString,
-            options, channel_credentials,
-            call_credentials, compression, wait_for_ready, timeout, metadata)
-
-    @staticmethod
-    def NewClientProxyReturn(request_iterator,
-            target,
-            options=(),
-            channel_credentials=None,
-            call_credentials=None,
-            compression=None,
-            wait_for_ready=None,
-            timeout=None,
-            metadata=None):
-        return grpc.experimental.stream_unary(request_iterator, target, '/server_route.UpdateServerRoute/NewClientProxyReturn',
-            app_dot_grpc__template_dot_route__pb2.HttpResponseItem.SerializeToString,
-            app_dot_grpc__template_dot_route__pb2.Empty.FromString,
             options, channel_credentials,
             call_credentials, compression, wait_for_ready, timeout, metadata)
