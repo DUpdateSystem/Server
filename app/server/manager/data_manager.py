@@ -33,20 +33,6 @@ class DataManager:
                 "http_proxy_request": http_request_item.to_dict()
             }
 
-    def __get_app_status(self, hub_uuid: str, app_id: list,
-                         fun_id: int = 0, http_response: dict = None,
-                         use_cache=True, cache_data=True) -> dict:
-        if hub_uuid not in hub_dict:
-            logging.warning(f"NO HUB: {hub_uuid}")
-            return {"valid_hub_uuid": False}
-        return_list = self.__get_release_info(hub_uuid, app_id, fun_id=fun_id, http_response=http_response,
-                                              use_cache=use_cache, cache_data=cache_data)
-        return {
-            "valid_hub_uuid": True,
-            "valid_app": True,
-            "release_info": return_list
-        }
-
     def get_download_info(self, hub_uuid: str, app_id: list, asset_index: list) -> dict or None:
         if hub_uuid not in hub_dict:
             logging.warning(f"NO HUB: {hub_uuid}")
@@ -66,38 +52,55 @@ class DataManager:
         for hub_uuid in cache_queue.keys():
             for app_info in cache_queue[hub_uuid]:
                 try:
-                    self.__get_release_info(hub_uuid, app_info, use_cache=False)
+                    self.__get_app_status(hub_uuid, app_info, use_cache=False)
                     i += 1
                 except NeedClientProxy:
                     pass
         logging.info(f"refresh all data: finish({i})")
 
-    def __get_release_info(self, hub_uuid: str, app_id: list,
-                           fun_id: int = 0, http_response: dict = None,
-                           use_cache=True, cache_data=True) -> list or None:
+    def __get_app_status(self, hub_uuid: str, app_id: list,
+                         fun_id: int = 0, http_response: dict = None,
+                         use_cache=True, cache_data=True) -> dict:
+        if hub_uuid not in hub_dict:
+            logging.warning(f"NO HUB: {hub_uuid}")
+            return {"valid_hub_uuid": False}
+        # 尝试取缓存
         if use_cache:
-            # 尝试取缓存
             try:
                 return cache_manager.get_release_cache(hub_uuid, app_id)
             except (KeyError, NameError):
                 pass
 
+        valid_data, valid_app, return_list = self.__get_release_info(hub_uuid, app_id,
+                                                                     fun_id=fun_id, http_response=http_response)
+        release_info = {
+            "valid_hub_uuid": True,
+            "valid_app": valid_app,
+            "release_info": return_list
+        }
+        if cache_data and valid_data:
+            cache_manager.add_release_cache(hub_uuid, app_id, release_info)
+        return release_info
+
+    def __get_release_info(self, hub_uuid: str, app_id: list,
+                           fun_id: int = 0, http_response: dict = None) -> [bool, bool, list or None]:
         # 获取云端数据
+        valid_data = True
+        valid_app = True
         release_info = None
         # noinspection PyBroadException
         try:
-            release_info = self.__call_release_info_fun(hub_uuid, app_id, fun_id, http_response)
+            valid_app, release_info = self.__call_release_info_fun(hub_uuid, app_id, fun_id, http_response)
             # 缓存数据，包括 404 None 数据
-            if cache_data:
-                cache_manager.add_release_cache(hub_uuid, app_id, release_info)
         except NeedClientProxy as e:
             raise e
         except Exception:
             logging.error(f"""app_info: {app_id} \nERROR: """, exc_info=server_config.debug_mode)
-        return release_info
+            valid_data = False
+        return valid_data, valid_app, release_info
 
     def __call_release_info_fun(self, hub_uuid: str, app_id: list,
-                                fun_id: int = 0, http_response: dict = None) -> list or None:
+                                fun_id: int = 0, http_response: dict = None) -> [bool, list or None]:
         # noinspection PyBroadException
         release_info = None
         try:
@@ -116,9 +119,11 @@ class DataManager:
             status_code = e.response.status_code
             logging.warning(f"""app_info: {app_id}
         HTTP CODE {status_code} ERROR: {e}""")
-            if status_code != 404:
+            if status_code == 404:
+                return False, release_info
+            else:
                 raise e
-        return release_info
+        return True, release_info
 
     def __get_release_info_fun(self, hub_uuid: str, fun_id: int = 0):
         hub = self.__hub_server_manager.get_hub(hub_uuid)
