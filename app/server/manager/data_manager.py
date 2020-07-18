@@ -114,9 +114,10 @@ class DataManager:
                 release_info = self.__get_release_info_fun(hub_uuid, fun_id)(app_id, http_response['text'])
         except HTTPError as e:
             status_code = e.response.status_code
-            if status_code == 404:
-                logging.warning(f"""app_info: {app_id}
-        HTTP CODE 404 ERROR: {e}""")
+            logging.warning(f"""app_info: {app_id}
+        HTTP CODE {status_code} ERROR: {e}""")
+            if status_code != 404:
+                raise e
         return release_info
 
     def __get_release_info_fun(self, hub_uuid: str, fun_id: int = 0):
