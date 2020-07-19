@@ -14,7 +14,7 @@ def get_app_status(hub_uuid: str, app_id: list,
     app_status = data_manager.get_app_status(hub_uuid, app_id, use_proxy=True,
                                              fun_id=fun_id, http_response=http_response,
                                              use_cache=use_cache, cache_data=cache_data)
-    if 'need_proxy' in app_status:
+    if 'http_proxy' in app_status:
         logging.info(f"请求客户端代理: hub_uuid: {hub_uuid} app_id: {app_id}")
     else:
         log_str = ""
