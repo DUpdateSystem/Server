@@ -63,7 +63,8 @@ message HttpProxyRequest{
 message AppStatus {
   bool valid_hub_uuid = 1;
   bool valid_app = 2;
-  repeated ReleaseInfoItem release_info = 3;
+  bool valid_data = 3;
+  repeated ReleaseInfoItem release_info = 4;
 }
 
 message ReleaseInfoItem {

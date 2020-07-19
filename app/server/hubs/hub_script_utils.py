@@ -2,7 +2,7 @@ import re
 
 import requests
 from bs4 import BeautifulSoup
-from requests import Response, Session
+from requests import Response, Session, HTTPError
 
 from app.server.client_proxy.client_proxy_utils import proxy_get as __proxy_get, proxy_post as __proxy_post
 
@@ -115,3 +115,9 @@ def get_value_from_app_id(app_id: list, key: str) -> str or None:
         if i["key"] == key:
             return i["value"]
     return None
+
+
+def raise_no_app_error():
+    response = Response()
+    response.status_code = 404
+    raise HTTPError(response=response)

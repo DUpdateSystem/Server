@@ -65,21 +65,25 @@ class DataManager:
             logging.warning(f"NO HUB: {hub_uuid}")
             return {"valid_hub_uuid": False}
         # 尝试取缓存
+        release_info = None
+        valid_data = False
         if use_cache:
             try:
-                return cache_manager.get_release_cache(hub_uuid, app_id)
+                release_info = cache_manager.get_release_cache(hub_uuid, app_id)
+                valid_data = True
             except (KeyError, NameError):
                 pass
-
-        valid_data, valid_app, return_list = self.__get_release_info(hub_uuid, app_id,
-                                                                     fun_id=fun_id, http_response=http_response)
-        release_info = {
-            "valid_hub_uuid": True,
-            "valid_app": valid_app,
-            "release_info": return_list
-        }
-        if cache_data and valid_data:
-            cache_manager.add_release_cache(hub_uuid, app_id, release_info)
+        if not release_info:
+            valid_data, valid_app, return_list = self.__get_release_info(hub_uuid, app_id,
+                                                                         fun_id=fun_id, http_response=http_response)
+            release_info = {
+                "valid_hub_uuid": True,
+                "valid_app": valid_app,
+                "release_info": return_list
+            }
+            if cache_data and valid_data:
+                cache_manager.add_release_cache(hub_uuid, app_id, release_info)
+        release_info["valid_data"] = valid_data
         return release_info
 
     def __get_release_info(self, hub_uuid: str, app_id: list,

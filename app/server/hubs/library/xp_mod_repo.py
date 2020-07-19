@@ -5,7 +5,7 @@ from xml.etree import ElementTree
 from bs4 import BeautifulSoup
 
 from ..base_hub import BaseHub
-from ..hub_script_utils import http_get, get_value_from_app_id
+from ..hub_script_utils import http_get, get_value_from_app_id, raise_no_app_error
 from ...manager.cache_manager import cache_manager
 
 cache_key = "xposed_full_module_xml_file_bytes"
@@ -33,7 +33,7 @@ class XpModRepo(BaseHub):
                 tree = ElementTree.parse(gzip_file)
         module = tree.find(f'.//module[@package="{package}"]')
         if not module:
-            return None
+            raise_no_app_error()
         version_list = module.findall('version')
         data = []
         for i in range(len(version_list)):
