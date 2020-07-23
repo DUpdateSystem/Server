@@ -7,7 +7,7 @@ class _ServerConfig:
         self.host = "localhost"
         self.port = 5000
         self.max_workers = 16
-        self.debug_mode = False
+        self.debug_mode = True
         self.auto_refresh_time = 6
         self.cloud_rule_hub_url = ""
         self.redis_server_address = "localhost"

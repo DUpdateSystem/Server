@@ -22,13 +22,14 @@ def __run() -> [Server, Thread, Thread or None]:
                         help='测试软件源脚本的运行选项，以 key value 为组，例如：android_app_package net.xzos.upgradeall')
 
     run_args = parser.parse_args()
-    # 运行服务程序
-    server, server_thread = serve()
-    # 运行 debug 程序
-    debug_thread = None
+    server = server_thread = debug_thread = None
     if run_args.debug:
+        # 运行 debug 程序
         debug_thread = Thread(target=debug, args=(run_args.hub_uuid, run_args.hub_options))
         debug_thread.start()
+    else:
+        # 运行服务程序
+        server, server_thread = serve()
     return server, server_thread, debug_thread
 
 
@@ -39,10 +40,12 @@ def run():
         if debug_thread:
             debug_thread.join()
             server.stop(5).wait()
-        server_thread.join()
+        if server_thread:
+            server_thread.join()
     except KeyboardInterrupt:
         logging.info("正在停止")
     finally:
-        server.stop(5).wait()
+        if server:
+            server.stop(5).wait()
         logging.info("已停止")
         sys.exit(0)
