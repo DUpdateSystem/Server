@@ -42,7 +42,8 @@ class CoolApk(BaseHub):
         for uuid in hub_dict:
             if self is hub_dict[uuid]:
                 hub_uuid = uuid
-        release_info = data_manager.get_app_status(hub_uuid, app_id)["app_status"]
+                break
+        release_info = data_manager.get_app_status(hub_uuid, app_id)["app_status"]["release_info"]
         download_url = release_info[asset_index[0]]["assets"][asset_index[1]]["download_url"]
         try:
             get_session().head(download_url).raise_for_status()
