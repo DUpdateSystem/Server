@@ -4,12 +4,14 @@ from requests import HTTPError
 
 from app.server.utils import logging
 from ..base_hub import BaseHub
-from ..hub_script_utils import get_value_from_app_id, parsing_http_page, get_session
+from ..hub_script_utils import get_value_from_app_id, parsing_http_page, get_session, raise_no_app_error
 
 
 class CoolApk(BaseHub):
     def get_release_info(self, app_id: list) -> tuple or None:
         package = _get_package(app_id)
+        if package is 'android':
+            raise_no_app_error()
         if package is None:
             return None
         url = _get_url(package)
