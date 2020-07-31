@@ -10,7 +10,7 @@ from ..hub_script_utils import get_value_from_app_id, parsing_http_page, get_ses
 class CoolApk(BaseHub):
     def get_release_info(self, app_id: list) -> tuple or None:
         package = _get_package(app_id)
-        if package is 'android':
+        if package == 'android':
             raise_no_app_error()
         if package is None:
             return None
