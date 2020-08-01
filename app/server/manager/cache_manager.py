@@ -53,7 +53,7 @@ class CacheManager:
 
     @staticmethod
     def __cache(redis_db: Redis, key: str, value: str, ex_h: int = None):
-        if server_config.debug_mode:
+        if not server_config.use_cache_db:
             return
         if key:
             ex = None
@@ -63,7 +63,7 @@ class CacheManager:
 
     @staticmethod
     def __get(redis_db: Redis, key: str) -> str:
-        if server_config.debug_mode or redis_db.exists(key) == 0:
+        if not server_config.use_cache_db or redis_db.exists(key) == 0:
             raise KeyError
         return redis_db.get(key)
 
