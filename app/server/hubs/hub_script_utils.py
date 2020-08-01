@@ -1,10 +1,14 @@
 import re
+import tarfile
+import tempfile
+from io import BytesIO
 
 import requests
 from bs4 import BeautifulSoup
 from requests import Response, Session, HTTPError
 
 from app.server.client_proxy.client_proxy_utils import proxy_get as __proxy_get, proxy_post as __proxy_post
+from app.server.manager.cache_manager import cache_manager
 
 __session = requests.Session()
 
@@ -115,6 +119,47 @@ def get_value_from_app_id(app_id: list, key: str) -> str or None:
         if i["key"] == key:
             return i["value"]
     return None
+
+
+def get_tmp_cache(key: str) -> str or None:
+    """获取临时缓存
+    Args:
+        key: 缓存键值
+
+    Returns:
+        缓存的字符串
+    """
+    try:
+        raw = cache_manager.get_tmp_cache(key)
+    except KeyError:
+        return None
+    with tempfile.TemporaryFile(mode='w+b') as f:
+        f.write(raw)
+        f.flush()
+        f.seek(0)
+        with tarfile.open(fileobj=f, mode='r:xz') as tar:
+            with tar.extractfile("1.txt") as file:
+                return file.read()
+
+
+def add_tmp_cache(key: str, value: str):
+    """获取临时缓存
+    Args:
+        key: 缓存键值
+        value: 缓存的字符串
+    Returns:
+        None
+    """
+    if value:
+        out = BytesIO()
+        with tarfile.open(mode="w:xz", fileobj=out) as tar:
+            data = value.encode('utf-8')
+            file = BytesIO(data)
+            info = tarfile.TarInfo(name="1.txt")
+            info.size = len(data)
+            tar.addfile(tarinfo=info, fileobj=file)
+
+        cache_manager.add_tmp_cache(key, out.getvalue())
 
 
 def raise_no_app_error():
