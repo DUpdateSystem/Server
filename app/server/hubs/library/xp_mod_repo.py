@@ -28,8 +28,7 @@ class XpModRepo(BaseHub):
             raise_no_app_error()
         version_list = module.findall('version')
         data = []
-        for i in range(len(version_list)):
-            version = version_list[i]
+        for version in version_list:
             download_url = version.find('download').text
             file_name = download_url[download_url.rfind('/') + 1:]
             change_log_raw = version.find('changelog').text

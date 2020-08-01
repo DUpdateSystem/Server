@@ -1,5 +1,7 @@
+from xml.etree import ElementTree
+
 from ..base_hub import BaseHub
-from ..hub_script_utils import get_value_from_app_id, parsing_http_page
+from ..hub_script_utils import get_value_from_app_id, http_get, get_tmp_cache, add_tmp_cache, raise_no_app_error
 
 
 class FDroid(BaseHub):
@@ -7,33 +9,45 @@ class FDroid(BaseHub):
         package, language = _get_key(app_id)
         if package is None:
             return None
-        url = _get_url(package, language)
-        soup = parsing_http_page(url)
-        version_number_list = [item.a["name"] for item in soup.find_all(class_="package-version-header")]
-        newest_changelog_div = soup.find(class_="package-whats-new")
-        newest_changelog = None
-        if newest_changelog_div is not None:
-            newest_changelog = ""
-            for text in [text for text in newest_changelog_div.stripped_strings]:
-                newest_changelog += f"\n{text}"
-        download_list = soup.find_all(class_="package-version-download")
-        download_url_list = [tag.find(href=True)["href"] for tag in download_list]
-        download_file_name_list = []
-        for download_url in download_url_list:
-            i = download_url.rfind("/") + 1
-            download_file_name_list.append(download_url[i:])
+        url = 'https://f-droid.org/repo'
+        tree = _get_xml_tree(url)
+        module = tree.find(f'.//application[@id="{package}"]')
+        if not module:
+            raise_no_app_error()
+        newest_changelog = module.find('changelog').text
+        packages = module.findall('package')
         data = []
-        for i in range(len(version_number_list)):
-            release_info = {"version_number": version_number_list[i]}
-            if i == 0 and newest_changelog is not None:
-                release_info["change_log"] = newest_changelog
-            assets = [{
-                "file_name": download_file_name_list[i],
-                "download_url": download_url_list[i]
-            }]
-            release_info["assets"] = assets
+        for i in range(len(packages)):
+            version = packages[i]
+            file_name = version.find('apkname').text
+            download_url = f'{url}/{file_name}'
+            if i == 0:
+                change_log = newest_changelog
+            else:
+                change_log = None
+            release_info = {
+                "version_number": version.find('version').text,
+                "change_log": change_log,
+                "assets": [{
+                    "file_name": file_name,
+                    "download_url": download_url
+                }]
+            }
             data.append(release_info)
         return data
+
+
+def _get_xml_tree(url: str = 'https://f-droid.org/repo'):
+    xml_string = None
+    try:
+        xml_string = get_tmp_cache(url)
+    except KeyError:
+        pass
+    if not xml_string:
+        xml_string = http_get(f'{url}/index.xml', stream=True).text
+        if xml_string:
+            add_tmp_cache(url, xml_string)
+    return ElementTree.fromstring(xml_string)
 
 
 def _get_url(app_package: str, language: str or None) -> str:
