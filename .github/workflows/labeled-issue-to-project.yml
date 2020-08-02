@@ -1,0 +1,32 @@
+name: labeled issue to project
+
+on:
+  issues:
+    types: [labeled]
+jobs:
+  labeled-issue-to-project:
+    runs-on: ubuntu-latest
+    steps:
+      - name: labeled enhancement issue to project
+        uses: alex-page/github-project-automation-plus@v0.2.4
+        if: ${{ contains(github.event.issue.labels.*.name, 'enhancement') }}
+        with:
+          project: Distributed Update System 看板
+          column: '服务端需求'
+          repo-token: '${{ secrets.GH_TOKEN }}'
+
+      - name: labeled Solved issue to project
+        uses: alex-page/github-project-automation-plus@v0.2.4
+        if: ${{ contains(github.event.issue.labels.*.name, 'Solved') }}
+        with:
+          project: Distributed Update System 看板
+          column: '服务端已完成'
+          repo-token: '${{ secrets.GH_TOKEN }}'
+
+      - name: labeled bug issue to project
+        uses: alex-page/github-project-automation-plus@v0.2.4
+        if: ${{ contains(github.event.issue.labels.*.name, 'bug') }}
+        with:
+          project: Distributed Update System 看板
+          column: 'BUG'
+          repo-token: '${{ secrets.GH_TOKEN }}'
