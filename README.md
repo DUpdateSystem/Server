@@ -14,8 +14,8 @@ UpgradeAll 服务端代码仓库
 - [背景](#背景)
 - [安装](#安装)
 - [运行这个项目](#运行这个项目)
-   - [已安装 Docker 的 Linux 环境](#已安装Docker的Linux环境)
-   - [手动安装并运行](#手动安装并运行（适用于Termux）)
+   - [已安装 Docker 的 Linux 环境](#已安装-docker-的-linux-环境)
+   - [手动安装并运行](#手动安装并运行适用于-termux)
 - [示例](#示例)
 - [相关仓库](#相关仓库)
 - [维护者](#维护者)
@@ -24,8 +24,8 @@ UpgradeAll 服务端代码仓库
 
 ## 背景
 
-`UpgradeAll 服务端` 最开始因为 [@yah](https://github.com/wangxiaoerYah) 在维护脚本时发觉本地爬虫的效率问题而被提出，并于 0.1.2 （
-客户端版本）版本的开发阶段实现。
+`UpgradeAll 服务端` 最开始因为 [@yah](https://github.com/wangxiaoerYah) 在维护脚本时发觉本地爬虫的效率问题而被提出，并于 [0.1.2 版本（
+客户端版本）](https://github.com/DUpdateSystem/UpgradeAll/releases/tag/0.1.2-rc.2)的开发阶段实现。
 
 
 ## 安装
@@ -61,8 +61,37 @@ $ python3 -m app --help
 ```
 
 ## 示例
+### Docker
+```sh
+$ ./startup.sh
+# 部署服务端
+$ ./startup.sh --debug 6a6d590b-1809-41bf-8ce3-7e3f6c8da945 android_app_package com.nextcloud.client
+# 测试软件源
+```
+### 手动运行
+```sh
+$ python3 -m app
+# 部署服务端
+$ python3 -m app --debug 6a6d590b-1809-41bf-8ce3-7e3f6c8da945 android_app_package com.nextcloud.client
+# 测试软件源
+```
+### 命令参数
+```text
+usage: DUpdateSystem Server [-h] [--normal] [--debug]
+                            [hub_uuid] [hub_options [hub_options ...]]
 
-想了解我们建议的规范是如何被应用的，请参考 [example-readmes](example-readmes/)。
+DUpdateSystem 服务端
+
+positional arguments:
+  hub_uuid     测试的软件源脚本的 UUID
+  hub_options  测试软件源脚本的运行选项，以 key value 为组，例如：android_app_package
+               net.xzos.upgradeall
+
+optional arguments:
+  -h, --help   show this help message and exit
+  --normal     以 config.ini 配置正常运行服务端
+  --debug      运行软件源脚本测试
+```
 
 ## 相关仓库
 
@@ -75,8 +104,8 @@ $ python3 -m app --help
 
 ## 如何贡献
 
-非常欢迎你的加入！[官方文档-参与我们](https://upgradeall.now.sh/joinus/)
-如果你已经有一个明确的想法了？请把它告诉我们 [提一个 Issue](https://github.com/DUpdateSystem/Server/issues/new) 或者提交一个 Pull Request。
+非常欢迎你的加入！[官方文档-参与我们](https://upgradeall.now.sh/joinus/)  
+你已经有一个明确的想法了?请 [提一个 Issue](https://github.com/DUpdateSystem/Server/issues/new/choose) 或者提交一个 Pull Request。
 
 
 ## 使用许可
