@@ -32,9 +32,6 @@ UpgradeAll 服务端代码仓库
 
 这个项目使用 [Python 3](https://www.python.org/)。请确保你本地安装了它们。
 
-```sh
-$ npm install --global standard-readme-spec
-```
 
 ## 使用说明
 
