@@ -1,4 +1,4 @@
-# UpgradeAll Server
+# [UpgradeAll Server](https://github.com/DUpdateSystem/Server)
 
 [![standard-readme compliant](https://img.shields.io/badge/readme%20style-standard-brightgreen.svg?style=flat-square)](https://github.com/RichardLitt/standard-readme)
 
@@ -13,10 +13,14 @@ UpgradeAll 服务端代码仓库
 
 - [背景](#背景)
 - [安装](#安装)
-- [运行这个项目](#运行这个项目)
-   - [已安装 Docker 的 Linux 环境](#已安装-docker-的-linux-环境)
-   - [手动安装并运行](#手动安装并运行适用于-termux)
-- [示例](#示例)
+- [使用说明](#使用说明)
+   - [运行这个项目](#运行这个项目)
+      - [已安装 Docker 的 Linux 环境](#已安装-docker-的-linux-环境)
+      - [手动安装并运行](#手动安装并运行适用于-termux)
+   - [示例](#示例)
+      - [Docker](#docker)
+      - [手动运行](#手动运行)
+   - [命令参数](#命令参数)
 - [相关仓库](#相关仓库)
 - [维护者](#维护者)
 - [如何贡献](#如何贡献)
@@ -35,7 +39,7 @@ UpgradeAll 服务端代码仓库
 
 ## 使用说明
 
-克隆仓库，这样你就可以开始修改该项目了
+克隆仓库，这样你就可以开始使用该项目了
 
 ```sh
 $ git clone --depth=1 https://github.com/DUpdateSystem/Server.git
@@ -48,7 +52,7 @@ $ git clone --depth=1 https://github.com/DUpdateSystem/Server.git
 ```sh
 $ ./startup.sh --help
 # 查看使用帮助
-# 使用 debug 模式运行，将直接挂载 app 文件夹到相关目录下，因此，在修改本项目代码时，请尽管运行以测试你的代码。
+# 使用 debug 模式运行时，将直接挂载 app 文件夹到相关目录下，因此，在修改本项目代码时，请尽管测试你的代码。
 ```
 
 #### 手动安装并运行（适用于 Termux）
@@ -60,15 +64,15 @@ $ python3 -m app --help
 # 查看命令帮助
 ```
 
-## 示例
-### Docker
+### 示例
+#### Docker
 ```sh
 $ ./startup.sh
 # 部署服务端
 $ ./startup.sh --debug 6a6d590b-1809-41bf-8ce3-7e3f6c8da945 android_app_package com.nextcloud.client
 # 测试软件源
 ```
-### 手动运行
+#### 手动运行
 ```sh
 $ python3 -m app
 # 部署服务端
