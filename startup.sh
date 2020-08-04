@@ -1,11 +1,12 @@
 #!/bin/bash
+
+docker_image_name="update-server"
 server_port=5255
 docker_server_port=5255
 docker_container_name="update-server"
-docker_image_name="upgradeall-server"
 
 dockerfile="Dockerfile"
-dockerfile_debug="Dockerfile_debug"
+
 
 BLUE='\033[0;31m'
 NC='\033[0m' # No Color
@@ -18,14 +19,7 @@ then
 fi
 
 # build docker image
-echo "Build New Docker Image"
-if [ "$1" == "--debug" ]
-then
-	Dockerfile=$dockerfile_debug
-else
-	Dockerfile=$dockerfile
-fi
-docker build -f$Dockerfile -t $docker_image_name .
+docker build -f $dockerfile -t $docker_image_name .
 
 if [ "$1" == "--normal" ] || [ -z "$1" ]
 # normal run in server mode
