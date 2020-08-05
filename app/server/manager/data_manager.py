@@ -154,6 +154,3 @@ def _auto_refresh():
     logging.info("auto refresh data: start")
     data_manager.refresh_cache()
     logging.info("auto refresh data: finish")
-
-
-_auto_refresh()
