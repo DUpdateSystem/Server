@@ -1,3 +1,4 @@
+import asyncio
 from datetime import timedelta
 
 from requests import HTTPError, Response
@@ -8,11 +9,10 @@ from app.server.client_proxy.ask_proxy_error import NeedClientProxy
 from app.server.hubs.hub_list import hub_dict
 from app.server.manager.cache_manager import cache_manager
 from app.server.manager.hub_server_manager import HubServerManager
-from app.server.utils import logging, set_new_asyncio_loop
+from app.server.utils import logging, set_new_asyncio_loop, call_def_in_loop_return_result
 
 
 class DataManager:
-    __loop = set_new_asyncio_loop()
 
     def __init__(self):
         self.__hub_server_manager = HubServerManager()
@@ -48,15 +48,22 @@ class DataManager:
     def refresh_cache(self):
         i = 0
         logging.info("refresh all data: start")
+        fun_list = []
         cache_queue = cache_manager.cached_app_queue
         for hub_uuid in cache_queue.keys():
             for app_info in cache_queue[hub_uuid]:
+                # noinspection PyBroadException
                 try:
-                    self.__get_app_status(hub_uuid, app_info, use_cache=False)
+                    fun_list.append(self.__renew_app_status(hub_uuid, app_info))
                     i += 1
-                except NeedClientProxy:
-                    pass
+                except Exception:
+                    cache_manager.del_release_cache(hub_uuid, app_info)
+        loop = set_new_asyncio_loop()
+        call_def_in_loop_return_result(asyncio.gather(*fun_list), loop)
         logging.info(f"refresh all data: finish({i})")
+
+    async def __renew_app_status(self, hub_uuid: str, app_id: list):
+        self.__get_app_status(hub_uuid, app_id, use_cache=False)
 
     def __get_app_status(self, hub_uuid: str, app_id: list,
                          fun_id: int = 0, http_response: dict = None,
@@ -147,3 +154,6 @@ def _auto_refresh():
     logging.info("auto refresh data: start")
     data_manager.refresh_cache()
     logging.info("auto refresh data: finish")
+
+
+_auto_refresh()
