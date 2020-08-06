@@ -15,10 +15,12 @@ UpgradeAll 服务端代码仓库
 - [安装](#安装)
 - [使用说明](#使用说明)
    - [运行这个项目](#运行这个项目)
+      - [Docker](#docker)
       - [已安装 Docker 的 Linux 环境](#已安装-docker-的-linux-环境)
       - [手动安装并运行](#手动安装并运行适用于-termux)
    - [示例](#示例)
-      - [Docker](#docker)
+      - [Docker](#docker-1)
+      - [Shell script](#shell-script)
       - [手动运行](#手动运行)
    - [命令参数](#命令参数)
 - [相关仓库](#相关仓库)
@@ -48,6 +50,22 @@ $ git clone --depth=1 https://github.com/DUpdateSystem/Server.git
 
 ### 运行这个项目
 
+#### Docker
+```sh
+$ docker pull xiangzhedev/upgradeall-server
+# 更新镜像
+$ docker run --rm -p 5255:5255 xiangzhedev/upgradeall-server
+# 单次运行
+$ docker run --rm -v $PWD/app:/app -p 5255:5255 xiangzhedev/upgradeall-server
+# 测试运行（在该项目的根目录下运行）
+$ docker run --rm -p 5255:5255 xiangzhedev/upgradeall-server --help
+# 查看参数帮助
+$ docker run -dit --restart unless-stopped --name=update-server -d -p 5255:5255 xiangzhedev/upgradeall-server
+# 服务部署
+$ docker stop update-server && docker container rm update-server
+# 停止服务
+```
+
 #### 已安装 Docker 的 Linux 环境
 ```sh
 $ ./startup.sh --help
@@ -56,7 +74,7 @@ $ ./startup.sh --help
 ```
 
 #### 手动安装并运行（适用于 Termux）
-因为我**没有 Windows 开发环境**，所以我只以 Linux 作为示例，命令可能不完全相同
+> 因为我**没有 Windows 开发环境**，所以我只以 Linux 作为示例，命令可能不完全相同
 ```sh
 $ pip3 install -r app/requirements.txt
 # 安装 Python 依赖
@@ -66,6 +84,14 @@ $ python3 -m app --help
 
 ### 示例
 #### Docker
+```sh
+$ docker run -dit --restart unless-stopped --name=update-server -d -p 5255:5255 xiangzhedev/upgradeall-server
+# 服务部署
+$ docker run --rm xiangzhedev/upgradeall-server --debug 6a6d590b-1809-41bf-8ce3-7e3f6c8da945 android_app_package com.nextcloud.client
+# 测试软件源
+```
+
+#### Shell script
 ```sh
 $ ./startup.sh
 # 部署服务端
