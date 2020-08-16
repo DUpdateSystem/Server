@@ -1,6 +1,7 @@
+import asyncio
 from app.server.hubs.hub_list import hub_dict
 from .manager.data_manager import data_manager
-from .utils import logging
+from .utils import logging, set_new_asyncio_loop, call_def_in_loop_return_result
 
 
 def get_app_status(hub_uuid: str, app_id: list,
@@ -22,6 +23,22 @@ def get_app_status(hub_uuid: str, app_id: list,
             log_str += "(empty)"
         logging.info(f"已完成单个请求: hub_uuid: {hub_uuid} app_id: {app_id}{log_str}")
     return app_status
+
+
+def get_app_list_status(hub_uuid: str, app_id_list: list) -> list:
+    fun_list = []
+    for app_id in app_id_list:
+        fun_list.append(lambda: (app_id, get_app_list_status(hub_uuid, app_id)))
+    loop = set_new_asyncio_loop()
+    app_status_list = call_def_in_loop_return_result(asyncio.gather(*fun_list), loop)
+    return_list = []
+    for i in app_status_list:
+        app_status = i[1]
+        app_status["app_id"] = app_status[0]
+        return_list.append(
+            app_status
+        )
+    return return_list
 
 
 def get_download_info(hub_uuid: str, app_id: list,

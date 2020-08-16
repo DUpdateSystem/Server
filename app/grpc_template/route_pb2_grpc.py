@@ -24,6 +24,11 @@ class UpdateServerRouteStub(object):
                 request_serializer=app_dot_grpc__template_dot_route__pb2.Request.SerializeToString,
                 response_deserializer=app_dot_grpc__template_dot_route__pb2.Response.FromString,
                 )
+        self.GetAppStatusList = channel.unary_unary(
+                '/server_route.UpdateServerRoute/GetAppStatusList',
+                request_serializer=app_dot_grpc__template_dot_route__pb2.RequestList.SerializeToString,
+                response_deserializer=app_dot_grpc__template_dot_route__pb2.ResponseList.FromString,
+                )
         self.GetDownloadInfo = channel.unary_unary(
                 '/server_route.UpdateServerRoute/GetDownloadInfo',
                 request_serializer=app_dot_grpc__template_dot_route__pb2.DownloadAssetIndex.SerializeToString,
@@ -41,6 +46,12 @@ class UpdateServerRouteServicer(object):
         raise NotImplementedError('Method not implemented!')
 
     def GetAppStatus(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def GetAppStatusList(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
@@ -65,6 +76,11 @@ def add_UpdateServerRouteServicer_to_server(servicer, server):
                     request_deserializer=app_dot_grpc__template_dot_route__pb2.Request.FromString,
                     response_serializer=app_dot_grpc__template_dot_route__pb2.Response.SerializeToString,
             ),
+            'GetAppStatusList': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetAppStatusList,
+                    request_deserializer=app_dot_grpc__template_dot_route__pb2.RequestList.FromString,
+                    response_serializer=app_dot_grpc__template_dot_route__pb2.ResponseList.SerializeToString,
+            ),
             'GetDownloadInfo': grpc.unary_unary_rpc_method_handler(
                     servicer.GetDownloadInfo,
                     request_deserializer=app_dot_grpc__template_dot_route__pb2.DownloadAssetIndex.FromString,
@@ -86,6 +102,7 @@ class UpdateServerRoute(object):
             options=(),
             channel_credentials=None,
             call_credentials=None,
+            insecure=False,
             compression=None,
             wait_for_ready=None,
             timeout=None,
@@ -94,7 +111,7 @@ class UpdateServerRoute(object):
             app_dot_grpc__template_dot_route__pb2.Empty.SerializeToString,
             app_dot_grpc__template_dot_route__pb2.Str.FromString,
             options, channel_credentials,
-            call_credentials, compression, wait_for_ready, timeout, metadata)
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
     @staticmethod
     def GetAppStatus(request,
@@ -102,6 +119,7 @@ class UpdateServerRoute(object):
             options=(),
             channel_credentials=None,
             call_credentials=None,
+            insecure=False,
             compression=None,
             wait_for_ready=None,
             timeout=None,
@@ -110,7 +128,24 @@ class UpdateServerRoute(object):
             app_dot_grpc__template_dot_route__pb2.Request.SerializeToString,
             app_dot_grpc__template_dot_route__pb2.Response.FromString,
             options, channel_credentials,
-            call_credentials, compression, wait_for_ready, timeout, metadata)
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def GetAppStatusList(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/server_route.UpdateServerRoute/GetAppStatusList',
+            app_dot_grpc__template_dot_route__pb2.RequestList.SerializeToString,
+            app_dot_grpc__template_dot_route__pb2.ResponseList.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
     @staticmethod
     def GetDownloadInfo(request,
@@ -118,6 +153,7 @@ class UpdateServerRoute(object):
             options=(),
             channel_credentials=None,
             call_credentials=None,
+            insecure=False,
             compression=None,
             wait_for_ready=None,
             timeout=None,
@@ -126,4 +162,4 @@ class UpdateServerRoute(object):
             app_dot_grpc__template_dot_route__pb2.DownloadAssetIndex.SerializeToString,
             app_dot_grpc__template_dot_route__pb2.DownloadInfo.FromString,
             options, channel_credentials,
-            call_credentials, compression, wait_for_ready, timeout, metadata)
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)

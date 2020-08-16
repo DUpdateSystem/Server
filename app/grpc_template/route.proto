@@ -9,6 +9,7 @@ package server_route;
 service UpdateServerRoute {
   rpc GetCloudConfig(Empty) returns (Str) {}
   rpc GetAppStatus(Request) returns (Response) {}
+  rpc GetAppStatusList(RequestList) returns (ResponseList) {}
   rpc GetDownloadInfo(DownloadAssetIndex) returns (DownloadInfo) {}
 }
 
@@ -26,6 +27,15 @@ message Response{
   HttpProxyRequest http_proxy = 2;
 }
 
+message RequestList {
+  string hub_uuid = 1;
+  repeated AppId app_id_list = 2;
+}
+
+message ResponseList {
+  repeated ResponsePackage response = 1;
+}
+
 message DownloadAssetIndex {
   Request app_id_info = 1;
   repeated int32 asset_index = 2;
@@ -36,13 +46,14 @@ message DownloadInfo {
   repeated Dict request_header = 2;
 }
 
-message AppId {repeated AppIdItem app_id = 1;}
-
-message ResponseList {repeated ResponsePackage response = 1;}
+message AppId {
+  repeated AppIdItem app_id = 1;
+}
 
 message ResponsePackage {
   repeated AppIdItem app_id = 1;
   AppStatus app_status = 2;
+  HttpProxyRequest http_proxy = 3;
 }
 
 message AppIdItem {

@@ -9,8 +9,8 @@ from grpc import Server
 # 初始化配置
 from app.config import server_config
 from app.grpc_template import route_pb2_grpc
-from app.grpc_template.route_pb2 import Response, AppStatus, DownloadInfo, Str
-from app.server.api import get_app_status, get_download_info
+from app.grpc_template.route_pb2 import *
+from app.server.api import *
 from app.server.manager.data_manager import tl
 from app.server.utils import logging, get_response
 
@@ -42,6 +42,18 @@ class Greeter(route_pb2_grpc.UpdateServerRouteServicer):
             logging.exception('gRPC: GetAppStatus')
             return None
 
+    def GetAppStatusList(self, request, context) -> ResponseList:
+        # noinspection PyBroadException
+        try:
+            request = MessageToDict(request, preserving_proto_field_name=True)
+            hub_uuid: str = request['hub_uuid']
+            app_id_list: list = request['app_id_list']
+            return self.__get_app_l
+                ist_status(hub_uuid, app_id_list)
+        except Exception:
+            logging.exception('gRPC: GetAppStatusList')
+            return None
+
     def GetDownloadInfo(self, request, context: grpc.RpcContext) -> DownloadInfo:
         if context.cancel():
             return
@@ -64,6 +76,11 @@ class Greeter(route_pb2_grpc.UpdateServerRouteServicer):
         if app_status is None:
             return Response(app_status=AppStatus(valid_hub_uuid=False))
         return ParseDict(app_status, Response())
+
+    @staticmethod
+    def __get_app_list_status(hub_uuid: str, app_id_list: list) -> ResponseList:
+        app_status_list = get_app_list_status(hub_uuid, app_id_list)
+        return ParseDict({"response": app_status_list}, ResponseList())
 
     @staticmethod
     def __get_download_info(hub_uuid: str, app_id: list, asset_index: list) -> DownloadInfo:
