@@ -48,8 +48,7 @@ class Greeter(route_pb2_grpc.UpdateServerRouteServicer):
             request = MessageToDict(request, preserving_proto_field_name=True)
             hub_uuid: str = request['hub_uuid']
             app_id_list: list = request['app_id_list']
-            return self.__get_app_l
-                ist_status(hub_uuid, app_id_list)
+            return self.__get_app_list_status(hub_uuid, app_id_list)
         except Exception:
             logging.exception('gRPC: GetAppStatusList')
             return None
