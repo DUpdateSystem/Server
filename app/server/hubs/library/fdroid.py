@@ -6,10 +6,11 @@ from ..hub_script_utils import get_value_from_app_id, http_get, get_tmp_cache, a
 
 class FDroid(BaseHub):
     def get_release_info(self, app_id: list) -> tuple or None:
-        package, language = _get_key(app_id)
-        if package is None:
+        package, url = _get_key(app_id)
+        if not package:
             return None
-        url = 'https://f-droid.org/repo'
+        if not url:
+            url = 'https://f-droid.org/repo'
         tree = _get_xml_tree(url)
         module = tree.find(f'.//application[@id="{package}"]')
         if not module:
@@ -57,6 +58,6 @@ def _get_url(app_package: str, language: str or None) -> str:
         return f"https://f-droid.org/packages/{app_package}"
 
 
-def _get_key(app_info: list) -> str or None:
+def _get_key(app_info: list) -> tuple:
     return get_value_from_app_id(app_info, "android_app_package"), \
-           get_value_from_app_id(app_info, "language")
+           get_value_from_app_id(app_info, "repo_url")
