@@ -7,7 +7,6 @@ import requests
 from bs4 import BeautifulSoup
 from requests import Response, Session, HTTPError
 
-from app.server.client_proxy.client_proxy_utils import proxy_get as __proxy_get, proxy_post as __proxy_post
 from app.server.manager.cache_manager import cache_manager
 
 __session = requests.Session()
@@ -26,31 +25,6 @@ def parsing_http_page(url: str, params=None) -> BeautifulSoup:
     }
     html = http_get(url, headers=headers, params=params).text
     return BeautifulSoup(html, "html5lib")
-
-
-def proxy_get(url: str, headers: dict or None = None):
-    """简易包装的客户端代理 get 方法
-    Args:
-        url: 访问的网址
-        headers: 请求头参数字典
-    Returns:
-        抛出包含请求数据的请求代理对象的错误
-    """
-    __proxy_get(url, headers)
-
-
-def proxy_post(url: str, headers: dict or None = None,
-               body_type: str or None = None, body_text: str or None = None):
-    """简易包装的客户端代理 post 方法
-    Args:
-        url: 访问的网址
-        headers: 请求头参数字典
-        body_type: 请求主体数据类型
-        body_text: 请求主体
-    Returns:
-        抛出包含请求数据的请求代理对象的错误
-    """
-    __proxy_post(url, headers, body_type, body_text)
 
 
 def http_get(url: str, throw_error=True, **kwargs) -> Response or None:
@@ -137,6 +111,7 @@ def get_tmp_cache(key: str) -> str or None:
         f.write(raw)
         f.flush()
         f.seek(0)
+        # noinspection PyTypeChecker
         with tarfile.open(fileobj=f, mode='r:xz') as tar:
             with tar.extractfile("1.txt") as file:
                 return file.read()
