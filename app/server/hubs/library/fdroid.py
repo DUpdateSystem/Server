@@ -5,7 +5,7 @@ from ..hub_script_utils import get_value_from_app_id, http_get, get_tmp_cache, a
 
 
 class FDroid(BaseHub):
-    def get_release_info(self, app_id: list) -> tuple or None:
+    def get_release_list(self, app_id: list) -> tuple or None:
         package, url = _get_key(app_id)
         if not package:
             return None

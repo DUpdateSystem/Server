@@ -1,7 +1,7 @@
 import json
 
 from app.config import server_config
-from .server.api import get_app_status, get_download_info
+from .server.api import get_release_list, get_download_info
 from .server.utils import logging
 from .server.hubs.hub_script_utils import get_session
 
@@ -30,9 +30,9 @@ def __get_app_status(hub_uuid: str, app_id: list) -> dict:
     fun_id = 0
     http_response = None
     while not app_status:
-        row_app_status = get_app_status(hub_uuid, app_id,
-                                        fun_id=fun_id, http_response=http_response,
-                                        use_cache=False, cache_data=False)
+        row_app_status = get_release_list(hub_uuid, app_id,
+                                          fun_id=fun_id, http_response=http_response,
+                                          use_cache=False, cache_data=False)
         if 'http_proxy' in row_app_status:
             http_proxy = row_app_status['http_proxy']
             fun_id = http_proxy['next_fun_id']

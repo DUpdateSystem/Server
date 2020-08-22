@@ -3,7 +3,7 @@ from ..hub_script_utils import http_get
 
 
 class ZLiveOfficial(BaseHub):
-    def get_release_info(self, app_id: list) -> tuple or None:
+    def get_release_list(self, app_id: list) -> tuple or None:
         data = http_get(_get_url()).json()
         return [{
             "version_number": data["version_name"],

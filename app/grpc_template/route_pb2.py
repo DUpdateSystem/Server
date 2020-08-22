@@ -19,7 +19,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   syntax='proto3',
   serialized_options=b'\n\036net.xzos.upgradeall.core.routeB\nRouteProtoP\001',
   create_key=_descriptor._internal_create_key,
-  serialized_pb=b'\n\x1d\x61pp/grpc_template/route.proto\x12\x0cserver_route\"\x07\n\x05\x45mpty\"\x10\n\x03Str\x12\t\n\x01s\x18\x01 \x01(\t\"y\n\x07Request\x12\x10\n\x08hub_uuid\x18\x01 \x01(\t\x12\'\n\x06\x61pp_id\x18\x02 \x03(\x0b\x32\x17.server_route.AppIdItem\x12\x33\n\nhttp_proxy\x18\x03 \x01(\x0b\x32\x1f.server_route.HttpProxyResponse\"k\n\x08Response\x12+\n\napp_status\x18\x01 \x01(\x0b\x32\x17.server_route.AppStatus\x12\x32\n\nhttp_proxy\x18\x02 \x01(\x0b\x32\x1e.server_route.HttpProxyRequest\"I\n\x0bRequestList\x12\x10\n\x08hub_uuid\x18\x01 \x01(\t\x12(\n\x0b\x61pp_id_list\x18\x02 \x03(\x0b\x32\x13.server_route.AppId\"?\n\x0cResponseList\x12/\n\x08response\x18\x01 \x03(\x0b\x32\x1d.server_route.ResponsePackage\"U\n\x12\x44ownloadAssetIndex\x12*\n\x0b\x61pp_id_info\x18\x01 \x01(\x0b\x32\x15.server_route.Request\x12\x13\n\x0b\x61sset_index\x18\x02 \x03(\x05\"G\n\x0c\x44ownloadInfo\x12\x0b\n\x03url\x18\x01 \x01(\t\x12*\n\x0erequest_header\x18\x02 \x03(\x0b\x32\x12.server_route.Dict\"0\n\x05\x41ppId\x12\'\n\x06\x61pp_id\x18\x01 \x03(\x0b\x32\x17.server_route.AppIdItem\"\x9b\x01\n\x0fResponsePackage\x12\'\n\x06\x61pp_id\x18\x01 \x03(\x0b\x32\x17.server_route.AppIdItem\x12+\n\napp_status\x18\x02 \x01(\x0b\x32\x17.server_route.AppStatus\x12\x32\n\nhttp_proxy\x18\x03 \x01(\x0b\x32\x1e.server_route.HttpProxyRequest\"\'\n\tAppIdItem\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\t\"Z\n\x11HttpProxyResponse\x12\x0e\n\x06\x66un_id\x18\x01 \x01(\x05\x12\x35\n\rhttp_response\x18\x02 \x01(\x0b\x32\x1e.server_route.HttpResponseItem\"b\n\x10HttpProxyRequest\x12\x13\n\x0bnext_fun_id\x18\x01 \x01(\x05\x12\x39\n\x12http_proxy_request\x18\x02 \x01(\x0b\x32\x1d.server_route.HttpRequestItem\"\x7f\n\tAppStatus\x12\x16\n\x0evalid_hub_uuid\x18\x01 \x01(\x08\x12\x11\n\tvalid_app\x18\x02 \x01(\x08\x12\x12\n\nvalid_data\x18\x03 \x01(\x08\x12\x33\n\x0crelease_info\x18\x04 \x03(\x0b\x32\x1d.server_route.ReleaseInfoItem\"f\n\x0fReleaseInfoItem\x12\x16\n\x0eversion_number\x18\x01 \x01(\t\x12\x12\n\nchange_log\x18\x02 \x01(\t\x12\'\n\x06\x61ssets\x18\x03 \x03(\x0b\x32\x17.server_route.AssetItem\"G\n\tAssetItem\x12\x11\n\tfile_name\x18\x01 \x01(\t\x12\x14\n\x0c\x64ownload_url\x18\x02 \x01(\t\x12\x11\n\tfile_type\x18\x03 \x01(\t\"\"\n\x04\x44ict\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\t\"\x84\x01\n\x0fHttpRequestItem\x12\x0e\n\x06method\x18\x01 \x01(\t\x12\x0b\n\x03url\x18\x02 \x01(\t\x12#\n\x07headers\x18\x03 \x03(\x0b\x32\x12.server_route.Dict\x12/\n\x04\x62ody\x18\x04 \x01(\x0b\x32!.server_route.HttpPostRequestBody\"1\n\x13HttpPostRequestBody\x12\x0c\n\x04type\x18\x01 \x01(\t\x12\x0c\n\x04text\x18\x02 \x01(\t\"5\n\x10HttpResponseItem\x12\x13\n\x0bstatus_code\x18\x01 \x01(\x05\x12\x0c\n\x04text\x18\x02 \x01(\t2\xb0\x02\n\x11UpdateServerRoute\x12:\n\x0eGetCloudConfig\x12\x13.server_route.Empty\x1a\x11.server_route.Str\"\x00\x12?\n\x0cGetAppStatus\x12\x15.server_route.Request\x1a\x16.server_route.Response\"\x00\x12K\n\x10GetAppStatusList\x12\x19.server_route.RequestList\x1a\x1a.server_route.ResponseList\"\x00\x12Q\n\x0fGetDownloadInfo\x12 .server_route.DownloadAssetIndex\x1a\x1a.server_route.DownloadInfo\"\x00\x42.\n\x1enet.xzos.upgradeall.core.routeB\nRouteProtoP\x01\x62\x06proto3'
+  serialized_pb=b'\n\x1d\x61pp/grpc_template/route.proto\x12\x0cserver_route\"\x07\n\x05\x45mpty\"\x10\n\x03Str\x12\t\n\x01s\x18\x01 \x01(\t\"+\n\x05\x41ppId\x12\"\n\x06\x61pp_id\x18\x02 \x03(\x0b\x32\x12.server_route.Dict\"n\n\x0eReleaseRequest\x12\x10\n\x08hub_uuid\x18\x01 \x01(\t\x12 \n\x04\x61uth\x18\x02 \x03(\x0b\x32\x12.server_route.Dict\x12(\n\x0b\x61pp_id_list\x18\x03 \x03(\x0b\x32\x13.server_route.AppId\"e\n\x0fReleaseResponse\x12\x16\n\x0evalid_hub_uuid\x18\x01 \x01(\x08\x12:\n\x14release_package_list\x18\x02 \x03(\x0b\x32\x1c.server_route.ReleasePackage\"j\n\x0eReleasePackage\x12#\n\x06\x61pp_id\x18\x01 \x01(\x0b\x32\x13.server_route.AppId\x12\x33\n\x0crelease_list\x18\x02 \x03(\x0b\x32\x1d.server_route.ReleaseListItem\"W\n\x12\x44ownloadAssetIndex\x12,\n\x06\x61pp_id\x18\x01 \x01(\x0b\x32\x1c.server_route.ReleaseRequest\x12\x13\n\x0b\x61sset_index\x18\x02 \x03(\x05\"G\n\x0c\x44ownloadInfo\x12\x0b\n\x03url\x18\x01 \x01(\t\x12*\n\x0erequest_header\x18\x02 \x03(\x0b\x32\x12.server_route.Dict\"f\n\x0fReleaseListItem\x12\x16\n\x0eversion_number\x18\x01 \x01(\t\x12\x12\n\nchange_log\x18\x02 \x01(\t\x12\'\n\x06\x61ssets\x18\x03 \x03(\x0b\x32\x17.server_route.AssetItem\"G\n\tAssetItem\x12\x11\n\tfile_name\x18\x01 \x01(\t\x12\x14\n\x0c\x64ownload_url\x18\x02 \x01(\t\x12\x11\n\tfile_type\x18\x03 \x01(\t\"\"\n\x04\x44ict\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\t2\xf1\x01\n\x11UpdateServerRoute\x12:\n\x0eGetCloudConfig\x12\x13.server_route.Empty\x1a\x11.server_route.Str\"\x00\x12M\n\x0cGetAppStatus\x12\x1c.server_route.ReleaseRequest\x1a\x1d.server_route.ReleaseResponse\"\x00\x12Q\n\x0fGetDownloadInfo\x12 .server_route.DownloadAssetIndex\x1a\x1a.server_route.DownloadInfo\"\x00\x42.\n\x1enet.xzos.upgradeall.core.routeB\nRouteProtoP\x01\x62\x06proto3'
 )
 
 
@@ -82,32 +82,18 @@ _STR = _descriptor.Descriptor(
 )
 
 
-_REQUEST = _descriptor.Descriptor(
-  name='Request',
-  full_name='server_route.Request',
+_APPID = _descriptor.Descriptor(
+  name='AppId',
+  full_name='server_route.AppId',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
-      name='hub_uuid', full_name='server_route.Request.hub_uuid', index=0,
-      number=1, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=b"".decode('utf-8'),
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
-    _descriptor.FieldDescriptor(
-      name='app_id', full_name='server_route.Request.app_id', index=1,
+      name='app_id', full_name='server_route.AppId.app_id', index=0,
       number=2, type=11, cpp_type=10, label=3,
       has_default_value=False, default_value=[],
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
-    _descriptor.FieldDescriptor(
-      name='http_proxy', full_name='server_route.Request.http_proxy', index=2,
-      number=3, type=11, cpp_type=10, label=1,
-      has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
@@ -124,29 +110,36 @@ _REQUEST = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=74,
-  serialized_end=195,
+  serialized_end=117,
 )
 
 
-_RESPONSE = _descriptor.Descriptor(
-  name='Response',
-  full_name='server_route.Response',
+_RELEASEREQUEST = _descriptor.Descriptor(
+  name='ReleaseRequest',
+  full_name='server_route.ReleaseRequest',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
-      name='app_status', full_name='server_route.Response.app_status', index=0,
-      number=1, type=11, cpp_type=10, label=1,
-      has_default_value=False, default_value=None,
+      name='hub_uuid', full_name='server_route.ReleaseRequest.hub_uuid', index=0,
+      number=1, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='http_proxy', full_name='server_route.Response.http_proxy', index=1,
-      number=2, type=11, cpp_type=10, label=1,
-      has_default_value=False, default_value=None,
+      name='auth', full_name='server_route.ReleaseRequest.auth', index=1,
+      number=2, type=11, cpp_type=10, label=3,
+      has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='app_id_list', full_name='server_route.ReleaseRequest.app_id_list', index=2,
+      number=3, type=11, cpp_type=10, label=3,
+      has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
@@ -162,28 +155,28 @@ _RESPONSE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=197,
-  serialized_end=304,
+  serialized_start=119,
+  serialized_end=229,
 )
 
 
-_REQUESTLIST = _descriptor.Descriptor(
-  name='RequestList',
-  full_name='server_route.RequestList',
+_RELEASERESPONSE = _descriptor.Descriptor(
+  name='ReleaseResponse',
+  full_name='server_route.ReleaseResponse',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
-      name='hub_uuid', full_name='server_route.RequestList.hub_uuid', index=0,
-      number=1, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=b"".decode('utf-8'),
+      name='valid_hub_uuid', full_name='server_route.ReleaseResponse.valid_hub_uuid', index=0,
+      number=1, type=8, cpp_type=7, label=1,
+      has_default_value=False, default_value=False,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='app_id_list', full_name='server_route.RequestList.app_id_list', index=1,
+      name='release_package_list', full_name='server_route.ReleaseResponse.release_package_list', index=1,
       number=2, type=11, cpp_type=10, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
@@ -201,22 +194,29 @@ _REQUESTLIST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=306,
-  serialized_end=379,
+  serialized_start=231,
+  serialized_end=332,
 )
 
 
-_RESPONSELIST = _descriptor.Descriptor(
-  name='ResponseList',
-  full_name='server_route.ResponseList',
+_RELEASEPACKAGE = _descriptor.Descriptor(
+  name='ReleasePackage',
+  full_name='server_route.ReleasePackage',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
-      name='response', full_name='server_route.ResponseList.response', index=0,
-      number=1, type=11, cpp_type=10, label=3,
+      name='app_id', full_name='server_route.ReleasePackage.app_id', index=0,
+      number=1, type=11, cpp_type=10, label=1,
+      has_default_value=False, default_value=None,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='release_list', full_name='server_route.ReleasePackage.release_list', index=1,
+      number=2, type=11, cpp_type=10, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
@@ -233,8 +233,8 @@ _RESPONSELIST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=381,
-  serialized_end=444,
+  serialized_start=334,
+  serialized_end=440,
 )
 
 
@@ -247,7 +247,7 @@ _DOWNLOADASSETINDEX = _descriptor.Descriptor(
   create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
-      name='app_id_info', full_name='server_route.DownloadAssetIndex.app_id_info', index=0,
+      name='app_id', full_name='server_route.DownloadAssetIndex.app_id', index=0,
       number=1, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
@@ -272,8 +272,8 @@ _DOWNLOADASSETINDEX = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=446,
-  serialized_end=531,
+  serialized_start=442,
+  serialized_end=529,
 )
 
 
@@ -311,283 +311,35 @@ _DOWNLOADINFO = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=533,
-  serialized_end=604,
+  serialized_start=531,
+  serialized_end=602,
 )
 
 
-_APPID = _descriptor.Descriptor(
-  name='AppId',
-  full_name='server_route.AppId',
+_RELEASELISTITEM = _descriptor.Descriptor(
+  name='ReleaseListItem',
+  full_name='server_route.ReleaseListItem',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
-      name='app_id', full_name='server_route.AppId.app_id', index=0,
-      number=1, type=11, cpp_type=10, label=3,
-      has_default_value=False, default_value=[],
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
-  ],
-  extensions=[
-  ],
-  nested_types=[],
-  enum_types=[
-  ],
-  serialized_options=None,
-  is_extendable=False,
-  syntax='proto3',
-  extension_ranges=[],
-  oneofs=[
-  ],
-  serialized_start=606,
-  serialized_end=654,
-)
-
-
-_RESPONSEPACKAGE = _descriptor.Descriptor(
-  name='ResponsePackage',
-  full_name='server_route.ResponsePackage',
-  filename=None,
-  file=DESCRIPTOR,
-  containing_type=None,
-  create_key=_descriptor._internal_create_key,
-  fields=[
-    _descriptor.FieldDescriptor(
-      name='app_id', full_name='server_route.ResponsePackage.app_id', index=0,
-      number=1, type=11, cpp_type=10, label=3,
-      has_default_value=False, default_value=[],
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
-    _descriptor.FieldDescriptor(
-      name='app_status', full_name='server_route.ResponsePackage.app_status', index=1,
-      number=2, type=11, cpp_type=10, label=1,
-      has_default_value=False, default_value=None,
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
-    _descriptor.FieldDescriptor(
-      name='http_proxy', full_name='server_route.ResponsePackage.http_proxy', index=2,
-      number=3, type=11, cpp_type=10, label=1,
-      has_default_value=False, default_value=None,
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
-  ],
-  extensions=[
-  ],
-  nested_types=[],
-  enum_types=[
-  ],
-  serialized_options=None,
-  is_extendable=False,
-  syntax='proto3',
-  extension_ranges=[],
-  oneofs=[
-  ],
-  serialized_start=657,
-  serialized_end=812,
-)
-
-
-_APPIDITEM = _descriptor.Descriptor(
-  name='AppIdItem',
-  full_name='server_route.AppIdItem',
-  filename=None,
-  file=DESCRIPTOR,
-  containing_type=None,
-  create_key=_descriptor._internal_create_key,
-  fields=[
-    _descriptor.FieldDescriptor(
-      name='key', full_name='server_route.AppIdItem.key', index=0,
+      name='version_number', full_name='server_route.ReleaseListItem.version_number', index=0,
       number=1, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='value', full_name='server_route.AppIdItem.value', index=1,
-      number=2, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=b"".decode('utf-8'),
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
-  ],
-  extensions=[
-  ],
-  nested_types=[],
-  enum_types=[
-  ],
-  serialized_options=None,
-  is_extendable=False,
-  syntax='proto3',
-  extension_ranges=[],
-  oneofs=[
-  ],
-  serialized_start=814,
-  serialized_end=853,
-)
-
-
-_HTTPPROXYRESPONSE = _descriptor.Descriptor(
-  name='HttpProxyResponse',
-  full_name='server_route.HttpProxyResponse',
-  filename=None,
-  file=DESCRIPTOR,
-  containing_type=None,
-  create_key=_descriptor._internal_create_key,
-  fields=[
-    _descriptor.FieldDescriptor(
-      name='fun_id', full_name='server_route.HttpProxyResponse.fun_id', index=0,
-      number=1, type=5, cpp_type=1, label=1,
-      has_default_value=False, default_value=0,
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
-    _descriptor.FieldDescriptor(
-      name='http_response', full_name='server_route.HttpProxyResponse.http_response', index=1,
-      number=2, type=11, cpp_type=10, label=1,
-      has_default_value=False, default_value=None,
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
-  ],
-  extensions=[
-  ],
-  nested_types=[],
-  enum_types=[
-  ],
-  serialized_options=None,
-  is_extendable=False,
-  syntax='proto3',
-  extension_ranges=[],
-  oneofs=[
-  ],
-  serialized_start=855,
-  serialized_end=945,
-)
-
-
-_HTTPPROXYREQUEST = _descriptor.Descriptor(
-  name='HttpProxyRequest',
-  full_name='server_route.HttpProxyRequest',
-  filename=None,
-  file=DESCRIPTOR,
-  containing_type=None,
-  create_key=_descriptor._internal_create_key,
-  fields=[
-    _descriptor.FieldDescriptor(
-      name='next_fun_id', full_name='server_route.HttpProxyRequest.next_fun_id', index=0,
-      number=1, type=5, cpp_type=1, label=1,
-      has_default_value=False, default_value=0,
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
-    _descriptor.FieldDescriptor(
-      name='http_proxy_request', full_name='server_route.HttpProxyRequest.http_proxy_request', index=1,
-      number=2, type=11, cpp_type=10, label=1,
-      has_default_value=False, default_value=None,
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
-  ],
-  extensions=[
-  ],
-  nested_types=[],
-  enum_types=[
-  ],
-  serialized_options=None,
-  is_extendable=False,
-  syntax='proto3',
-  extension_ranges=[],
-  oneofs=[
-  ],
-  serialized_start=947,
-  serialized_end=1045,
-)
-
-
-_APPSTATUS = _descriptor.Descriptor(
-  name='AppStatus',
-  full_name='server_route.AppStatus',
-  filename=None,
-  file=DESCRIPTOR,
-  containing_type=None,
-  create_key=_descriptor._internal_create_key,
-  fields=[
-    _descriptor.FieldDescriptor(
-      name='valid_hub_uuid', full_name='server_route.AppStatus.valid_hub_uuid', index=0,
-      number=1, type=8, cpp_type=7, label=1,
-      has_default_value=False, default_value=False,
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
-    _descriptor.FieldDescriptor(
-      name='valid_app', full_name='server_route.AppStatus.valid_app', index=1,
-      number=2, type=8, cpp_type=7, label=1,
-      has_default_value=False, default_value=False,
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
-    _descriptor.FieldDescriptor(
-      name='valid_data', full_name='server_route.AppStatus.valid_data', index=2,
-      number=3, type=8, cpp_type=7, label=1,
-      has_default_value=False, default_value=False,
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
-    _descriptor.FieldDescriptor(
-      name='release_info', full_name='server_route.AppStatus.release_info', index=3,
-      number=4, type=11, cpp_type=10, label=3,
-      has_default_value=False, default_value=[],
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
-  ],
-  extensions=[
-  ],
-  nested_types=[],
-  enum_types=[
-  ],
-  serialized_options=None,
-  is_extendable=False,
-  syntax='proto3',
-  extension_ranges=[],
-  oneofs=[
-  ],
-  serialized_start=1047,
-  serialized_end=1174,
-)
-
-
-_RELEASEINFOITEM = _descriptor.Descriptor(
-  name='ReleaseInfoItem',
-  full_name='server_route.ReleaseInfoItem',
-  filename=None,
-  file=DESCRIPTOR,
-  containing_type=None,
-  create_key=_descriptor._internal_create_key,
-  fields=[
-    _descriptor.FieldDescriptor(
-      name='version_number', full_name='server_route.ReleaseInfoItem.version_number', index=0,
-      number=1, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=b"".decode('utf-8'),
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
-    _descriptor.FieldDescriptor(
-      name='change_log', full_name='server_route.ReleaseInfoItem.change_log', index=1,
+      name='change_log', full_name='server_route.ReleaseListItem.change_log', index=1,
       number=2, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='assets', full_name='server_route.ReleaseInfoItem.assets', index=2,
+      name='assets', full_name='server_route.ReleaseListItem.assets', index=2,
       number=3, type=11, cpp_type=10, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
@@ -605,8 +357,8 @@ _RELEASEINFOITEM = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1176,
-  serialized_end=1278,
+  serialized_start=604,
+  serialized_end=706,
 )
 
 
@@ -651,8 +403,8 @@ _ASSETITEM = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1280,
-  serialized_end=1351,
+  serialized_start=708,
+  serialized_end=779,
 )
 
 
@@ -690,179 +442,30 @@ _DICT = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1353,
-  serialized_end=1387,
+  serialized_start=781,
+  serialized_end=815,
 )
 
-
-_HTTPREQUESTITEM = _descriptor.Descriptor(
-  name='HttpRequestItem',
-  full_name='server_route.HttpRequestItem',
-  filename=None,
-  file=DESCRIPTOR,
-  containing_type=None,
-  create_key=_descriptor._internal_create_key,
-  fields=[
-    _descriptor.FieldDescriptor(
-      name='method', full_name='server_route.HttpRequestItem.method', index=0,
-      number=1, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=b"".decode('utf-8'),
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
-    _descriptor.FieldDescriptor(
-      name='url', full_name='server_route.HttpRequestItem.url', index=1,
-      number=2, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=b"".decode('utf-8'),
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
-    _descriptor.FieldDescriptor(
-      name='headers', full_name='server_route.HttpRequestItem.headers', index=2,
-      number=3, type=11, cpp_type=10, label=3,
-      has_default_value=False, default_value=[],
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
-    _descriptor.FieldDescriptor(
-      name='body', full_name='server_route.HttpRequestItem.body', index=3,
-      number=4, type=11, cpp_type=10, label=1,
-      has_default_value=False, default_value=None,
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
-  ],
-  extensions=[
-  ],
-  nested_types=[],
-  enum_types=[
-  ],
-  serialized_options=None,
-  is_extendable=False,
-  syntax='proto3',
-  extension_ranges=[],
-  oneofs=[
-  ],
-  serialized_start=1390,
-  serialized_end=1522,
-)
-
-
-_HTTPPOSTREQUESTBODY = _descriptor.Descriptor(
-  name='HttpPostRequestBody',
-  full_name='server_route.HttpPostRequestBody',
-  filename=None,
-  file=DESCRIPTOR,
-  containing_type=None,
-  create_key=_descriptor._internal_create_key,
-  fields=[
-    _descriptor.FieldDescriptor(
-      name='type', full_name='server_route.HttpPostRequestBody.type', index=0,
-      number=1, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=b"".decode('utf-8'),
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
-    _descriptor.FieldDescriptor(
-      name='text', full_name='server_route.HttpPostRequestBody.text', index=1,
-      number=2, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=b"".decode('utf-8'),
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
-  ],
-  extensions=[
-  ],
-  nested_types=[],
-  enum_types=[
-  ],
-  serialized_options=None,
-  is_extendable=False,
-  syntax='proto3',
-  extension_ranges=[],
-  oneofs=[
-  ],
-  serialized_start=1524,
-  serialized_end=1573,
-)
-
-
-_HTTPRESPONSEITEM = _descriptor.Descriptor(
-  name='HttpResponseItem',
-  full_name='server_route.HttpResponseItem',
-  filename=None,
-  file=DESCRIPTOR,
-  containing_type=None,
-  create_key=_descriptor._internal_create_key,
-  fields=[
-    _descriptor.FieldDescriptor(
-      name='status_code', full_name='server_route.HttpResponseItem.status_code', index=0,
-      number=1, type=5, cpp_type=1, label=1,
-      has_default_value=False, default_value=0,
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
-    _descriptor.FieldDescriptor(
-      name='text', full_name='server_route.HttpResponseItem.text', index=1,
-      number=2, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=b"".decode('utf-8'),
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
-  ],
-  extensions=[
-  ],
-  nested_types=[],
-  enum_types=[
-  ],
-  serialized_options=None,
-  is_extendable=False,
-  syntax='proto3',
-  extension_ranges=[],
-  oneofs=[
-  ],
-  serialized_start=1575,
-  serialized_end=1628,
-)
-
-_REQUEST.fields_by_name['app_id'].message_type = _APPIDITEM
-_REQUEST.fields_by_name['http_proxy'].message_type = _HTTPPROXYRESPONSE
-_RESPONSE.fields_by_name['app_status'].message_type = _APPSTATUS
-_RESPONSE.fields_by_name['http_proxy'].message_type = _HTTPPROXYREQUEST
-_REQUESTLIST.fields_by_name['app_id_list'].message_type = _APPID
-_RESPONSELIST.fields_by_name['response'].message_type = _RESPONSEPACKAGE
-_DOWNLOADASSETINDEX.fields_by_name['app_id_info'].message_type = _REQUEST
+_APPID.fields_by_name['app_id'].message_type = _DICT
+_RELEASEREQUEST.fields_by_name['auth'].message_type = _DICT
+_RELEASEREQUEST.fields_by_name['app_id_list'].message_type = _APPID
+_RELEASERESPONSE.fields_by_name['release_package_list'].message_type = _RELEASEPACKAGE
+_RELEASEPACKAGE.fields_by_name['app_id'].message_type = _APPID
+_RELEASEPACKAGE.fields_by_name['release_list'].message_type = _RELEASELISTITEM
+_DOWNLOADASSETINDEX.fields_by_name['app_id'].message_type = _RELEASEREQUEST
 _DOWNLOADINFO.fields_by_name['request_header'].message_type = _DICT
-_APPID.fields_by_name['app_id'].message_type = _APPIDITEM
-_RESPONSEPACKAGE.fields_by_name['app_id'].message_type = _APPIDITEM
-_RESPONSEPACKAGE.fields_by_name['app_status'].message_type = _APPSTATUS
-_RESPONSEPACKAGE.fields_by_name['http_proxy'].message_type = _HTTPPROXYREQUEST
-_HTTPPROXYRESPONSE.fields_by_name['http_response'].message_type = _HTTPRESPONSEITEM
-_HTTPPROXYREQUEST.fields_by_name['http_proxy_request'].message_type = _HTTPREQUESTITEM
-_APPSTATUS.fields_by_name['release_info'].message_type = _RELEASEINFOITEM
-_RELEASEINFOITEM.fields_by_name['assets'].message_type = _ASSETITEM
-_HTTPREQUESTITEM.fields_by_name['headers'].message_type = _DICT
-_HTTPREQUESTITEM.fields_by_name['body'].message_type = _HTTPPOSTREQUESTBODY
+_RELEASELISTITEM.fields_by_name['assets'].message_type = _ASSETITEM
 DESCRIPTOR.message_types_by_name['Empty'] = _EMPTY
 DESCRIPTOR.message_types_by_name['Str'] = _STR
-DESCRIPTOR.message_types_by_name['Request'] = _REQUEST
-DESCRIPTOR.message_types_by_name['Response'] = _RESPONSE
-DESCRIPTOR.message_types_by_name['RequestList'] = _REQUESTLIST
-DESCRIPTOR.message_types_by_name['ResponseList'] = _RESPONSELIST
+DESCRIPTOR.message_types_by_name['AppId'] = _APPID
+DESCRIPTOR.message_types_by_name['ReleaseRequest'] = _RELEASEREQUEST
+DESCRIPTOR.message_types_by_name['ReleaseResponse'] = _RELEASERESPONSE
+DESCRIPTOR.message_types_by_name['ReleasePackage'] = _RELEASEPACKAGE
 DESCRIPTOR.message_types_by_name['DownloadAssetIndex'] = _DOWNLOADASSETINDEX
 DESCRIPTOR.message_types_by_name['DownloadInfo'] = _DOWNLOADINFO
-DESCRIPTOR.message_types_by_name['AppId'] = _APPID
-DESCRIPTOR.message_types_by_name['ResponsePackage'] = _RESPONSEPACKAGE
-DESCRIPTOR.message_types_by_name['AppIdItem'] = _APPIDITEM
-DESCRIPTOR.message_types_by_name['HttpProxyResponse'] = _HTTPPROXYRESPONSE
-DESCRIPTOR.message_types_by_name['HttpProxyRequest'] = _HTTPPROXYREQUEST
-DESCRIPTOR.message_types_by_name['AppStatus'] = _APPSTATUS
-DESCRIPTOR.message_types_by_name['ReleaseInfoItem'] = _RELEASEINFOITEM
+DESCRIPTOR.message_types_by_name['ReleaseListItem'] = _RELEASELISTITEM
 DESCRIPTOR.message_types_by_name['AssetItem'] = _ASSETITEM
 DESCRIPTOR.message_types_by_name['Dict'] = _DICT
-DESCRIPTOR.message_types_by_name['HttpRequestItem'] = _HTTPREQUESTITEM
-DESCRIPTOR.message_types_by_name['HttpPostRequestBody'] = _HTTPPOSTREQUESTBODY
-DESCRIPTOR.message_types_by_name['HttpResponseItem'] = _HTTPRESPONSEITEM
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
 Empty = _reflection.GeneratedProtocolMessageType('Empty', (_message.Message,), {
@@ -879,33 +482,33 @@ Str = _reflection.GeneratedProtocolMessageType('Str', (_message.Message,), {
   })
 _sym_db.RegisterMessage(Str)
 
-Request = _reflection.GeneratedProtocolMessageType('Request', (_message.Message,), {
-  'DESCRIPTOR' : _REQUEST,
+AppId = _reflection.GeneratedProtocolMessageType('AppId', (_message.Message,), {
+  'DESCRIPTOR' : _APPID,
   '__module__' : 'app.grpc_template.route_pb2'
-  # @@protoc_insertion_point(class_scope:server_route.Request)
+  # @@protoc_insertion_point(class_scope:server_route.AppId)
   })
-_sym_db.RegisterMessage(Request)
+_sym_db.RegisterMessage(AppId)
 
-Response = _reflection.GeneratedProtocolMessageType('Response', (_message.Message,), {
-  'DESCRIPTOR' : _RESPONSE,
+ReleaseRequest = _reflection.GeneratedProtocolMessageType('ReleaseRequest', (_message.Message,), {
+  'DESCRIPTOR' : _RELEASEREQUEST,
   '__module__' : 'app.grpc_template.route_pb2'
-  # @@protoc_insertion_point(class_scope:server_route.Response)
+  # @@protoc_insertion_point(class_scope:server_route.ReleaseRequest)
   })
-_sym_db.RegisterMessage(Response)
+_sym_db.RegisterMessage(ReleaseRequest)
 
-RequestList = _reflection.GeneratedProtocolMessageType('RequestList', (_message.Message,), {
-  'DESCRIPTOR' : _REQUESTLIST,
+ReleaseResponse = _reflection.GeneratedProtocolMessageType('ReleaseResponse', (_message.Message,), {
+  'DESCRIPTOR' : _RELEASERESPONSE,
   '__module__' : 'app.grpc_template.route_pb2'
-  # @@protoc_insertion_point(class_scope:server_route.RequestList)
+  # @@protoc_insertion_point(class_scope:server_route.ReleaseResponse)
   })
-_sym_db.RegisterMessage(RequestList)
+_sym_db.RegisterMessage(ReleaseResponse)
 
-ResponseList = _reflection.GeneratedProtocolMessageType('ResponseList', (_message.Message,), {
-  'DESCRIPTOR' : _RESPONSELIST,
+ReleasePackage = _reflection.GeneratedProtocolMessageType('ReleasePackage', (_message.Message,), {
+  'DESCRIPTOR' : _RELEASEPACKAGE,
   '__module__' : 'app.grpc_template.route_pb2'
-  # @@protoc_insertion_point(class_scope:server_route.ResponseList)
+  # @@protoc_insertion_point(class_scope:server_route.ReleasePackage)
   })
-_sym_db.RegisterMessage(ResponseList)
+_sym_db.RegisterMessage(ReleasePackage)
 
 DownloadAssetIndex = _reflection.GeneratedProtocolMessageType('DownloadAssetIndex', (_message.Message,), {
   'DESCRIPTOR' : _DOWNLOADASSETINDEX,
@@ -921,54 +524,12 @@ DownloadInfo = _reflection.GeneratedProtocolMessageType('DownloadInfo', (_messag
   })
 _sym_db.RegisterMessage(DownloadInfo)
 
-AppId = _reflection.GeneratedProtocolMessageType('AppId', (_message.Message,), {
-  'DESCRIPTOR' : _APPID,
+ReleaseListItem = _reflection.GeneratedProtocolMessageType('ReleaseListItem', (_message.Message,), {
+  'DESCRIPTOR' : _RELEASELISTITEM,
   '__module__' : 'app.grpc_template.route_pb2'
-  # @@protoc_insertion_point(class_scope:server_route.AppId)
+  # @@protoc_insertion_point(class_scope:server_route.ReleaseListItem)
   })
-_sym_db.RegisterMessage(AppId)
-
-ResponsePackage = _reflection.GeneratedProtocolMessageType('ResponsePackage', (_message.Message,), {
-  'DESCRIPTOR' : _RESPONSEPACKAGE,
-  '__module__' : 'app.grpc_template.route_pb2'
-  # @@protoc_insertion_point(class_scope:server_route.ResponsePackage)
-  })
-_sym_db.RegisterMessage(ResponsePackage)
-
-AppIdItem = _reflection.GeneratedProtocolMessageType('AppIdItem', (_message.Message,), {
-  'DESCRIPTOR' : _APPIDITEM,
-  '__module__' : 'app.grpc_template.route_pb2'
-  # @@protoc_insertion_point(class_scope:server_route.AppIdItem)
-  })
-_sym_db.RegisterMessage(AppIdItem)
-
-HttpProxyResponse = _reflection.GeneratedProtocolMessageType('HttpProxyResponse', (_message.Message,), {
-  'DESCRIPTOR' : _HTTPPROXYRESPONSE,
-  '__module__' : 'app.grpc_template.route_pb2'
-  # @@protoc_insertion_point(class_scope:server_route.HttpProxyResponse)
-  })
-_sym_db.RegisterMessage(HttpProxyResponse)
-
-HttpProxyRequest = _reflection.GeneratedProtocolMessageType('HttpProxyRequest', (_message.Message,), {
-  'DESCRIPTOR' : _HTTPPROXYREQUEST,
-  '__module__' : 'app.grpc_template.route_pb2'
-  # @@protoc_insertion_point(class_scope:server_route.HttpProxyRequest)
-  })
-_sym_db.RegisterMessage(HttpProxyRequest)
-
-AppStatus = _reflection.GeneratedProtocolMessageType('AppStatus', (_message.Message,), {
-  'DESCRIPTOR' : _APPSTATUS,
-  '__module__' : 'app.grpc_template.route_pb2'
-  # @@protoc_insertion_point(class_scope:server_route.AppStatus)
-  })
-_sym_db.RegisterMessage(AppStatus)
-
-ReleaseInfoItem = _reflection.GeneratedProtocolMessageType('ReleaseInfoItem', (_message.Message,), {
-  'DESCRIPTOR' : _RELEASEINFOITEM,
-  '__module__' : 'app.grpc_template.route_pb2'
-  # @@protoc_insertion_point(class_scope:server_route.ReleaseInfoItem)
-  })
-_sym_db.RegisterMessage(ReleaseInfoItem)
+_sym_db.RegisterMessage(ReleaseListItem)
 
 AssetItem = _reflection.GeneratedProtocolMessageType('AssetItem', (_message.Message,), {
   'DESCRIPTOR' : _ASSETITEM,
@@ -984,27 +545,6 @@ Dict = _reflection.GeneratedProtocolMessageType('Dict', (_message.Message,), {
   })
 _sym_db.RegisterMessage(Dict)
 
-HttpRequestItem = _reflection.GeneratedProtocolMessageType('HttpRequestItem', (_message.Message,), {
-  'DESCRIPTOR' : _HTTPREQUESTITEM,
-  '__module__' : 'app.grpc_template.route_pb2'
-  # @@protoc_insertion_point(class_scope:server_route.HttpRequestItem)
-  })
-_sym_db.RegisterMessage(HttpRequestItem)
-
-HttpPostRequestBody = _reflection.GeneratedProtocolMessageType('HttpPostRequestBody', (_message.Message,), {
-  'DESCRIPTOR' : _HTTPPOSTREQUESTBODY,
-  '__module__' : 'app.grpc_template.route_pb2'
-  # @@protoc_insertion_point(class_scope:server_route.HttpPostRequestBody)
-  })
-_sym_db.RegisterMessage(HttpPostRequestBody)
-
-HttpResponseItem = _reflection.GeneratedProtocolMessageType('HttpResponseItem', (_message.Message,), {
-  'DESCRIPTOR' : _HTTPRESPONSEITEM,
-  '__module__' : 'app.grpc_template.route_pb2'
-  # @@protoc_insertion_point(class_scope:server_route.HttpResponseItem)
-  })
-_sym_db.RegisterMessage(HttpResponseItem)
-
 
 DESCRIPTOR._options = None
 
@@ -1015,8 +555,8 @@ _UPDATESERVERROUTE = _descriptor.ServiceDescriptor(
   index=0,
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_start=1631,
-  serialized_end=1935,
+  serialized_start=818,
+  serialized_end=1059,
   methods=[
   _descriptor.MethodDescriptor(
     name='GetCloudConfig',
@@ -1033,25 +573,15 @@ _UPDATESERVERROUTE = _descriptor.ServiceDescriptor(
     full_name='server_route.UpdateServerRoute.GetAppStatus',
     index=1,
     containing_service=None,
-    input_type=_REQUEST,
-    output_type=_RESPONSE,
-    serialized_options=None,
-    create_key=_descriptor._internal_create_key,
-  ),
-  _descriptor.MethodDescriptor(
-    name='GetAppStatusList',
-    full_name='server_route.UpdateServerRoute.GetAppStatusList',
-    index=2,
-    containing_service=None,
-    input_type=_REQUESTLIST,
-    output_type=_RESPONSELIST,
+    input_type=_RELEASEREQUEST,
+    output_type=_RELEASERESPONSE,
     serialized_options=None,
     create_key=_descriptor._internal_create_key,
   ),
   _descriptor.MethodDescriptor(
     name='GetDownloadInfo',
     full_name='server_route.UpdateServerRoute.GetDownloadInfo',
-    index=3,
+    index=2,
     containing_service=None,
     input_type=_DOWNLOADASSETINDEX,
     output_type=_DOWNLOADINFO,

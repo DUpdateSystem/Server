@@ -5,7 +5,7 @@ from ..hub_script_utils import get_value_from_app_id, http_get
 
 
 class Sjly(BaseHub):
-    def get_release_info(self, app_id: list) -> tuple or None:
+    def get_release_list(self, app_id: list) -> tuple or None:
         app_id = _get_app_id(app_id)
         if app_id is None:
             return None

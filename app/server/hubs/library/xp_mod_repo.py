@@ -11,7 +11,7 @@ cache_key = "xposed_full_module_xml"
 
 
 class XpModRepo(BaseHub):
-    def get_release_info(self, app_id: list) -> tuple or None:
+    def get_release_list(self, app_id: list) -> tuple or None:
         package = _get_package(app_id)
         if package is None:
             return None

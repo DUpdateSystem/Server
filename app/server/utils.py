@@ -52,6 +52,19 @@ def call_def_in_loop(core, loop):
         asyncio.run_coroutine_threadsafe(core, loop)
 
 
+def call_fun_list_in_loop(core_list: list, loop=set_new_asyncio_loop()):
+    data_list = call_def_in_loop_return_result(asyncio.gather(*core_list), loop)
+    return data_list
+
+
+def grcp_dict_list_to_dict(grcp_dict: list or None) -> dict:
+    d = {}
+    if grcp_dict:
+        for gd in grcp_dict:
+            d[gd.key] = gd.value
+    return d
+
+
 __manager = Manager()
 
 

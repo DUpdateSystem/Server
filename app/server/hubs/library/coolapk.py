@@ -8,7 +8,7 @@ from ..hub_script_utils import get_value_from_app_id, parsing_http_page, get_ses
 
 
 class CoolApk(BaseHub):
-    def get_release_info(self, app_id: list) -> tuple or None:
+    def get_release_list(self, app_id: list) -> tuple or None:
         package = _get_package(app_id)
         if package == 'android':
             raise_no_app_error()
@@ -45,14 +45,14 @@ class CoolApk(BaseHub):
             if self is hub_dict[uuid]:
                 hub_uuid = uuid
                 break
-        release_info = data_manager.get_app_status(hub_uuid, app_id)["app_status"]["release_info"]
+        release_info = data_manager.get_release_list(hub_uuid, app_id)["app_status"]["release_info"]
         download_url = release_info[asset_index[0]]["assets"][asset_index[1]]["download_url"]
         try:
             get_session().head(download_url).raise_for_status()
             logging.debug("网址验证正确")
         except HTTPError:
             logging.debug("网址错误，尝试重新获取")
-            release_info = data_manager.get_app_status(hub_uuid, app_id, use_cache=False)["app_status"]
+            release_info = data_manager.get_release_list(hub_uuid, app_id, use_cache=False)["app_status"]
             download_url = release_info[asset_index[0]]["assets"][asset_index[1]]["download_url"]
         return {"url": download_url}
 

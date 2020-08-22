@@ -33,9 +33,9 @@ class CacheManager:
         except ConnectionError:
             pass
 
-    def get_release_cache(self, hub_uuid: str, app_info: list) -> dict or None:
+    def get_release_cache(self, hub_uuid: str, app_id: dict) -> dict or None:
         try:
-            return self.__get_release_cache(hub_uuid, app_info)
+            return self.__get_release_cache(hub_uuid, app_id)
         except ConnectionError:
             pass
 
@@ -91,15 +91,15 @@ class CacheManager:
         # 缓存完毕
         logging.debug(f"release caching: {app_info}")
 
-    def __get_release_cache(self, hub_uuid: str, app_info: list) -> dict or None:
-        key = self.__get_app_cache_key(hub_uuid, app_info)
+    def __get_release_cache(self, hub_uuid: str, app_id: dict) -> dict or None:
+        key = self.__get_app_cache_key(hub_uuid, app_id)
         if key is None:
             logging.error(f"""WRONG FORMAT
 hub_uuid: {hub_uuid}
-app_info: {app_info}""", exc_info=server_config.debug_mode)
+app_id: {app_id}""", exc_info=server_config.debug_mode)
             raise NameError
         release_info = self.__get(self.__redis_release_cache_client, key)
-        logging.debug(f"release cached: {app_info}")
+        logging.debug(f"release cached: {app_id}")
         return json.loads(release_info)
 
     @property
@@ -119,11 +119,11 @@ app_info: {app_info}""", exc_info=server_config.debug_mode)
         return cache_app_info_dict
 
     @staticmethod
-    def __get_app_cache_key(hub_uuid: str, app_id: list) -> str or None:
+    def __get_app_cache_key(hub_uuid: str, app_id: dict) -> str or None:
         key = hub_uuid
-        for k in app_id:
+        for key in app_id:
             try:
-                key += (key_delimiter + k["key"] + value_dict_delimiter + k["value"])
+                key += (key_delimiter + key + value_dict_delimiter + app_id[key])
             except TypeError:
                 return None
         return key
@@ -132,13 +132,11 @@ app_info: {app_info}""", exc_info=server_config.debug_mode)
     def __parsing_app_id(key: str) -> tuple:
         key_list = key.split(key_delimiter)
         hub_uuid = key_list[0]
-        app_info = []
+        app_id = {}
         for k in key_list[1:]:
             key, value = k.split(value_dict_delimiter, 1)
-            app_info.append(
-                {"key": key, "value": value}
-            )
-        return hub_uuid, app_info
+            app_id[key] = value
+        return hub_uuid, app_id
 
 
 cache_manager = CacheManager()

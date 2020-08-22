@@ -12,7 +12,7 @@ from app.grpc_template import route_pb2_grpc
 from app.grpc_template.route_pb2 import *
 from app.server.api import *
 from app.server.manager.data_manager import tl
-from app.server.utils import logging, get_response
+from app.server.utils import logging, get_response, grcp_dict_list_to_dict
 
 
 class Greeter(route_pb2_grpc.UpdateServerRouteServicer):
@@ -23,34 +23,15 @@ class Greeter(route_pb2_grpc.UpdateServerRouteServicer):
             logging.info("已完成获取云端配置仓库数据请求")
             return Str(s=response.text)
 
-    def GetAppStatus(self, request, context) -> Response:
+    def GetAppStatus(self, request: ReleaseRequest, context) -> ReleaseResponse:
+        hub_uuid: str = request.hub_uuid
+        auth: dict = grcp_dict_list_to_dict(request.auth)
+        app_id_list: list = [grcp_dict_list_to_dict(item) for item in request.app_id_list]
         # noinspection PyBroadException
         try:
-            request = MessageToDict(request, preserving_proto_field_name=True)
-            hub_uuid: str = request['hub_uuid']
-            if 'app_id' in request:
-                app_id: list = request['app_id']
-            else:
-                app_id = []
-            fun_id: int = 0
-            http_response = None
-            if 'http_proxy' in request:
-                fun_id = request['http_proxy']['fun_id']
-                http_response = request['http_proxy']['http_response']
-            return self.__get_app_status(hub_uuid, app_id, fun_id, http_response)
+            return self.__get_app_status(hub_uuid, auth, app_id_list)
         except Exception:
             logging.exception('gRPC: GetAppStatus')
-            return None
-
-    def GetAppStatusList(self, request, context) -> ResponseList:
-        # noinspection PyBroadException
-        try:
-            request = MessageToDict(request, preserving_proto_field_name=True)
-            hub_uuid: str = request['hub_uuid']
-            app_id_list: list = request['app_id_list']
-            return self.__get_app_list_status(hub_uuid, app_id_list)
-        except Exception:
-            logging.exception('gRPC: GetAppStatusList')
             return None
 
     def GetDownloadInfo(self, request, context: grpc.RpcContext) -> DownloadInfo:
@@ -69,17 +50,9 @@ class Greeter(route_pb2_grpc.UpdateServerRouteServicer):
             return None
 
     @staticmethod
-    def __get_app_status(hub_uuid: str, app_id: list,
-                         fun_id: int = 0, http_response: dict = None) -> Response:
-        app_status = get_app_status(hub_uuid, app_id, fun_id, http_response)
-        if app_status is None:
-            return Response(app_status=AppStatus(valid_hub_uuid=False))
-        return ParseDict(app_status, Response())
-
-    @staticmethod
-    def __get_app_list_status(hub_uuid: str, app_id_list: list) -> ResponseList:
-        app_status_list = get_app_list_status(hub_uuid, app_id_list)
-        return ParseDict({"response": app_status_list}, ResponseList())
+    def __get_app_status(hub_uuid: str, auth: dict, app_id_list: list) -> ReleaseResponse:
+        release_list = get_release_dict(hub_uuid, auth, app_id_list)
+        return ParseDict(release_list, ReleaseResponse())
 
     @staticmethod
     def __get_download_info(hub_uuid: str, app_id: list, asset_index: list) -> DownloadInfo:

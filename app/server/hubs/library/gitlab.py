@@ -10,7 +10,7 @@ from ..hub_script_utils import http_get
 class Gitlab(BaseHub):
     """Gitlab 软件源"""
 
-    def get_release_info(self, app_id: list) -> tuple or None:
+    def get_release_list(self, app_id: list) -> tuple or None:
         owner_name, repo_name = _get_base_info(app_id)
         if repo_name is None or owner_name is None:
             return
