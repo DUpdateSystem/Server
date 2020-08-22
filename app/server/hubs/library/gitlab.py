@@ -2,7 +2,6 @@ import json
 
 from bs4 import BeautifulSoup
 
-from .github import _get_base_info
 from ..base_hub import BaseHub
 from ..hub_script_utils import http_get
 
@@ -10,10 +9,9 @@ from ..hub_script_utils import http_get
 class Gitlab(BaseHub):
     """Gitlab 软件源"""
 
-    def get_release_list(self, app_id: list) -> tuple or None:
-        owner_name, repo_name = _get_base_info(app_id)
-        if repo_name is None or owner_name is None:
-            return
+    def get_release(self, app_id: dict, auth: dict or None = None) -> tuple or None:
+        owner_name = app_id['owner']
+        repo_name = app_id['repo']
         response = _get_response(owner_name, repo_name)
         data = []
         # 分版本号获取信息

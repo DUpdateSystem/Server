@@ -7,10 +7,9 @@ from ..hub_script_utils import http_get, search_version_number_string
 class Github(BaseHub):
     """GitHub 软件源"""
 
-    def get_release_list(self, app_id: list) -> tuple or None:
-        owner_name, repo_name = _get_base_info(app_id)
-        if repo_name is None or owner_name is None:
-            return
+    def get_release(self, app_id: dict, auth: dict or None = None) -> tuple or None:
+        owner_name = app_id['owner']
+        repo_name = app_id['repo']
         response = _get_response(owner_name, repo_name)
         data = []
         # 分版本号获取信息
@@ -36,27 +35,6 @@ class Github(BaseHub):
             release_info["assets"] = assets
             data.append(release_info)
         return data
-
-
-def _get_base_info(app_info: list) -> tuple:
-    """从 app_info 获取作者名称与仓库名称
-    Arg:
-        app_info: 客户端上传的信息
-    Return:
-        owner_name: 所有者名称
-        repo_name: Git 仓库名称
-     """
-    owner_name = None
-    repo_name = None
-    for i in app_info:
-        key = i["key"]
-        value = i["value"]
-        if key == "owner":
-            owner_name = value
-        elif key == "repo":
-            repo_name = value
-
-    return owner_name, repo_name
 
 
 def _get_api_url(owner_name: str, repo_name: str) -> str:

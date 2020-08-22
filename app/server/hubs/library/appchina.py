@@ -7,12 +7,8 @@ headers = {
 
 
 class AppChina(BaseHub):
-    def get_release_list(self, app_id: list) -> tuple or None:
-        package = _get_package(app_id)
-
-        if package is None:
-            return None
-
+    def get_release(self, app_id: dict, auth: dict or None = None) -> tuple or None:
+        package = app_id["android_app_package"]
         newest_json = {"type": "app.detailInfo", "packagename": "com.example.app"}
         history_json = {"type": "app.pastdetails", "id": 0, "packagename": "com.example.app"}
 
@@ -45,7 +41,3 @@ def _send_api(param: dict) -> dict:
     api_url = "https://mobile.appchina.com/market/api"
     format_json = {"param": str(param), "api": "market.MarketAPI", "\n": ""}
     return session.post(url=api_url, headers=headers, data=format_json).json()
-
-
-def _get_package(app_info: list) -> str or None:
-    return get_value_from_app_id(app_info, "android_app_package")

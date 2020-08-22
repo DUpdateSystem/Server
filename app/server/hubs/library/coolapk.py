@@ -4,16 +4,14 @@ from requests import HTTPError
 
 from app.server.utils import logging
 from ..base_hub import BaseHub
-from ..hub_script_utils import get_value_from_app_id, parsing_http_page, get_session, raise_no_app_error
+from ..hub_script_utils import parsing_http_page, get_session, raise_no_app_error
 
 
 class CoolApk(BaseHub):
-    def get_release_list(self, app_id: list) -> tuple or None:
-        package = _get_package(app_id)
+    def get_release(self, app_id: dict, auth: dict or None = None) -> tuple or None:
+        package = app_id["android_app_package"]
         if package == 'android':
             raise_no_app_error()
-        if package is None:
-            return None
         url = _get_url(package)
         soup = parsing_http_page(url)
         version_number = soup.find(class_="list_app_info").get_text("|", strip=True)
@@ -59,7 +57,3 @@ class CoolApk(BaseHub):
 
 def _get_url(app_package: str) -> str:
     return f"https://www.coolapk.com/apk/{app_package}"
-
-
-def _get_package(app_info: list) -> str or None:
-    return get_value_from_app_id(app_info, "android_app_package")

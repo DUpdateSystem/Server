@@ -1,14 +1,12 @@
 from bs4 import BeautifulSoup
 
 from ..base_hub import BaseHub
-from ..hub_script_utils import get_value_from_app_id, http_get
+from ..hub_script_utils import http_get
 
 
 class Sjly(BaseHub):
-    def get_release_list(self, app_id: list) -> tuple or None:
-        app_id = _get_app_id(app_id)
-        if app_id is None:
-            return None
+    def get_release(self, app_id: dict, auth: dict or None = None) -> tuple or None:
+        app_id = app_id['app_id']
         url = _get_url(app_id)
         response = http_get(url, verify=False)
         response.encoding = 'utf-8'
@@ -18,7 +16,7 @@ class Sjly(BaseHub):
         version_row_string_list = [element.a.text for element in version_number_elements if element.a]
         version_number_list = [item[item.find('v') + 1:] for item in version_row_string_list]
         newest_changelog_mark_elements = soup.find(class_="Lef1_cent").find_next(name="h3", class_="biaoti",
-                                                                                     text="更新说明")
+                                                                                 text="更新说明")
         newest_changelog = None
         if newest_changelog_mark_elements is not None:
             newest_changelog = newest_changelog_mark_elements.next_element.next_element.next_element.text
@@ -40,7 +38,3 @@ class Sjly(BaseHub):
 
 def _get_url(app_id: str) -> str:
     return f"https://soft.shouji.com.cn/down/{app_id}.html"
-
-
-def _get_app_id(app_info: list) -> str or None:
-    return get_value_from_app_id(app_info, "app_id")
