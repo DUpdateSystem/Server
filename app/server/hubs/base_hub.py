@@ -10,7 +10,7 @@ class BaseHub(metaclass=ABCMeta):
     """ 软件源脚本需要实现的抽象类
     """
 
-    def init_account(self, account_id: dict) -> dict or None:
+    def init_account(self, account: dict) -> dict or None:
         pass
 
     def get_release_list(self, app_id_list: list, auth: dict or None = None) -> dict or None:

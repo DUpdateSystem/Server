@@ -23,6 +23,16 @@ class Greeter(route_pb2_grpc.UpdateServerRouteServicer):
             logging.info("已完成获取云端配置仓库数据请求")
             return Str(s=response.text)
 
+    def InitHubAccount(self, request: AccountRequest, context) -> AccountResponse:
+        hub_uuid: str = request.hub_uuid
+        account: dict = grcp_dict_list_to_dict(request.account)
+        # noinspection PyBroadException
+        try:
+            return self.__init_account(hub_uuid, account)
+        except Exception:
+            logging.exception('gRPC: InitHubAccount')
+            return None
+
     def GetAppStatus(self, request: ReleaseRequest, context) -> ReleaseResponse:
         hub_uuid: str = request.hub_uuid
         auth: dict = grcp_dict_list_to_dict(request.auth)
@@ -47,6 +57,11 @@ class Greeter(route_pb2_grpc.UpdateServerRouteServicer):
         except Exception:
             logging.exception('gRPC: GetDownloadInfo')
             return None
+
+    @staticmethod
+    def __init_account(hub_uuid: str, account: dict) -> AccountResponse:
+        auth_data = init_account(hub_uuid, account)
+        return ParseDict(auth_data, AccountResponse())
 
     @staticmethod
     def __get_app_status(hub_uuid: str, auth: dict, app_id_list: list) -> ReleaseResponse:

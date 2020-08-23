@@ -14,6 +14,18 @@ class DataManager:
     def __init__(self):
         self.__hub_server_manager = HubServerManager()
 
+    def init_account(self, hub_uuid: str, account: dict) -> dict or None:
+        if hub_uuid not in hub_dict:
+            logging.warning(f"NO HUB: {hub_uuid}")
+            return None
+        hub = self.__hub_server_manager.get_hub(hub_uuid)
+        # noinspection PyBroadException
+        try:
+            return hub.init_account(account)
+        except Exception:
+            logging.error(f"""hub_uuid: {hub_uuid} \nERROR: """, exc_info=server_config.debug_mode)
+            return None
+
     def get_release_dict(self, hub_uuid: str, app_id_list: list, auth: dict or None = None,
                          use_cache=True, cache_data=True) -> dict or None:
         if hub_uuid not in hub_dict:
@@ -28,7 +40,7 @@ class DataManager:
         hub = self.__hub_server_manager.get_hub(hub_uuid)
         # noinspection PyBroadException
         try:
-            return hub.get_download_info(app_id, asset_index)
+            return hub.get_download_info(app_id, asset_index, auth)
         except Exception:
             logging.error(f"""app_info: {app_id} \nERROR: """, exc_info=server_config.debug_mode)
             return None

@@ -8,6 +8,7 @@ package server_route;
 
 service UpdateServerRoute {
   rpc GetCloudConfig(Empty) returns (Str) {}
+  rpc InitHubAccount(AccountRequest) returns (AccountResponse) {}
   rpc GetAppStatus(ReleaseRequest) returns (ReleaseResponse) {}
   rpc GetDownloadInfo(DownloadRequest) returns (DownloadInfo) {}
 }
@@ -17,6 +18,15 @@ message Str {string s = 1;}
 
 message AppId {
   repeated Dict app_id = 2;
+}
+
+message AccountRequest{
+  string hub_uuid = 1;
+  repeated Dict account = 2;
+}
+
+message AccountResponse{
+  repeated Dict auth = 1;
 }
 
 message ReleaseRequest{

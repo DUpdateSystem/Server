@@ -1,9 +1,14 @@
 from .manager.data_manager import data_manager
-from .utils import logging
+from .utils import logging, dict_to_grcp_dict_list
+
+
+def init_account(hub_uuid: str, account: dict) -> dict:
+    auth = data_manager.init_account(hub_uuid, account)
+    return {"auth": dict_to_grcp_dict_list(auth)}
 
 
 def get_release_dict(hub_uuid: str, auth: dict or None, app_id_list: list,
-                     use_cache=True, cache_data=True) -> dict or None:
+                     use_cache=True, cache_data=True) -> dict:
     app_id_index = {frozenset(app_id): app_id for app_id in app_id_list}
     release_dict = data_manager.get_release_dict(hub_uuid, app_id_list, auth=auth,
                                                  use_cache=use_cache, cache_data=cache_data)

@@ -19,6 +19,11 @@ class UpdateServerRouteStub(object):
                 request_serializer=app_dot_grpc__template_dot_route__pb2.Empty.SerializeToString,
                 response_deserializer=app_dot_grpc__template_dot_route__pb2.Str.FromString,
                 )
+        self.InitHubAccount = channel.unary_unary(
+                '/server_route.UpdateServerRoute/InitHubAccount',
+                request_serializer=app_dot_grpc__template_dot_route__pb2.AccountRequest.SerializeToString,
+                response_deserializer=app_dot_grpc__template_dot_route__pb2.AccountResponse.FromString,
+                )
         self.GetAppStatus = channel.unary_unary(
                 '/server_route.UpdateServerRoute/GetAppStatus',
                 request_serializer=app_dot_grpc__template_dot_route__pb2.ReleaseRequest.SerializeToString,
@@ -35,6 +40,12 @@ class UpdateServerRouteServicer(object):
     """Missing associated documentation comment in .proto file."""
 
     def GetCloudConfig(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def InitHubAccount(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
@@ -59,6 +70,11 @@ def add_UpdateServerRouteServicer_to_server(servicer, server):
                     servicer.GetCloudConfig,
                     request_deserializer=app_dot_grpc__template_dot_route__pb2.Empty.FromString,
                     response_serializer=app_dot_grpc__template_dot_route__pb2.Str.SerializeToString,
+            ),
+            'InitHubAccount': grpc.unary_unary_rpc_method_handler(
+                    servicer.InitHubAccount,
+                    request_deserializer=app_dot_grpc__template_dot_route__pb2.AccountRequest.FromString,
+                    response_serializer=app_dot_grpc__template_dot_route__pb2.AccountResponse.SerializeToString,
             ),
             'GetAppStatus': grpc.unary_unary_rpc_method_handler(
                     servicer.GetAppStatus,
@@ -94,6 +110,23 @@ class UpdateServerRoute(object):
         return grpc.experimental.unary_unary(request, target, '/server_route.UpdateServerRoute/GetCloudConfig',
             app_dot_grpc__template_dot_route__pb2.Empty.SerializeToString,
             app_dot_grpc__template_dot_route__pb2.Str.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def InitHubAccount(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/server_route.UpdateServerRoute/InitHubAccount',
+            app_dot_grpc__template_dot_route__pb2.AccountRequest.SerializeToString,
+            app_dot_grpc__template_dot_route__pb2.AccountResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 

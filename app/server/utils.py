@@ -72,6 +72,14 @@ def grcp_dict_list_to_dict(grcp_dict: list or None) -> dict:
     return d
 
 
+def dict_to_grcp_dict_list(d: dict or None) -> list:
+    g_dict = []
+    if d:
+        for k in d:
+            g_dict.append({"key": k, "value": d[k]})
+    return g_dict
+
+
 __manager = Manager()
 
 
