@@ -36,15 +36,20 @@ def __process_proxy_request(method: str, url: str, headers_list: list, body_type
     return status_code, text
 
 
+auth_key = '_auth'
+
+
 def debug(hub_uuid: str, app_id_option: list):
     try:
         app_id = {}
         auth = {}
-        for i in range(0, len(app_id_option), 2):
-            app_id[app_id_option[i]] = app_id_option[i + 1]
-        auth_key = '_auth'
+        app_id_size = len(app_id_option)
+        auth_index = 0
         if auth_key in app_id_option:
-            auth_index = app_id_option.index(auth_key)
+            app_id_size = auth_index = app_id_option.index(auth_key)
+        for i in range(0, app_id_size, 2):
+            app_id[app_id_option[i]] = app_id_option[i + 1]
+        if auth_index:
             for i in range(auth_index + 1, len(app_id_option), 2):
                 auth[app_id_option[i]] = app_id_option[i + 1]
         _debug(hub_uuid, auth, app_id)
