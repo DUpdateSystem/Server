@@ -71,8 +71,6 @@ class Greeter(route_pb2_grpc.UpdateServerRouteServicer):
     @staticmethod
     def __get_download_info(hub_uuid: str, auth: dict, app_id: dict, asset_index: list) -> DownloadInfo:
         download_info = get_download_info(hub_uuid, auth, app_id, asset_index)
-        if not download_info:
-            download_info = {}
         return ParseDict(download_info, DownloadInfo())
 
 

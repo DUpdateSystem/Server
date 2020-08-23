@@ -41,7 +41,7 @@ class BaseHub(metaclass=ABCMeta):
         """
         return []
 
-    def get_download_info(self, app_id: dict, asset_index: list, auth: dict or None = None) -> dict or None:
+    def get_download_info(self, app_id: dict, asset_index: list, auth: dict or None = None) -> tuple or None:
         """即时获取下载地址
         Args:
             app_id: 客户端上传的软件属性
@@ -49,13 +49,11 @@ class BaseHub(metaclass=ABCMeta):
                 example: [0, 0] 第一个版本的第一个文件
             auth: 软件源身份验证信息
 
-        Returns: JSON
+        Returns: tuple
             Examples:
-                {
-                    url: "",
-                    request_header : {
+                ({url}, {request_header_dict})
+                request_header_dict 结构示例: {
                         "<请求头>": "<请求头参数>"
-                    }
                 }
         """
         pass

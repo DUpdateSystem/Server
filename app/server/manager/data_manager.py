@@ -33,7 +33,7 @@ class DataManager:
             return None
         return self.__get_release(hub_uuid, app_id_list, auth, use_cache, cache_data)
 
-    def get_download_info(self, hub_uuid: str, auth: dict, app_id: list, asset_index: list) -> dict or None:
+    def get_download_info(self, hub_uuid: str, auth: dict, app_id: list, asset_index: list) -> tuple or None:
         if hub_uuid not in hub_dict:
             logging.warning(f"NO HUB: {hub_uuid}")
             return None

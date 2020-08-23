@@ -36,7 +36,7 @@ class CoolApk(BaseHub):
         }]
         return data
 
-    def get_download_info(self, app_id: dict, asset_index: list, auth: dict or None = None) -> dict or None:
+    def get_download_info(self, app_id: dict, asset_index: list, auth: dict or None = None) -> tuple or None:
         from app.server.manager.data_manager import data_manager
         from app.server.hubs.hub_list import hub_dict
         hub_uuid = None
@@ -53,7 +53,7 @@ class CoolApk(BaseHub):
             logging.debug("网址错误，尝试重新获取")
             release_info = data_manager.get_release_list(hub_uuid, app_id, use_cache=False)["app_status"]
             download_url = release_info[asset_index[0]]["assets"][asset_index[1]]["download_url"]
-        return {"url": download_url}
+        return download_url,
 
 
 def _get_url(app_package: str) -> str:
