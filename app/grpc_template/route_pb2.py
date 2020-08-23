@@ -19,7 +19,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   syntax='proto3',
   serialized_options=b'\n\036net.xzos.upgradeall.core.routeB\nRouteProtoP\001',
   create_key=_descriptor._internal_create_key,
-  serialized_pb=b'\n\x1d\x61pp/grpc_template/route.proto\x12\x0cserver_route\"\x07\n\x05\x45mpty\"\x10\n\x03Str\x12\t\n\x01s\x18\x01 \x01(\t\"+\n\x05\x41ppId\x12\"\n\x06\x61pp_id\x18\x02 \x03(\x0b\x32\x12.server_route.Dict\"n\n\x0eReleaseRequest\x12\x10\n\x08hub_uuid\x18\x01 \x01(\t\x12 \n\x04\x61uth\x18\x02 \x03(\x0b\x32\x12.server_route.Dict\x12(\n\x0b\x61pp_id_list\x18\x03 \x03(\x0b\x32\x13.server_route.AppId\"e\n\x0fReleaseResponse\x12\x16\n\x0evalid_hub_uuid\x18\x01 \x01(\x08\x12:\n\x14release_package_list\x18\x02 \x03(\x0b\x32\x1c.server_route.ReleasePackage\"j\n\x0eReleasePackage\x12#\n\x06\x61pp_id\x18\x01 \x01(\x0b\x32\x13.server_route.AppId\x12\x33\n\x0crelease_list\x18\x02 \x03(\x0b\x32\x1d.server_route.ReleaseListItem\"W\n\x12\x44ownloadAssetIndex\x12,\n\x06\x61pp_id\x18\x01 \x01(\x0b\x32\x1c.server_route.ReleaseRequest\x12\x13\n\x0b\x61sset_index\x18\x02 \x03(\x05\"G\n\x0c\x44ownloadInfo\x12\x0b\n\x03url\x18\x01 \x01(\t\x12*\n\x0erequest_header\x18\x02 \x03(\x0b\x32\x12.server_route.Dict\"f\n\x0fReleaseListItem\x12\x16\n\x0eversion_number\x18\x01 \x01(\t\x12\x12\n\nchange_log\x18\x02 \x01(\t\x12\'\n\x06\x61ssets\x18\x03 \x03(\x0b\x32\x17.server_route.AssetItem\"G\n\tAssetItem\x12\x11\n\tfile_name\x18\x01 \x01(\t\x12\x14\n\x0c\x64ownload_url\x18\x02 \x01(\t\x12\x11\n\tfile_type\x18\x03 \x01(\t\"\"\n\x04\x44ict\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\t2\xf1\x01\n\x11UpdateServerRoute\x12:\n\x0eGetCloudConfig\x12\x13.server_route.Empty\x1a\x11.server_route.Str\"\x00\x12M\n\x0cGetAppStatus\x12\x1c.server_route.ReleaseRequest\x1a\x1d.server_route.ReleaseResponse\"\x00\x12Q\n\x0fGetDownloadInfo\x12 .server_route.DownloadAssetIndex\x1a\x1a.server_route.DownloadInfo\"\x00\x42.\n\x1enet.xzos.upgradeall.core.routeB\nRouteProtoP\x01\x62\x06proto3'
+  serialized_pb=b'\n\x1d\x61pp/grpc_template/route.proto\x12\x0cserver_route\"\x07\n\x05\x45mpty\"\x10\n\x03Str\x12\t\n\x01s\x18\x01 \x01(\t\"+\n\x05\x41ppId\x12\"\n\x06\x61pp_id\x18\x02 \x03(\x0b\x32\x12.server_route.Dict\"n\n\x0eReleaseRequest\x12\x10\n\x08hub_uuid\x18\x01 \x01(\t\x12 \n\x04\x61uth\x18\x02 \x03(\x0b\x32\x12.server_route.Dict\x12(\n\x0b\x61pp_id_list\x18\x03 \x03(\x0b\x32\x13.server_route.AppId\"e\n\x0fReleaseResponse\x12\x16\n\x0evalid_hub_uuid\x18\x01 \x01(\x08\x12:\n\x14release_package_list\x18\x02 \x03(\x0b\x32\x1c.server_route.ReleasePackage\"j\n\x0eReleasePackage\x12#\n\x06\x61pp_id\x18\x01 \x01(\x0b\x32\x13.server_route.AppId\x12\x33\n\x0crelease_list\x18\x02 \x03(\x0b\x32\x1d.server_route.ReleaseListItem\"\x7f\n\x0f\x44ownloadRequest\x12\x10\n\x08hub_uuid\x18\x01 \x01(\t\x12 \n\x04\x61uth\x18\x02 \x03(\x0b\x32\x12.server_route.Dict\x12#\n\x06\x61pp_id\x18\x03 \x01(\x0b\x32\x13.server_route.AppId\x12\x13\n\x0b\x61sset_index\x18\x04 \x03(\x05\"G\n\x0c\x44ownloadInfo\x12\x0b\n\x03url\x18\x01 \x01(\t\x12*\n\x0erequest_header\x18\x02 \x03(\x0b\x32\x12.server_route.Dict\"f\n\x0fReleaseListItem\x12\x16\n\x0eversion_number\x18\x01 \x01(\t\x12\x12\n\nchange_log\x18\x02 \x01(\t\x12\'\n\x06\x61ssets\x18\x03 \x03(\x0b\x32\x17.server_route.AssetItem\"G\n\tAssetItem\x12\x11\n\tfile_name\x18\x01 \x01(\t\x12\x14\n\x0c\x64ownload_url\x18\x02 \x01(\t\x12\x11\n\tfile_type\x18\x03 \x01(\t\"\"\n\x04\x44ict\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\t2\xee\x01\n\x11UpdateServerRoute\x12:\n\x0eGetCloudConfig\x12\x13.server_route.Empty\x1a\x11.server_route.Str\"\x00\x12M\n\x0cGetAppStatus\x12\x1c.server_route.ReleaseRequest\x1a\x1d.server_route.ReleaseResponse\"\x00\x12N\n\x0fGetDownloadInfo\x12\x1d.server_route.DownloadRequest\x1a\x1a.server_route.DownloadInfo\"\x00\x42.\n\x1enet.xzos.upgradeall.core.routeB\nRouteProtoP\x01\x62\x06proto3'
 )
 
 
@@ -238,24 +238,38 @@ _RELEASEPACKAGE = _descriptor.Descriptor(
 )
 
 
-_DOWNLOADASSETINDEX = _descriptor.Descriptor(
-  name='DownloadAssetIndex',
-  full_name='server_route.DownloadAssetIndex',
+_DOWNLOADREQUEST = _descriptor.Descriptor(
+  name='DownloadRequest',
+  full_name='server_route.DownloadRequest',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
-      name='app_id', full_name='server_route.DownloadAssetIndex.app_id', index=0,
-      number=1, type=11, cpp_type=10, label=1,
+      name='hub_uuid', full_name='server_route.DownloadRequest.hub_uuid', index=0,
+      number=1, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=b"".decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='auth', full_name='server_route.DownloadRequest.auth', index=1,
+      number=2, type=11, cpp_type=10, label=3,
+      has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='app_id', full_name='server_route.DownloadRequest.app_id', index=2,
+      number=3, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='asset_index', full_name='server_route.DownloadAssetIndex.asset_index', index=1,
-      number=2, type=5, cpp_type=1, label=3,
+      name='asset_index', full_name='server_route.DownloadRequest.asset_index', index=3,
+      number=4, type=5, cpp_type=1, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
@@ -273,7 +287,7 @@ _DOWNLOADASSETINDEX = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=442,
-  serialized_end=529,
+  serialized_end=569,
 )
 
 
@@ -311,8 +325,8 @@ _DOWNLOADINFO = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=531,
-  serialized_end=602,
+  serialized_start=571,
+  serialized_end=642,
 )
 
 
@@ -357,8 +371,8 @@ _RELEASELISTITEM = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=604,
-  serialized_end=706,
+  serialized_start=644,
+  serialized_end=746,
 )
 
 
@@ -403,8 +417,8 @@ _ASSETITEM = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=708,
-  serialized_end=779,
+  serialized_start=748,
+  serialized_end=819,
 )
 
 
@@ -442,8 +456,8 @@ _DICT = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=781,
-  serialized_end=815,
+  serialized_start=821,
+  serialized_end=855,
 )
 
 _APPID.fields_by_name['app_id'].message_type = _DICT
@@ -452,7 +466,8 @@ _RELEASEREQUEST.fields_by_name['app_id_list'].message_type = _APPID
 _RELEASERESPONSE.fields_by_name['release_package_list'].message_type = _RELEASEPACKAGE
 _RELEASEPACKAGE.fields_by_name['app_id'].message_type = _APPID
 _RELEASEPACKAGE.fields_by_name['release_list'].message_type = _RELEASELISTITEM
-_DOWNLOADASSETINDEX.fields_by_name['app_id'].message_type = _RELEASEREQUEST
+_DOWNLOADREQUEST.fields_by_name['auth'].message_type = _DICT
+_DOWNLOADREQUEST.fields_by_name['app_id'].message_type = _APPID
 _DOWNLOADINFO.fields_by_name['request_header'].message_type = _DICT
 _RELEASELISTITEM.fields_by_name['assets'].message_type = _ASSETITEM
 DESCRIPTOR.message_types_by_name['Empty'] = _EMPTY
@@ -461,7 +476,7 @@ DESCRIPTOR.message_types_by_name['AppId'] = _APPID
 DESCRIPTOR.message_types_by_name['ReleaseRequest'] = _RELEASEREQUEST
 DESCRIPTOR.message_types_by_name['ReleaseResponse'] = _RELEASERESPONSE
 DESCRIPTOR.message_types_by_name['ReleasePackage'] = _RELEASEPACKAGE
-DESCRIPTOR.message_types_by_name['DownloadAssetIndex'] = _DOWNLOADASSETINDEX
+DESCRIPTOR.message_types_by_name['DownloadRequest'] = _DOWNLOADREQUEST
 DESCRIPTOR.message_types_by_name['DownloadInfo'] = _DOWNLOADINFO
 DESCRIPTOR.message_types_by_name['ReleaseListItem'] = _RELEASELISTITEM
 DESCRIPTOR.message_types_by_name['AssetItem'] = _ASSETITEM
@@ -510,12 +525,12 @@ ReleasePackage = _reflection.GeneratedProtocolMessageType('ReleasePackage', (_me
   })
 _sym_db.RegisterMessage(ReleasePackage)
 
-DownloadAssetIndex = _reflection.GeneratedProtocolMessageType('DownloadAssetIndex', (_message.Message,), {
-  'DESCRIPTOR' : _DOWNLOADASSETINDEX,
+DownloadRequest = _reflection.GeneratedProtocolMessageType('DownloadRequest', (_message.Message,), {
+  'DESCRIPTOR' : _DOWNLOADREQUEST,
   '__module__' : 'app.grpc_template.route_pb2'
-  # @@protoc_insertion_point(class_scope:server_route.DownloadAssetIndex)
+  # @@protoc_insertion_point(class_scope:server_route.DownloadRequest)
   })
-_sym_db.RegisterMessage(DownloadAssetIndex)
+_sym_db.RegisterMessage(DownloadRequest)
 
 DownloadInfo = _reflection.GeneratedProtocolMessageType('DownloadInfo', (_message.Message,), {
   'DESCRIPTOR' : _DOWNLOADINFO,
@@ -555,8 +570,8 @@ _UPDATESERVERROUTE = _descriptor.ServiceDescriptor(
   index=0,
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_start=818,
-  serialized_end=1059,
+  serialized_start=858,
+  serialized_end=1096,
   methods=[
   _descriptor.MethodDescriptor(
     name='GetCloudConfig',
@@ -583,7 +598,7 @@ _UPDATESERVERROUTE = _descriptor.ServiceDescriptor(
     full_name='server_route.UpdateServerRoute.GetDownloadInfo',
     index=2,
     containing_service=None,
-    input_type=_DOWNLOADASSETINDEX,
+    input_type=_DOWNLOADREQUEST,
     output_type=_DOWNLOADINFO,
     serialized_options=None,
     create_key=_descriptor._internal_create_key,

@@ -26,7 +26,7 @@ class UpdateServerRouteStub(object):
                 )
         self.GetDownloadInfo = channel.unary_unary(
                 '/server_route.UpdateServerRoute/GetDownloadInfo',
-                request_serializer=app_dot_grpc__template_dot_route__pb2.DownloadAssetIndex.SerializeToString,
+                request_serializer=app_dot_grpc__template_dot_route__pb2.DownloadRequest.SerializeToString,
                 response_deserializer=app_dot_grpc__template_dot_route__pb2.DownloadInfo.FromString,
                 )
 
@@ -67,7 +67,7 @@ def add_UpdateServerRouteServicer_to_server(servicer, server):
             ),
             'GetDownloadInfo': grpc.unary_unary_rpc_method_handler(
                     servicer.GetDownloadInfo,
-                    request_deserializer=app_dot_grpc__template_dot_route__pb2.DownloadAssetIndex.FromString,
+                    request_deserializer=app_dot_grpc__template_dot_route__pb2.DownloadRequest.FromString,
                     response_serializer=app_dot_grpc__template_dot_route__pb2.DownloadInfo.SerializeToString,
             ),
     }
@@ -126,7 +126,7 @@ class UpdateServerRoute(object):
             timeout=None,
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/server_route.UpdateServerRoute/GetDownloadInfo',
-            app_dot_grpc__template_dot_route__pb2.DownloadAssetIndex.SerializeToString,
+            app_dot_grpc__template_dot_route__pb2.DownloadRequest.SerializeToString,
             app_dot_grpc__template_dot_route__pb2.DownloadInfo.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)

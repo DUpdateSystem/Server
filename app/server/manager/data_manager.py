@@ -21,7 +21,7 @@ class DataManager:
             return None
         return self.__get_release(hub_uuid, app_id_list, auth, use_cache, cache_data)
 
-    def get_download_info(self, hub_uuid: str, app_id: list, asset_index: list) -> dict or None:
+    def get_download_info(self, hub_uuid: str, auth: dict, app_id: list, asset_index: list) -> dict or None:
         if hub_uuid not in hub_dict:
             logging.warning(f"NO HUB: {hub_uuid}")
             return None
@@ -49,7 +49,7 @@ class DataManager:
         for app_id in app_id_list:
             try:
                 release_list = cache_manager.get_release_cache(hub_uuid, app_id)
-                cache_data[app_id] = release_list
+                cache_data[frozenset(app_id)] = release_list
             except (KeyError, NameError):
                 nocache.append(app_id)
         return nocache, cache_data
@@ -61,7 +61,7 @@ class DataManager:
         if use_cache:
             nocache, cache_data = self.__get_release_cache(hub_uuid, app_id_list)
             data = {**data, **cache_data}
-        hub = hub_dict[hub_uuid]
+        hub = self.__hub_server_manager.get_hub(hub_uuid)
         nocache_data = hub.get_release_list(nocache, auth)
         data = {**data, **nocache_data}
         if cache_data:

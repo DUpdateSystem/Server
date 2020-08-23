@@ -4,7 +4,7 @@ from xml.etree import ElementTree
 
 from bs4 import BeautifulSoup
 
-from app.server.utils import call_fun_list_in_loop
+from app.server.utils import call_fun_list_in_loop, call_async_fun_with_id
 from ..base_hub import BaseHub
 from ..hub_script_utils import http_get, get_value_from_app_id, get_tmp_cache, add_tmp_cache, raise_no_app_error
 
@@ -21,10 +21,10 @@ class XpModRepo(BaseHub):
                 add_tmp_cache(cache_key, xml_str)
         if xml_str:
             tree = ElementTree.fromstring(xml_str)
-        fun_list = [lambda: (app_id, self.__get_release(app_id['android_app_package'], tree)) for app_id in app_id_list
-                    if 'android_app_package' in app_id]
-        data_list = call_fun_list_in_loop(fun_list)
-        return {key: value for key, value in data_list}
+            fun_list = [call_async_fun_with_id(app_id, lambda: self.__get_release(app_id['android_app_package'], tree))
+                        for app_id in app_id_list if 'android_app_package' in app_id]
+            data_list = call_fun_list_in_loop(fun_list)
+            return {frozenset(key): value for key, value in data_list}
 
     @staticmethod
     def __get_release(package: str, tree) -> tuple or None:

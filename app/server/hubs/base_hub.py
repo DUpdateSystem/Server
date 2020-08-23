@@ -3,7 +3,7 @@ from abc import ABCMeta
 from requests import HTTPError
 
 from app.config import server_config
-from app.server.utils import logging, call_fun_list_in_loop
+from app.server.utils import logging, call_fun_list_in_loop, call_async_fun_with_id
 
 
 class BaseHub(metaclass=ABCMeta):
@@ -14,9 +14,10 @@ class BaseHub(metaclass=ABCMeta):
         pass
 
     def get_release_list(self, app_id_list: list, auth: dict or None = None) -> dict or None:
-        fun_list = [lambda: (app_id, self.__call_release_list_fun(app_id, auth)) for app_id in app_id_list]
+        fun_list = [call_async_fun_with_id(app_id, lambda: self.__call_release_list_fun(app_id, auth))
+                    for app_id in app_id_list]
         data_list = call_fun_list_in_loop(fun_list)
-        return {key: value for key, value in data_list}
+        return {frozenset(key): value for key, value in data_list}
 
     # noinspection PyMethodMayBeStatic
     def get_release(self, app_id: dict, auth: dict or None = None) -> tuple or None:
@@ -40,12 +41,13 @@ class BaseHub(metaclass=ABCMeta):
         """
         return []
 
-    def get_download_info(self, app_id: dict, asset_index: list) -> dict or None:
+    def get_download_info(self, app_id: dict, asset_index: list, auth: dict or None = None) -> dict or None:
         """即时获取下载地址
         Args:
             app_id: 客户端上传的软件属性
             asset_index: 客户端请求的下载文件的索引
                 example: [0, 0] 第一个版本的第一个文件
+            auth: 软件源身份验证信息
 
         Returns: JSON
             Examples:

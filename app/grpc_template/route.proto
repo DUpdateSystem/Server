@@ -9,7 +9,7 @@ package server_route;
 service UpdateServerRoute {
   rpc GetCloudConfig(Empty) returns (Str) {}
   rpc GetAppStatus(ReleaseRequest) returns (ReleaseResponse) {}
-  rpc GetDownloadInfo(DownloadAssetIndex) returns (DownloadInfo) {}
+  rpc GetDownloadInfo(DownloadRequest) returns (DownloadInfo) {}
 }
 
 message Empty {}
@@ -35,9 +35,11 @@ message ReleasePackage{
   repeated ReleaseListItem release_list = 2;
 }
 
-message DownloadAssetIndex {
-  ReleaseRequest app_id = 1;
-  repeated int32 asset_index = 2;
+message DownloadRequest {
+  string hub_uuid = 1;
+  repeated Dict auth = 2;
+  AppId app_id = 3;
+  repeated int32 asset_index = 4;
 }
 
 message DownloadInfo {

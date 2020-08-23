@@ -14,6 +14,7 @@ class CoolApk(BaseHub):
             raise_no_app_error()
         url = _get_url(package)
         soup = parsing_http_page(url)
+        # noinspection PyArgumentList
         version_number = soup.find(class_="list_app_info").get_text("|", strip=True)
         newest_changelog_div = soup.find(class_="apk_left_title_info")
         newest_changelog = None
@@ -35,7 +36,7 @@ class CoolApk(BaseHub):
         }]
         return data
 
-    def get_download_info(self, app_id: list, asset_index: list) -> dict or None:
+    def get_download_info(self, app_id: dict, asset_index: list, auth: dict or None = None) -> dict or None:
         from app.server.manager.data_manager import data_manager
         from app.server.hubs.hub_list import hub_dict
         hub_uuid = None
@@ -43,7 +44,7 @@ class CoolApk(BaseHub):
             if self is hub_dict[uuid]:
                 hub_uuid = uuid
                 break
-        release_info = data_manager.get_release_list(hub_uuid, app_id)["app_status"]["release_info"]
+        release_info = data_manager.get_release_dict(hub_uuid, app_id, auth)[app_id]["app_status"]["release_info"]
         download_url = release_info[asset_index[0]]["assets"][asset_index[1]]["download_url"]
         try:
             get_session().head(download_url).raise_for_status()

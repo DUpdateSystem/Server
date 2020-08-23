@@ -3,7 +3,7 @@ from concurrent import futures
 from threading import Thread
 
 import grpc
-from google.protobuf.json_format import MessageToDict, ParseDict
+from google.protobuf.json_format import ParseDict
 from grpc import Server
 
 # 初始化配置
@@ -37,14 +37,13 @@ class Greeter(route_pb2_grpc.UpdateServerRouteServicer):
     def GetDownloadInfo(self, request, context: grpc.RpcContext) -> DownloadInfo:
         if context.cancel():
             return
+        hub_uuid: str = request.hub_uuid
+        auth: dict = grcp_dict_list_to_dict(request.auth)
+        app_id: dict = grcp_dict_list_to_dict(request.app_id)
+        asset_index: list = request.asset_index
         # noinspection PyBroadException
         try:
-            request = MessageToDict(request, preserving_proto_field_name=True)
-            app_id_info = request["app_id_info"]
-            hub_uuid = app_id_info["hub_uuid"]
-            app_id = app_id_info["app_id"]
-            asset_index = request["asset_index"]
-            return self.__get_download_info(hub_uuid, app_id, asset_index)
+            return self.__get_download_info(hub_uuid, auth, app_id, asset_index)
         except Exception:
             logging.exception('gRPC: GetDownloadInfo')
             return None
@@ -55,8 +54,8 @@ class Greeter(route_pb2_grpc.UpdateServerRouteServicer):
         return ParseDict(release_list, ReleaseResponse())
 
     @staticmethod
-    def __get_download_info(hub_uuid: str, app_id: list, asset_index: list) -> DownloadInfo:
-        download_info = get_download_info(hub_uuid, app_id, asset_index)
+    def __get_download_info(hub_uuid: str, auth: dict, app_id: dict, asset_index: list) -> DownloadInfo:
+        download_info = get_download_info(hub_uuid, auth, app_id, asset_index)
         if not download_info:
             download_info = {}
         return ParseDict(download_info, DownloadInfo())

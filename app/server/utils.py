@@ -52,9 +52,16 @@ def call_def_in_loop(core, loop):
         asyncio.run_coroutine_threadsafe(core, loop)
 
 
-def call_fun_list_in_loop(core_list: list, loop=set_new_asyncio_loop()):
-    data_list = call_def_in_loop_return_result(asyncio.gather(*core_list), loop)
-    return data_list
+def call_fun_list_in_loop(core_list: list, loop=set_new_asyncio_loop()) -> tuple:
+    return call_def_in_loop_return_result(__call_fun_list_in_loop(core_list), loop)
+
+
+async def __call_fun_list_in_loop(core_list: list) -> tuple:
+    return await asyncio.gather(*core_list)
+
+
+async def call_async_fun_with_id(core_id, core) -> tuple:
+    return core_id, core()
 
 
 def grcp_dict_list_to_dict(grcp_dict: list or None) -> dict:

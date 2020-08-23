@@ -27,9 +27,9 @@ class CacheManager:
                                                    password=server_config.redis_server_password,
                                                    db=release_cache_db_index))
 
-    def add_release_cache(self, hub_uuid: str, app_info: list, release_info: list or None = None):
+    def add_release_cache(self, hub_uuid: str, app_id: dict, release_info: list or None = None):
         try:
-            self.__add_release_cache(hub_uuid, app_info, release_info)
+            self.__add_release_cache(hub_uuid, app_id, release_info)
         except ConnectionError:
             pass
 
@@ -84,12 +84,12 @@ class CacheManager:
             local_cache.add(key, value)
         return value
 
-    def __add_release_cache(self, hub_uuid: str, app_info: list, release_info: list or None = None):
-        key = self.__get_app_cache_key(hub_uuid, app_info)
+    def __add_release_cache(self, hub_uuid: str, app_id: dict, release_info: list or None = None):
+        key = self.__get_app_cache_key(hub_uuid, app_id)
         value = json.dumps(release_info)
         self.__cache(self.__redis_release_cache_client, key, value, server_config.auto_refresh_time * 2)
         # 缓存完毕
-        logging.debug(f"release caching: {app_info}")
+        logging.debug(f"release caching: {app_id}")
 
     def __get_release_cache(self, hub_uuid: str, app_id: dict) -> dict or None:
         key = self.__get_app_cache_key(hub_uuid, app_id)
@@ -104,16 +104,16 @@ app_id: {app_id}""", exc_info=server_config.debug_mode)
 
     @property
     def cached_app_queue(self) -> dict:
-        cache_app_info_dict = {}
+        cache_app_id_dict = {}
         for key in self.__redis_release_cache_client.scan_iter():
             # noinspection PyBroadException
             try:
-                hub_uuid, app_info = self.__parsing_app_id(key.decode("utf-8"))
-                app_info_list = []
-                if hub_uuid in cache_app_info_dict:
-                    app_info_list = cache_app_info_dict.get(hub_uuid)
-                app_info_list.append(app_info)
-                cache_app_info_dict[hub_uuid] = app_info_list
+                hub_uuid, app_id = self.__parsing_app_id(key.decode("utf-8"))
+                app_id_list = []
+                if hub_uuid in cache_app_id_dict:
+                    app_id_list = cache_app_id_dict.get(hub_uuid)
+                app_id_list.append(app_id)
+                cache_app_id_dict[hub_uuid] = app_id_list
             except Exception:
                 self.del_release_cache(key)
         return cache_app_info_dict
