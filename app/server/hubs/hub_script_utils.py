@@ -81,20 +81,6 @@ def search_url_string(string: str or None) -> str or None:
     return re.search(pattern, string).lastgroup
 
 
-def get_value_from_app_id(app_id: list, key: str) -> str or None:
-    """获取 app_id 中的值
-    Args:
-        app_id: 应用信息列表
-        key: 搜索的键
-    Returns:
-        搜索到的键值，若没有符合的键则返回 None
-    """
-    for i in app_id:
-        if i["key"] == key:
-            return i["value"]
-    return None
-
-
 def get_tmp_cache(key: str) -> str or None:
     """获取临时缓存
     Args:

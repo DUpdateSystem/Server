@@ -53,7 +53,7 @@ class CoolApk(BaseHub):
             logging.debug("网址错误，尝试重新获取")
             release_info = data_manager.get_release_list(hub_uuid, app_id, use_cache=False)["app_status"]
             download_url = release_info[asset_index[0]]["assets"][asset_index[1]]["download_url"]
-        return download_url,
+        return (download_url,),
 
 
 def _get_url(app_package: str) -> str:

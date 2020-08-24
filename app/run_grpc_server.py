@@ -44,7 +44,7 @@ class Greeter(route_pb2_grpc.UpdateServerRouteServicer):
             logging.exception('gRPC: GetAppStatus')
             return None
 
-    def GetDownloadInfo(self, request, context: grpc.RpcContext) -> DownloadInfo:
+    def GetDownloadInfo(self, request: GetDownloadRequest, context: grpc.RpcContext) -> GetDownloadResponse:
         if context.cancel():
             return
         hub_uuid: str = request.hub_uuid
@@ -69,9 +69,9 @@ class Greeter(route_pb2_grpc.UpdateServerRouteServicer):
         return ParseDict(release_list, ReleaseResponse())
 
     @staticmethod
-    def __get_download_info(hub_uuid: str, auth: dict, app_id: dict, asset_index: list) -> DownloadInfo:
+    def __get_download_info(hub_uuid: str, auth: dict, app_id: dict, asset_index: list) -> GetDownloadResponse:
         download_info = get_download_info(hub_uuid, auth, app_id, asset_index)
-        return ParseDict(download_info, DownloadInfo())
+        return ParseDict(download_info, GetDownloadResponse())
 
 
 def init():

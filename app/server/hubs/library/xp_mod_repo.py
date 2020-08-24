@@ -6,7 +6,7 @@ from bs4 import BeautifulSoup
 
 from app.server.utils import call_fun_list_in_loop, call_async_fun_with_id
 from ..base_hub import BaseHub
-from ..hub_script_utils import http_get, get_value_from_app_id, get_tmp_cache, add_tmp_cache, raise_no_app_error
+from ..hub_script_utils import http_get, get_tmp_cache, add_tmp_cache, raise_no_app_error
 
 cache_key = "xposed_full_module_xml"
 
@@ -61,7 +61,3 @@ def _raw_to_xml_string(raw):
         f.seek(0)
         with gzip.GzipFile(mode='r', fileobj=f) as gzip_file:
             return gzip_file.read().decode("utf-8")
-
-
-def _get_package(app_info: list) -> str or None:
-    return get_value_from_app_id(app_info, "android_app_package")

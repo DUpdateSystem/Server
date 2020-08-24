@@ -15,15 +15,15 @@ def _debug(hub_uuid: str, test_options: dict, run_init_account: bool = False):
 
 
 def _init_account_debug(hub_uuid: str, account: dict):
-    logging.info(f"开始测试：hub_uuid: {hub_uuid}, account: {account}")
-    logging.info("测试  init_account函数")
+    logging.info(f"开始测试：hub_uuid: {hub_uuid}, account: {json.dumps(account)}")
+    logging.info("测试 init_account 函数")
     row_download_info = init_account(hub_uuid, account)
     js = json.dumps(row_download_info, sort_keys=True, indent=4, ensure_ascii=False)
     logging.debug(js)
 
 
 def _standard_debug(hub_uuid: str, auth: dict, app_id: dict):
-    logging.info(f"开始测试：hub_uuid: {hub_uuid}, app_id: {app_id}, auth: {dict}")
+    logging.info(f"开始测试：hub_uuid: {hub_uuid}, app_id: {json.dumps(app_id)}, auth: {json.dumps(auth)}")
     logging.info("测试 get_app_status 函数")
     release_dict = get_release_dict(hub_uuid, auth, [app_id], use_cache=False, cache_data=False)
     js = json.dumps(release_dict, sort_keys=True, indent=4, ensure_ascii=False)
@@ -80,5 +80,3 @@ def debug(hub_uuid: str, test_options: list, run_init_account: bool = False):
         _debug(hub_uuid, test_options, run_init_account)
     except KeyboardInterrupt:
         logging.exception("手动停止 DEBUG")
-    except TypeError:
-        logging.exception("DEBUG 参数不完整")

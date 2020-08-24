@@ -75,7 +75,8 @@ class DataManager:
             data = {**data, **cache_data}
         hub = self.__hub_server_manager.get_hub(hub_uuid)
         nocache_data = hub.get_release_list(nocache, auth)
-        data = {**data, **nocache_data}
+        if nocache_data:
+            data = {**data, **nocache_data}
         if cache_data:
             for app_id in data:
                 cache_manager.add_release_cache(hub_uuid, app_id, data[app_id])

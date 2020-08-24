@@ -1,5 +1,5 @@
 from ..base_hub import BaseHub
-from ..hub_script_utils import get_value_from_app_id, get_session
+from ..hub_script_utils import get_session
 
 headers = {
     "User-Agent": "Dalvik/2.1.0 (Linux; U; Android 10; ONEPLUS A6013 Build/QQ2A.200501.001.B2)"
