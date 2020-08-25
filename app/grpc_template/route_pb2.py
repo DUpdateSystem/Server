@@ -20,7 +20,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   syntax='proto3',
   serialized_options=b'\n\036net.xzos.upgradeall.core.routeB\nRouteProtoP\001',
   create_key=_descriptor._internal_create_key,
-  serialized_pb=b'\n\x1d\x61pp/grpc_template/route.proto\x12\x0cserver_route\"\x07\n\x05\x45mpty\"\x10\n\x03Str\x12\t\n\x01s\x18\x01 \x01(\t\"+\n\x05\x41ppId\x12\"\n\x06\x61pp_id\x18\x02 \x03(\x0b\x32\x12.server_route.Dict\"G\n\x0e\x41\x63\x63ountRequest\x12\x10\n\x08hub_uuid\x18\x01 \x01(\t\x12#\n\x07\x61\x63\x63ount\x18\x02 \x03(\x0b\x32\x12.server_route.Dict\"3\n\x0f\x41\x63\x63ountResponse\x12 \n\x04\x61uth\x18\x01 \x03(\x0b\x32\x12.server_route.Dict\"n\n\x0eReleaseRequest\x12\x10\n\x08hub_uuid\x18\x01 \x01(\t\x12 \n\x04\x61uth\x18\x02 \x03(\x0b\x32\x12.server_route.Dict\x12(\n\x0b\x61pp_id_list\x18\x03 \x03(\x0b\x32\x13.server_route.AppId\"e\n\x0fReleaseResponse\x12\x16\n\x0evalid_hub_uuid\x18\x01 \x01(\x08\x12:\n\x14release_package_list\x18\x02 \x03(\x0b\x32\x1c.server_route.ReleasePackage\"j\n\x0eReleasePackage\x12#\n\x06\x61pp_id\x18\x01 \x01(\x0b\x32\x13.server_route.AppId\x12\x33\n\x0crelease_list\x18\x02 \x03(\x0b\x32\x1d.server_route.ReleaseListItem\"\x82\x01\n\x12GetDownloadRequest\x12\x10\n\x08hub_uuid\x18\x01 \x01(\t\x12 \n\x04\x61uth\x18\x02 \x03(\x0b\x32\x12.server_route.Dict\x12#\n\x06\x61pp_id\x18\x03 \x01(\x0b\x32\x13.server_route.AppId\x12\x13\n\x0b\x61sset_index\x18\x04 \x03(\x05\"B\n\x13GetDownloadResponse\x12+\n\x04list\x18\x01 \x03(\x0b\x32\x1d.server_route.DownloadPackage\"J\n\x0f\x44ownloadPackage\x12\x0b\n\x03url\x18\x01 \x01(\t\x12*\n\x0erequest_header\x18\x02 \x03(\x0b\x32\x12.server_route.Dict\"f\n\x0fReleaseListItem\x12\x16\n\x0eversion_number\x18\x01 \x01(\t\x12\x12\n\nchange_log\x18\x02 \x01(\t\x12\'\n\x06\x61ssets\x18\x03 \x03(\x0b\x32\x17.server_route.AssetItem\"G\n\tAssetItem\x12\x11\n\tfile_name\x18\x01 \x01(\t\x12\x14\n\x0c\x64ownload_url\x18\x02 \x01(\t\x12\x11\n\tfile_type\x18\x03 \x01(\t\"\"\n\x04\x44ict\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\t\"b\n\x0f\x44ownloadRequest\x12\r\n\x03url\x18\x01 \x01(\tH\x00\x12.\n\x06status\x18\x02 \x01(\x0b\x32\x1c.server_route.DownloadStatusH\x00\x42\x10\n\x0e\x64ownload_oneof\"\x7f\n\x10\x44ownloadResponse\x12\x33\n\tmeta_data\x18\x01 \x01(\x0b\x32\x1e.server_route.DownloadMetadataH\x00\x12$\n\x05\x63hunk\x18\x02 \x01(\x0b\x32\x13.server_route.ChunkH\x00\x42\x10\n\x0e\x64ownload_oneof\"O\n\x0e\x44ownloadStatus\x12\x0f\n\x07Message\x18\x01 \x01(\t\x12,\n\x04\x43ode\x18\x02 \x01(\x0e\x32\x1e.server_route.UploadStatusCode\"2\n\x10\x44ownloadMetadata\x12\x11\n\tfile_name\x18\x01 \x01(\t\x12\x0b\n\x03\x65nd\x18\x02 \x01(\x08\"\x18\n\x05\x43hunk\x12\x0f\n\x07\x43ontent\x18\x01 \x01(\x0c*3\n\x10UploadStatusCode\x12\x0b\n\x07Unknown\x10\x00\x12\x06\n\x02Ok\x10\x01\x12\n\n\x06\x46\x61iled\x10\x02\x32\x98\x03\n\x11UpdateServerRoute\x12:\n\x0eGetCloudConfig\x12\x13.server_route.Empty\x1a\x11.server_route.Str\"\x00\x12O\n\x0eInitHubAccount\x12\x1c.server_route.AccountRequest\x1a\x1d.server_route.AccountResponse\"\x00\x12M\n\x0cGetAppStatus\x12\x1c.server_route.ReleaseRequest\x1a\x1d.server_route.ReleaseResponse\"\x00\x12X\n\x0fGetDownloadInfo\x12 .server_route.GetDownloadRequest\x1a!.server_route.GetDownloadResponse\"\x00\x12M\n\x08\x44ownload\x12\x1d.server_route.DownloadRequest\x1a\x1e.server_route.DownloadResponse\"\x00(\x01\x42.\n\x1enet.xzos.upgradeall.core.routeB\nRouteProtoP\x01\x62\x06proto3'
+  serialized_pb=b'\n\x1d\x61pp/grpc_template/route.proto\x12\x0cserver_route\"\x07\n\x05\x45mpty\"\x10\n\x03Str\x12\t\n\x01s\x18\x01 \x01(\t\"+\n\x05\x41ppId\x12\"\n\x06\x61pp_id\x18\x02 \x03(\x0b\x32\x12.server_route.Dict\"G\n\x0e\x41\x63\x63ountRequest\x12\x10\n\x08hub_uuid\x18\x01 \x01(\t\x12#\n\x07\x61\x63\x63ount\x18\x02 \x03(\x0b\x32\x12.server_route.Dict\"3\n\x0f\x41\x63\x63ountResponse\x12 \n\x04\x61uth\x18\x01 \x03(\x0b\x32\x12.server_route.Dict\"n\n\x0eReleaseRequest\x12\x10\n\x08hub_uuid\x18\x01 \x01(\t\x12 \n\x04\x61uth\x18\x02 \x03(\x0b\x32\x12.server_route.Dict\x12(\n\x0b\x61pp_id_list\x18\x03 \x03(\x0b\x32\x13.server_route.AppId\"e\n\x0fReleaseResponse\x12\x16\n\x0evalid_hub_uuid\x18\x01 \x01(\x08\x12:\n\x14release_package_list\x18\x02 \x03(\x0b\x32\x1c.server_route.ReleasePackage\"j\n\x0eReleasePackage\x12#\n\x06\x61pp_id\x18\x01 \x01(\x0b\x32\x13.server_route.AppId\x12\x33\n\x0crelease_list\x18\x02 \x03(\x0b\x32\x1d.server_route.ReleaseListItem\"\x82\x01\n\x12GetDownloadRequest\x12\x10\n\x08hub_uuid\x18\x01 \x01(\t\x12 \n\x04\x61uth\x18\x02 \x03(\x0b\x32\x12.server_route.Dict\x12#\n\x06\x61pp_id\x18\x03 \x01(\x0b\x32\x13.server_route.AppId\x12\x13\n\x0b\x61sset_index\x18\x04 \x03(\x05\"B\n\x13GetDownloadResponse\x12+\n\x04list\x18\x01 \x03(\x0b\x32\x1d.server_route.DownloadPackage\"J\n\x0f\x44ownloadPackage\x12\x0b\n\x03url\x18\x01 \x01(\t\x12*\n\x0erequest_header\x18\x02 \x03(\x0b\x32\x12.server_route.Dict\"f\n\x0fReleaseListItem\x12\x16\n\x0eversion_number\x18\x01 \x01(\t\x12\x12\n\nchange_log\x18\x02 \x01(\t\x12\'\n\x06\x61ssets\x18\x03 \x03(\x0b\x32\x17.server_route.AssetItem\"G\n\tAssetItem\x12\x11\n\tfile_name\x18\x01 \x01(\t\x12\x14\n\x0c\x64ownload_url\x18\x02 \x01(\t\x12\x11\n\tfile_type\x18\x03 \x01(\t\"\"\n\x04\x44ict\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\t\"b\n\x0f\x44ownloadRequest\x12\r\n\x03url\x18\x01 \x01(\tH\x00\x12.\n\x06status\x18\x02 \x01(\x0b\x32\x1c.server_route.DownloadStatusH\x00\x42\x10\n\x0e\x64ownload_oneof\"\x7f\n\x10\x44ownloadResponse\x12\x33\n\tmeta_data\x18\x01 \x01(\x0b\x32\x1e.server_route.DownloadMetadataH\x00\x12$\n\x05\x63hunk\x18\x02 \x01(\x0b\x32\x13.server_route.ChunkH\x00\x42\x10\n\x0e\x64ownload_oneof\"O\n\x0e\x44ownloadStatus\x12\x0f\n\x07message\x18\x01 \x01(\t\x12,\n\x04\x63ode\x18\x02 \x01(\x0e\x32\x1e.server_route.UploadStatusCode\"H\n\x10\x44ownloadMetadata\x12\x13\n\tfile_name\x18\x01 \x01(\tH\x00\x12\r\n\x03\x65nd\x18\x02 \x01(\x08H\x00\x42\x10\n\x0e\x64ownload_oneof\"\x18\n\x05\x43hunk\x12\x0f\n\x07\x63ontent\x18\x01 \x01(\x0c*3\n\x10UploadStatusCode\x12\x0b\n\x07Unknown\x10\x00\x12\x06\n\x02Ok\x10\x01\x12\n\n\x06\x46\x61iled\x10\x02\x32\x9c\x03\n\x11UpdateServerRoute\x12:\n\x0eGetCloudConfig\x12\x13.server_route.Empty\x1a\x11.server_route.Str\"\x00\x12O\n\x0eInitHubAccount\x12\x1c.server_route.AccountRequest\x1a\x1d.server_route.AccountResponse\"\x00\x12M\n\x0cGetAppStatus\x12\x1c.server_route.ReleaseRequest\x1a\x1d.server_route.ReleaseResponse\"\x00\x12X\n\x0fGetDownloadInfo\x12 .server_route.GetDownloadRequest\x1a!.server_route.GetDownloadResponse\"\x00\x12Q\n\x0c\x44ownloadFile\x12\x1d.server_route.DownloadRequest\x1a\x1e.server_route.DownloadResponse\"\x00(\x01\x42.\n\x1enet.xzos.upgradeall.core.routeB\nRouteProtoP\x01\x62\x06proto3'
 )
 
 _UPLOADSTATUSCODE = _descriptor.EnumDescriptor(
@@ -48,8 +48,8 @@ _UPLOADSTATUSCODE = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   serialized_options=None,
-  serialized_start=1446,
-  serialized_end=1497,
+  serialized_start=1468,
+  serialized_end=1519,
 )
 _sym_db.RegisterEnumDescriptor(_UPLOADSTATUSCODE)
 
@@ -696,14 +696,14 @@ _DOWNLOADSTATUS = _descriptor.Descriptor(
   create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
-      name='Message', full_name='server_route.DownloadStatus.Message', index=0,
+      name='message', full_name='server_route.DownloadStatus.message', index=0,
       number=1, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='Code', full_name='server_route.DownloadStatus.Code', index=1,
+      name='code', full_name='server_route.DownloadStatus.code', index=1,
       number=2, type=14, cpp_type=8, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
@@ -759,9 +759,14 @@ _DOWNLOADMETADATA = _descriptor.Descriptor(
   syntax='proto3',
   extension_ranges=[],
   oneofs=[
+    _descriptor.OneofDescriptor(
+      name='download_oneof', full_name='server_route.DownloadMetadata.download_oneof',
+      index=0, containing_type=None,
+      create_key=_descriptor._internal_create_key,
+    fields=[]),
   ],
   serialized_start=1368,
-  serialized_end=1418,
+  serialized_end=1440,
 )
 
 
@@ -774,7 +779,7 @@ _CHUNK = _descriptor.Descriptor(
   create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
-      name='Content', full_name='server_route.Chunk.Content', index=0,
+      name='content', full_name='server_route.Chunk.content', index=0,
       number=1, type=12, cpp_type=9, label=1,
       has_default_value=False, default_value=b"",
       message_type=None, enum_type=None, containing_type=None,
@@ -792,8 +797,8 @@ _CHUNK = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1420,
-  serialized_end=1444,
+  serialized_start=1442,
+  serialized_end=1466,
 )
 
 _APPID.fields_by_name['app_id'].message_type = _DICT
@@ -824,7 +829,13 @@ _DOWNLOADRESPONSE.fields_by_name['meta_data'].containing_oneof = _DOWNLOADRESPON
 _DOWNLOADRESPONSE.oneofs_by_name['download_oneof'].fields.append(
   _DOWNLOADRESPONSE.fields_by_name['chunk'])
 _DOWNLOADRESPONSE.fields_by_name['chunk'].containing_oneof = _DOWNLOADRESPONSE.oneofs_by_name['download_oneof']
-_DOWNLOADSTATUS.fields_by_name['Code'].enum_type = _UPLOADSTATUSCODE
+_DOWNLOADSTATUS.fields_by_name['code'].enum_type = _UPLOADSTATUSCODE
+_DOWNLOADMETADATA.oneofs_by_name['download_oneof'].fields.append(
+  _DOWNLOADMETADATA.fields_by_name['file_name'])
+_DOWNLOADMETADATA.fields_by_name['file_name'].containing_oneof = _DOWNLOADMETADATA.oneofs_by_name['download_oneof']
+_DOWNLOADMETADATA.oneofs_by_name['download_oneof'].fields.append(
+  _DOWNLOADMETADATA.fields_by_name['end'])
+_DOWNLOADMETADATA.fields_by_name['end'].containing_oneof = _DOWNLOADMETADATA.oneofs_by_name['download_oneof']
 DESCRIPTOR.message_types_by_name['Empty'] = _EMPTY
 DESCRIPTOR.message_types_by_name['Str'] = _STR
 DESCRIPTOR.message_types_by_name['AppId'] = _APPID
@@ -990,8 +1001,8 @@ _UPDATESERVERROUTE = _descriptor.ServiceDescriptor(
   index=0,
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_start=1500,
-  serialized_end=1908,
+  serialized_start=1522,
+  serialized_end=1934,
   methods=[
   _descriptor.MethodDescriptor(
     name='GetCloudConfig',
@@ -1034,8 +1045,8 @@ _UPDATESERVERROUTE = _descriptor.ServiceDescriptor(
     create_key=_descriptor._internal_create_key,
   ),
   _descriptor.MethodDescriptor(
-    name='Download',
-    full_name='server_route.UpdateServerRoute.Download',
+    name='DownloadFile',
+    full_name='server_route.UpdateServerRoute.DownloadFile',
     index=4,
     containing_service=None,
     input_type=_DOWNLOADREQUEST,

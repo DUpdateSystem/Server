@@ -1,24 +1,22 @@
 from datetime import timedelta
+from urllib.parse import urlparse
 
 from timeloop import Timeloop
 
 from app.config import server_config
-from app.server.hubs.hub_list import hub_dict
+from app.server.hubs.hub_list import hub_dict, hub_url_dict
 from app.server.manager.cache_manager import cache_manager
-from app.server.manager.hub_server_manager import HubServerManager
 from app.server.utils import logging
 
 
 class DataManager:
 
-    def __init__(self):
-        self.__hub_server_manager = HubServerManager()
-
-    def init_account(self, hub_uuid: str, account: dict) -> dict or None:
+    @staticmethod
+    def init_account(hub_uuid: str, account: dict) -> dict or None:
         if hub_uuid not in hub_dict:
             logging.warning(f"NO HUB: {hub_uuid}")
             return None
-        hub = self.__hub_server_manager.get_hub(hub_uuid)
+        hub = hub_dict[hub_uuid]
         # noinspection PyBroadException
         try:
             return hub.init_account(account)
@@ -33,16 +31,36 @@ class DataManager:
             return None
         return self.__get_release(hub_uuid, app_id_list, auth, use_cache, cache_data)
 
-    def get_download_info(self, hub_uuid: str, auth: dict, app_id: list, asset_index: list) -> tuple or None:
+    @staticmethod
+    def get_download_info(hub_uuid: str, auth: dict, app_id: list, asset_index: list) -> tuple or None:
         if hub_uuid not in hub_dict:
             logging.warning(f"NO HUB: {hub_uuid}")
             return None
-        hub = self.__hub_server_manager.get_hub(hub_uuid)
+        hub = hub_dict[hub_uuid]
         # noinspection PyBroadException
         try:
             return hub.get_download_info(app_id, asset_index, auth)
         except Exception:
             logging.error(f"""app_info: {app_id} \nERROR: """, exc_info=server_config.debug_mode)
+            return None
+
+    @staticmethod
+    def download_file(url: str, auth: dict) -> dict or None:
+        o = urlparse(url)
+        if o != 'grcp':
+            logging.warning(f"UNSUPPORTED PROTOCOL: {url}")
+            return None
+        path_list = [path for path in o.path.split('/') if path]
+        hub_url = path_list[0]
+        if hub_url not in hub_url_dict:
+            logging.warning(f"NO HUB: {hub_url}")
+            return None
+        hub = hub_url_dict[hub_url]
+        # noinspection PyBroadException
+        try:
+            return hub.download(path_list[1:], auth)
+        except Exception:
+            logging.error(f"""url: {url} \nERROR: """, exc_info=server_config.debug_mode)
             return None
 
     def refresh_cache(self):
@@ -73,7 +91,7 @@ class DataManager:
         if use_cache:
             nocache, cache_data = self.__get_release_cache(hub_uuid, app_id_list)
             data = {**data, **cache_data}
-        hub = self.__hub_server_manager.get_hub(hub_uuid)
+        hub = hub_dict[hub_uuid]
         nocache_data = hub.get_release_list(nocache, auth)
         if nocache_data:
             data = {**data, **nocache_data}

@@ -58,6 +58,36 @@ class Greeter(route_pb2_grpc.UpdateServerRouteServicer):
             logging.exception('gRPC: GetDownloadInfo')
             return None
 
+    def DownloadFile(self, request_iterator, context):
+        if context.cancel():
+            return
+        file_byte_dict = {}
+        file_iter = None
+        current_iter = None
+        file_bytes = None
+        for request in request_iterator:
+            if request.url:
+                auth: dict = grcp_dict_list_to_dict(request.auth)
+                file_byte_dict = download_file(request.url, auth)
+            else:
+                status: DownloadStatus = request.status
+                if status.code == Failed:
+                    logging.warning(f"gRPC: DownloadFile: status_code: {status.code}, message: {status.message}")
+                    file_bytes = file_byte_dict[current_iter]
+                if not file_bytes:
+                    if not file_iter:
+                        file_iter = iter(file_byte_dict)
+                    try:
+                        name = next(file_iter)
+                        current_iter = name
+                        yield self.__wrap_download_file_name(name)
+                    except StopIteration:
+                        return self.__wrap_download_end()
+                    file_bytes = file_byte_dict[name]
+            for byte in file_bytes:
+                yield self.__wrap_file_byte(byte)
+            file_bytes = None
+
     @staticmethod
     def __init_account(hub_uuid: str, account: dict) -> AccountResponse:
         auth_data = init_account(hub_uuid, account)
@@ -72,6 +102,18 @@ class Greeter(route_pb2_grpc.UpdateServerRouteServicer):
     def __get_download_info(hub_uuid: str, auth: dict, app_id: dict, asset_index: list) -> GetDownloadResponse:
         download_info = get_download_info(hub_uuid, auth, app_id, asset_index)
         return ParseDict(download_info, GetDownloadResponse())
+
+    @staticmethod
+    def __wrap_download_file_name(name: str) -> DownloadResponse:
+        return ParseDict({'meta_data': {'file_name': name}}, DownloadResponse())
+
+    @staticmethod
+    def __wrap_download_end() -> DownloadResponse:
+        return ParseDict({'meta_data': {'end': True}}, DownloadResponse())
+
+    @staticmethod
+    def __wrap_file_byte(byte: bytes) -> DownloadResponse:
+        return ParseDict({'chunk': {'content': byte}}, DownloadResponse())
 
 
 def init():

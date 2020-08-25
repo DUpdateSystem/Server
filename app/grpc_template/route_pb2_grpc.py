@@ -34,8 +34,8 @@ class UpdateServerRouteStub(object):
                 request_serializer=app_dot_grpc__template_dot_route__pb2.GetDownloadRequest.SerializeToString,
                 response_deserializer=app_dot_grpc__template_dot_route__pb2.GetDownloadResponse.FromString,
                 )
-        self.Download = channel.stream_unary(
-                '/server_route.UpdateServerRoute/Download',
+        self.DownloadFile = channel.stream_unary(
+                '/server_route.UpdateServerRoute/DownloadFile',
                 request_serializer=app_dot_grpc__template_dot_route__pb2.DownloadRequest.SerializeToString,
                 response_deserializer=app_dot_grpc__template_dot_route__pb2.DownloadResponse.FromString,
                 )
@@ -68,7 +68,7 @@ class UpdateServerRouteServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
-    def Download(self, request_iterator, context):
+    def DownloadFile(self, request_iterator, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
@@ -97,8 +97,8 @@ def add_UpdateServerRouteServicer_to_server(servicer, server):
                     request_deserializer=app_dot_grpc__template_dot_route__pb2.GetDownloadRequest.FromString,
                     response_serializer=app_dot_grpc__template_dot_route__pb2.GetDownloadResponse.SerializeToString,
             ),
-            'Download': grpc.stream_unary_rpc_method_handler(
-                    servicer.Download,
+            'DownloadFile': grpc.stream_unary_rpc_method_handler(
+                    servicer.DownloadFile,
                     request_deserializer=app_dot_grpc__template_dot_route__pb2.DownloadRequest.FromString,
                     response_serializer=app_dot_grpc__template_dot_route__pb2.DownloadResponse.SerializeToString,
             ),
@@ -181,7 +181,7 @@ class UpdateServerRoute(object):
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
     @staticmethod
-    def Download(request_iterator,
+    def DownloadFile(request_iterator,
             target,
             options=(),
             channel_credentials=None,
@@ -191,7 +191,7 @@ class UpdateServerRoute(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.stream_unary(request_iterator, target, '/server_route.UpdateServerRoute/Download',
+        return grpc.experimental.stream_unary(request_iterator, target, '/server_route.UpdateServerRoute/DownloadFile',
             app_dot_grpc__template_dot_route__pb2.DownloadRequest.SerializeToString,
             app_dot_grpc__template_dot_route__pb2.DownloadResponse.FromString,
             options, channel_credentials,

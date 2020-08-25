@@ -64,6 +64,9 @@ class BaseHub(metaclass=ABCMeta):
         """
         pass
 
+    def download(self, url_path: str, auth: dict or None = None) -> dict or None:
+        pass
+
     def __call_release_list_fun(self, data_dict: dict, app_id: dict, auth: dict or None = None):
         """
         当软件源未实现 get_release_list 函数时，缺省调用 get_release 函数获取数据的协程函数

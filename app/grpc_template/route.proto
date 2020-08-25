@@ -11,7 +11,7 @@ service UpdateServerRoute {
   rpc InitHubAccount(AccountRequest) returns (AccountResponse) {}
   rpc GetAppStatus(ReleaseRequest) returns (ReleaseResponse) {}
   rpc GetDownloadInfo(GetDownloadRequest) returns (GetDownloadResponse) {}
-  rpc Download(stream DownloadRequest) returns (DownloadResponse) {}
+  rpc DownloadFile(stream DownloadRequest) returns (DownloadResponse) {}
 }
 
 message Empty {}
@@ -95,8 +95,8 @@ message DownloadResponse {
 }
 
 message DownloadStatus {
-  string Message = 1;
-  UploadStatusCode Code = 2;
+  string message = 1;
+  UploadStatusCode code = 2;
 }
 
 enum UploadStatusCode {
@@ -108,10 +108,12 @@ enum UploadStatusCode {
 
 
 message DownloadMetadata {
-  string file_name = 1;
-  bool end = 2;
+  oneof download_oneof {
+    string file_name = 1;
+    bool end = 2;
+  }
 }
 
 message Chunk {
-  bytes Content = 1;
+  bytes content = 1;
 }
