@@ -7,11 +7,11 @@ from google.protobuf.json_format import ParseDict
 from grpc import Server
 
 # 初始化配置
-from app.config import server_config
+from app.server.config import server_config
 from app.grpc_template import route_pb2_grpc
 from app.grpc_template.route_pb2 import *
 from app.server.api import *
-from app.server.manager.data_manager import tl
+from app.server.manager.data_manager import time_loop
 from app.server.utils import logging, get_response, grcp_dict_list_to_dict
 
 
@@ -33,7 +33,7 @@ class Greeter(route_pb2_grpc.UpdateServerRouteServicer):
             logging.exception('gRPC: InitHubAccount')
             return None
 
-    def GetAppStatus(self, request: ReleaseRequest, context) -> ReleaseResponse:
+    def GetAppRelease(self, request: ReleaseRequest, context) -> ReleaseResponse:
         hub_uuid: str = request.hub_uuid
         auth: dict = grcp_dict_list_to_dict(request.auth)
         app_id_list: list = [grcp_dict_list_to_dict(item) for item in request.app_id_list]
@@ -118,7 +118,7 @@ class Greeter(route_pb2_grpc.UpdateServerRouteServicer):
 
 def init():
     if not server_config.debug_mode:
-        tl.start()
+        time_loop.start()
 
 
 def serve() -> [Server, Thread]:

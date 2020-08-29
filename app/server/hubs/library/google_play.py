@@ -1,4 +1,5 @@
 from ..base_hub import BaseHub
+from app.server.manager.asset_manager import write_byte_asset
 from gpapi.googleplay import GooglePlayAPI as _GooglePlayAPI
 
 locale = "en_US"
@@ -48,17 +49,20 @@ class GooglePlay(BaseHub):
                 app_release_dict[frozenset(app_id)] = release_list
         return app_release_dict
 
-    def download(self, url_path_list: list, auth: dict or None = None) -> dict or None:
-        download_dict = {}
-        doc_id = url_path_list[0]
+    def get_download_info(self, app_id: dict, asset_index: list, auth: dict or None = None) -> tuple or None:
+        download_list = []
+        doc_id = app_id['android_app_package']
         api = _GooglePlayAPI(locale=locale, timezone=timezone, device_codename=device_codename)
         gsf_id = int(auth['gsfId'])
         auth_sub_token = auth['authSubToken']
         api.gsfId = gsf_id
         api.setAuthSubToken(auth_sub_token)
         download = api.download(doc_id, expansion_files=True)
-        download_dict[doc_id + '.apk'] = download.get('file').get('data')
+        apk_file = f'{doc_id}.apk'
+        apk_file_url = write_byte_asset(apk_file, download.get('file').get('data'))
+        download_list.append((apk_file_url,))
         for obb in download['additionalData']:
-            name = obb['type'] + '.' + str(obb['versionCode']) + '.' + download['docId'] + '.obb'
-            download_dict[name] = obb.get('file').get('data')
-        return download_dict
+            obb_file = obb['type'] + '.' + str(obb['versionCode']) + '.' + download['docId'] + '.obb'
+            obb_file_url = write_byte_asset(obb_file, obb.get('file').get('data'))
+            download_list.append((obb_file_url,))
+        return download_list

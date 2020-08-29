@@ -1,11 +1,14 @@
 import asyncio
 import logging
 from multiprocessing import Manager
+from timeloop import Timeloop
 
 from colorlog import ColoredFormatter
 from requests import Response
 
 from app.server.hubs import hub_script_utils
+
+time_loop = Timeloop()
 
 LOG_LEVEL = logging.DEBUG
 LOG_FORMAT = "  %(log_color)s%(levelname)-8s%(reset)s | %(log_color)s%(message)s%(reset)s"

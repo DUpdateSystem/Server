@@ -9,9 +9,8 @@ package server_route;
 service UpdateServerRoute {
   rpc GetCloudConfig(Empty) returns (Str) {}
   rpc InitHubAccount(AccountRequest) returns (AccountResponse) {}
-  rpc GetAppStatus(ReleaseRequest) returns (ReleaseResponse) {}
+  rpc GetAppRelease(ReleaseRequest) returns (ReleaseResponse) {}
   rpc GetDownloadInfo(GetDownloadRequest) returns (GetDownloadResponse) {}
-  rpc DownloadFile(stream DownloadRequest) returns (DownloadResponse) {}
 }
 
 message Empty {}

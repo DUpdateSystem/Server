@@ -24,8 +24,8 @@ class UpdateServerRouteStub(object):
                 request_serializer=app_dot_grpc__template_dot_route__pb2.AccountRequest.SerializeToString,
                 response_deserializer=app_dot_grpc__template_dot_route__pb2.AccountResponse.FromString,
                 )
-        self.GetAppStatus = channel.unary_unary(
-                '/server_route.UpdateServerRoute/GetAppStatus',
+        self.GetAppRelease = channel.unary_unary(
+                '/server_route.UpdateServerRoute/GetAppRelease',
                 request_serializer=app_dot_grpc__template_dot_route__pb2.ReleaseRequest.SerializeToString,
                 response_deserializer=app_dot_grpc__template_dot_route__pb2.ReleaseResponse.FromString,
                 )
@@ -33,11 +33,6 @@ class UpdateServerRouteStub(object):
                 '/server_route.UpdateServerRoute/GetDownloadInfo',
                 request_serializer=app_dot_grpc__template_dot_route__pb2.GetDownloadRequest.SerializeToString,
                 response_deserializer=app_dot_grpc__template_dot_route__pb2.GetDownloadResponse.FromString,
-                )
-        self.DownloadFile = channel.stream_unary(
-                '/server_route.UpdateServerRoute/DownloadFile',
-                request_serializer=app_dot_grpc__template_dot_route__pb2.DownloadRequest.SerializeToString,
-                response_deserializer=app_dot_grpc__template_dot_route__pb2.DownloadResponse.FromString,
                 )
 
 
@@ -56,19 +51,13 @@ class UpdateServerRouteServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
-    def GetAppStatus(self, request, context):
+    def GetAppRelease(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
     def GetDownloadInfo(self, request, context):
-        """Missing associated documentation comment in .proto file."""
-        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details('Method not implemented!')
-        raise NotImplementedError('Method not implemented!')
-
-    def DownloadFile(self, request_iterator, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
@@ -87,8 +76,8 @@ def add_UpdateServerRouteServicer_to_server(servicer, server):
                     request_deserializer=app_dot_grpc__template_dot_route__pb2.AccountRequest.FromString,
                     response_serializer=app_dot_grpc__template_dot_route__pb2.AccountResponse.SerializeToString,
             ),
-            'GetAppStatus': grpc.unary_unary_rpc_method_handler(
-                    servicer.GetAppStatus,
+            'GetAppRelease': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetAppRelease,
                     request_deserializer=app_dot_grpc__template_dot_route__pb2.ReleaseRequest.FromString,
                     response_serializer=app_dot_grpc__template_dot_route__pb2.ReleaseResponse.SerializeToString,
             ),
@@ -96,11 +85,6 @@ def add_UpdateServerRouteServicer_to_server(servicer, server):
                     servicer.GetDownloadInfo,
                     request_deserializer=app_dot_grpc__template_dot_route__pb2.GetDownloadRequest.FromString,
                     response_serializer=app_dot_grpc__template_dot_route__pb2.GetDownloadResponse.SerializeToString,
-            ),
-            'DownloadFile': grpc.stream_unary_rpc_method_handler(
-                    servicer.DownloadFile,
-                    request_deserializer=app_dot_grpc__template_dot_route__pb2.DownloadRequest.FromString,
-                    response_serializer=app_dot_grpc__template_dot_route__pb2.DownloadResponse.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -147,7 +131,7 @@ class UpdateServerRoute(object):
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
     @staticmethod
-    def GetAppStatus(request,
+    def GetAppRelease(request,
             target,
             options=(),
             channel_credentials=None,
@@ -157,7 +141,7 @@ class UpdateServerRoute(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/server_route.UpdateServerRoute/GetAppStatus',
+        return grpc.experimental.unary_unary(request, target, '/server_route.UpdateServerRoute/GetAppRelease',
             app_dot_grpc__template_dot_route__pb2.ReleaseRequest.SerializeToString,
             app_dot_grpc__template_dot_route__pb2.ReleaseResponse.FromString,
             options, channel_credentials,
@@ -177,22 +161,5 @@ class UpdateServerRoute(object):
         return grpc.experimental.unary_unary(request, target, '/server_route.UpdateServerRoute/GetDownloadInfo',
             app_dot_grpc__template_dot_route__pb2.GetDownloadRequest.SerializeToString,
             app_dot_grpc__template_dot_route__pb2.GetDownloadResponse.FromString,
-            options, channel_credentials,
-            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
-
-    @staticmethod
-    def DownloadFile(request_iterator,
-            target,
-            options=(),
-            channel_credentials=None,
-            call_credentials=None,
-            insecure=False,
-            compression=None,
-            wait_for_ready=None,
-            timeout=None,
-            metadata=None):
-        return grpc.experimental.stream_unary(request_iterator, target, '/server_route.UpdateServerRoute/DownloadFile',
-            app_dot_grpc__template_dot_route__pb2.DownloadRequest.SerializeToString,
-            app_dot_grpc__template_dot_route__pb2.DownloadResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)

@@ -20,7 +20,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   syntax='proto3',
   serialized_options=b'\n\036net.xzos.upgradeall.core.routeB\nRouteProtoP\001',
   create_key=_descriptor._internal_create_key,
-  serialized_pb=b'\n\x1d\x61pp/grpc_template/route.proto\x12\x0cserver_route\"\x07\n\x05\x45mpty\"\x10\n\x03Str\x12\t\n\x01s\x18\x01 \x01(\t\"+\n\x05\x41ppId\x12\"\n\x06\x61pp_id\x18\x02 \x03(\x0b\x32\x12.server_route.Dict\"G\n\x0e\x41\x63\x63ountRequest\x12\x10\n\x08hub_uuid\x18\x01 \x01(\t\x12#\n\x07\x61\x63\x63ount\x18\x02 \x03(\x0b\x32\x12.server_route.Dict\"3\n\x0f\x41\x63\x63ountResponse\x12 \n\x04\x61uth\x18\x01 \x03(\x0b\x32\x12.server_route.Dict\"n\n\x0eReleaseRequest\x12\x10\n\x08hub_uuid\x18\x01 \x01(\t\x12 \n\x04\x61uth\x18\x02 \x03(\x0b\x32\x12.server_route.Dict\x12(\n\x0b\x61pp_id_list\x18\x03 \x03(\x0b\x32\x13.server_route.AppId\"e\n\x0fReleaseResponse\x12\x16\n\x0evalid_hub_uuid\x18\x01 \x01(\x08\x12:\n\x14release_package_list\x18\x02 \x03(\x0b\x32\x1c.server_route.ReleasePackage\"j\n\x0eReleasePackage\x12#\n\x06\x61pp_id\x18\x01 \x01(\x0b\x32\x13.server_route.AppId\x12\x33\n\x0crelease_list\x18\x02 \x03(\x0b\x32\x1d.server_route.ReleaseListItem\"\x82\x01\n\x12GetDownloadRequest\x12\x10\n\x08hub_uuid\x18\x01 \x01(\t\x12 \n\x04\x61uth\x18\x02 \x03(\x0b\x32\x12.server_route.Dict\x12#\n\x06\x61pp_id\x18\x03 \x01(\x0b\x32\x13.server_route.AppId\x12\x13\n\x0b\x61sset_index\x18\x04 \x03(\x05\"B\n\x13GetDownloadResponse\x12+\n\x04list\x18\x01 \x03(\x0b\x32\x1d.server_route.DownloadPackage\"J\n\x0f\x44ownloadPackage\x12\x0b\n\x03url\x18\x01 \x01(\t\x12*\n\x0erequest_header\x18\x02 \x03(\x0b\x32\x12.server_route.Dict\"f\n\x0fReleaseListItem\x12\x16\n\x0eversion_number\x18\x01 \x01(\t\x12\x12\n\nchange_log\x18\x02 \x01(\t\x12\'\n\x06\x61ssets\x18\x03 \x03(\x0b\x32\x17.server_route.AssetItem\"G\n\tAssetItem\x12\x11\n\tfile_name\x18\x01 \x01(\t\x12\x14\n\x0c\x64ownload_url\x18\x02 \x01(\t\x12\x11\n\tfile_type\x18\x03 \x01(\t\"\"\n\x04\x44ict\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\t\"b\n\x0f\x44ownloadRequest\x12\r\n\x03url\x18\x01 \x01(\tH\x00\x12.\n\x06status\x18\x02 \x01(\x0b\x32\x1c.server_route.DownloadStatusH\x00\x42\x10\n\x0e\x64ownload_oneof\"\x7f\n\x10\x44ownloadResponse\x12\x33\n\tmeta_data\x18\x01 \x01(\x0b\x32\x1e.server_route.DownloadMetadataH\x00\x12$\n\x05\x63hunk\x18\x02 \x01(\x0b\x32\x13.server_route.ChunkH\x00\x42\x10\n\x0e\x64ownload_oneof\"O\n\x0e\x44ownloadStatus\x12\x0f\n\x07message\x18\x01 \x01(\t\x12,\n\x04\x63ode\x18\x02 \x01(\x0e\x32\x1e.server_route.UploadStatusCode\"H\n\x10\x44ownloadMetadata\x12\x13\n\tfile_name\x18\x01 \x01(\tH\x00\x12\r\n\x03\x65nd\x18\x02 \x01(\x08H\x00\x42\x10\n\x0e\x64ownload_oneof\"\x18\n\x05\x43hunk\x12\x0f\n\x07\x63ontent\x18\x01 \x01(\x0c*3\n\x10UploadStatusCode\x12\x0b\n\x07Unknown\x10\x00\x12\x06\n\x02Ok\x10\x01\x12\n\n\x06\x46\x61iled\x10\x02\x32\x9c\x03\n\x11UpdateServerRoute\x12:\n\x0eGetCloudConfig\x12\x13.server_route.Empty\x1a\x11.server_route.Str\"\x00\x12O\n\x0eInitHubAccount\x12\x1c.server_route.AccountRequest\x1a\x1d.server_route.AccountResponse\"\x00\x12M\n\x0cGetAppStatus\x12\x1c.server_route.ReleaseRequest\x1a\x1d.server_route.ReleaseResponse\"\x00\x12X\n\x0fGetDownloadInfo\x12 .server_route.GetDownloadRequest\x1a!.server_route.GetDownloadResponse\"\x00\x12Q\n\x0c\x44ownloadFile\x12\x1d.server_route.DownloadRequest\x1a\x1e.server_route.DownloadResponse\"\x00(\x01\x42.\n\x1enet.xzos.upgradeall.core.routeB\nRouteProtoP\x01\x62\x06proto3'
+  serialized_pb=b'\n\x1d\x61pp/grpc_template/route.proto\x12\x0cserver_route\"\x07\n\x05\x45mpty\"\x10\n\x03Str\x12\t\n\x01s\x18\x01 \x01(\t\"+\n\x05\x41ppId\x12\"\n\x06\x61pp_id\x18\x02 \x03(\x0b\x32\x12.server_route.Dict\"G\n\x0e\x41\x63\x63ountRequest\x12\x10\n\x08hub_uuid\x18\x01 \x01(\t\x12#\n\x07\x61\x63\x63ount\x18\x02 \x03(\x0b\x32\x12.server_route.Dict\"3\n\x0f\x41\x63\x63ountResponse\x12 \n\x04\x61uth\x18\x01 \x03(\x0b\x32\x12.server_route.Dict\"n\n\x0eReleaseRequest\x12\x10\n\x08hub_uuid\x18\x01 \x01(\t\x12 \n\x04\x61uth\x18\x02 \x03(\x0b\x32\x12.server_route.Dict\x12(\n\x0b\x61pp_id_list\x18\x03 \x03(\x0b\x32\x13.server_route.AppId\"e\n\x0fReleaseResponse\x12\x16\n\x0evalid_hub_uuid\x18\x01 \x01(\x08\x12:\n\x14release_package_list\x18\x02 \x03(\x0b\x32\x1c.server_route.ReleasePackage\"j\n\x0eReleasePackage\x12#\n\x06\x61pp_id\x18\x01 \x01(\x0b\x32\x13.server_route.AppId\x12\x33\n\x0crelease_list\x18\x02 \x03(\x0b\x32\x1d.server_route.ReleaseListItem\"\x82\x01\n\x12GetDownloadRequest\x12\x10\n\x08hub_uuid\x18\x01 \x01(\t\x12 \n\x04\x61uth\x18\x02 \x03(\x0b\x32\x12.server_route.Dict\x12#\n\x06\x61pp_id\x18\x03 \x01(\x0b\x32\x13.server_route.AppId\x12\x13\n\x0b\x61sset_index\x18\x04 \x03(\x05\"B\n\x13GetDownloadResponse\x12+\n\x04list\x18\x01 \x03(\x0b\x32\x1d.server_route.DownloadPackage\"J\n\x0f\x44ownloadPackage\x12\x0b\n\x03url\x18\x01 \x01(\t\x12*\n\x0erequest_header\x18\x02 \x03(\x0b\x32\x12.server_route.Dict\"f\n\x0fReleaseListItem\x12\x16\n\x0eversion_number\x18\x01 \x01(\t\x12\x12\n\nchange_log\x18\x02 \x01(\t\x12\'\n\x06\x61ssets\x18\x03 \x03(\x0b\x32\x17.server_route.AssetItem\"G\n\tAssetItem\x12\x11\n\tfile_name\x18\x01 \x01(\t\x12\x14\n\x0c\x64ownload_url\x18\x02 \x01(\t\x12\x11\n\tfile_type\x18\x03 \x01(\t\"\"\n\x04\x44ict\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\t\"b\n\x0f\x44ownloadRequest\x12\r\n\x03url\x18\x01 \x01(\tH\x00\x12.\n\x06status\x18\x02 \x01(\x0b\x32\x1c.server_route.DownloadStatusH\x00\x42\x10\n\x0e\x64ownload_oneof\"\x7f\n\x10\x44ownloadResponse\x12\x33\n\tmeta_data\x18\x01 \x01(\x0b\x32\x1e.server_route.DownloadMetadataH\x00\x12$\n\x05\x63hunk\x18\x02 \x01(\x0b\x32\x13.server_route.ChunkH\x00\x42\x10\n\x0e\x64ownload_oneof\"O\n\x0e\x44ownloadStatus\x12\x0f\n\x07message\x18\x01 \x01(\t\x12,\n\x04\x63ode\x18\x02 \x01(\x0e\x32\x1e.server_route.UploadStatusCode\"H\n\x10\x44ownloadMetadata\x12\x13\n\tfile_name\x18\x01 \x01(\tH\x00\x12\r\n\x03\x65nd\x18\x02 \x01(\x08H\x00\x42\x10\n\x0e\x64ownload_oneof\"\x18\n\x05\x43hunk\x12\x0f\n\x07\x63ontent\x18\x01 \x01(\x0c*3\n\x10UploadStatusCode\x12\x0b\n\x07Unknown\x10\x00\x12\x06\n\x02Ok\x10\x01\x12\n\n\x06\x46\x61iled\x10\x02\x32\xca\x02\n\x11UpdateServerRoute\x12:\n\x0eGetCloudConfig\x12\x13.server_route.Empty\x1a\x11.server_route.Str\"\x00\x12O\n\x0eInitHubAccount\x12\x1c.server_route.AccountRequest\x1a\x1d.server_route.AccountResponse\"\x00\x12N\n\rGetAppRelease\x12\x1c.server_route.ReleaseRequest\x1a\x1d.server_route.ReleaseResponse\"\x00\x12X\n\x0fGetDownloadInfo\x12 .server_route.GetDownloadRequest\x1a!.server_route.GetDownloadResponse\"\x00\x42.\n\x1enet.xzos.upgradeall.core.routeB\nRouteProtoP\x01\x62\x06proto3'
 )
 
 _UPLOADSTATUSCODE = _descriptor.EnumDescriptor(
@@ -1002,7 +1002,7 @@ _UPDATESERVERROUTE = _descriptor.ServiceDescriptor(
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
   serialized_start=1522,
-  serialized_end=1934,
+  serialized_end=1852,
   methods=[
   _descriptor.MethodDescriptor(
     name='GetCloudConfig',
@@ -1025,8 +1025,8 @@ _UPDATESERVERROUTE = _descriptor.ServiceDescriptor(
     create_key=_descriptor._internal_create_key,
   ),
   _descriptor.MethodDescriptor(
-    name='GetAppStatus',
-    full_name='server_route.UpdateServerRoute.GetAppStatus',
+    name='GetAppRelease',
+    full_name='server_route.UpdateServerRoute.GetAppRelease',
     index=2,
     containing_service=None,
     input_type=_RELEASEREQUEST,
@@ -1041,16 +1041,6 @@ _UPDATESERVERROUTE = _descriptor.ServiceDescriptor(
     containing_service=None,
     input_type=_GETDOWNLOADREQUEST,
     output_type=_GETDOWNLOADRESPONSE,
-    serialized_options=None,
-    create_key=_descriptor._internal_create_key,
-  ),
-  _descriptor.MethodDescriptor(
-    name='DownloadFile',
-    full_name='server_route.UpdateServerRoute.DownloadFile',
-    index=4,
-    containing_service=None,
-    input_type=_DOWNLOADREQUEST,
-    output_type=_DOWNLOADRESPONSE,
     serialized_options=None,
     create_key=_descriptor._internal_create_key,
   ),

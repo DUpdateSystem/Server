@@ -2,7 +2,7 @@ from abc import ABCMeta
 
 from requests import HTTPError
 
-from app.config import server_config
+from app.server.config import server_config
 from app.server.utils import logging, call_fun_list_in_loop, call_async_fun_with_id, get_manager_dict
 
 
@@ -62,9 +62,6 @@ class BaseHub(metaclass=ABCMeta):
                         "<请求头>": "<请求头参数>"
                 }
         """
-        pass
-
-    def download(self, url_path: str, auth: dict or None = None) -> dict or None:
         pass
 
     def __call_release_list_fun(self, data_dict: dict, app_id: dict, auth: dict or None = None):

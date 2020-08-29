@@ -3,7 +3,7 @@ import json
 from redis import BlockingConnectionPool
 from redis.client import Redis
 
-from app.config import server_config
+from app.server.config import server_config
 from app.server.utils import logging
 from .data.local_cache import local_cache
 
@@ -116,7 +116,7 @@ app_id: {app_id}""", exc_info=server_config.debug_mode)
                 cache_app_id_dict[hub_uuid] = app_id_list
             except Exception:
                 self.del_release_cache(key)
-        return cache_app_info_dict
+        return cache_app_id_dict
 
     @staticmethod
     def __get_app_cache_key(hub_uuid: str, app_id: dict) -> str or None:

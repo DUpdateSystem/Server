@@ -1,12 +1,10 @@
 from datetime import timedelta
 from urllib.parse import urlparse
 
-from timeloop import Timeloop
-
-from app.config import server_config
+from app.server.config import server_config
 from app.server.hubs.hub_list import hub_dict, hub_url_dict
 from app.server.manager.cache_manager import cache_manager
-from app.server.utils import logging
+from app.server.utils import logging, time_loop
 
 
 class DataManager:
@@ -101,11 +99,10 @@ class DataManager:
         return data
 
 
-tl = Timeloop()
 data_manager = DataManager()
 
 
-@tl.job(interval=timedelta(hours=server_config.auto_refresh_time))
+@time_loop.job(interval=timedelta(hours=server_config.auto_refresh_time))
 def _auto_refresh():
     logging.info("auto refresh data: start")
     data_manager.refresh_cache()

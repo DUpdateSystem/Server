@@ -1,9 +1,9 @@
 import json
 
-from app.config import server_config
-from .server.api import *
-from .server.hubs.hub_script_utils import get_session
-from .server.utils import logging
+from app.server.config import server_config
+from app.server.api import *
+from app.server.hubs.hub_script_utils import get_session
+from app.server.utils import logging
 
 
 def _debug(hub_uuid: str, test_options: dict, run_init_account: bool = False):

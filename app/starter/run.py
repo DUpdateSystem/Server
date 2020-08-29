@@ -4,8 +4,8 @@ from threading import Thread
 
 from grpc import Server
 
-from app.run_debugger import debug
-from app.run_grpc_server import serve
+from app.starter.run_debugger import debug
+from app.starter.run_grpc_server import serve
 from app.server.utils import logging
 
 
