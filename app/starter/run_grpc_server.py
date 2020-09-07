@@ -42,13 +42,12 @@ class Greeter(route_pb2_grpc.UpdateServerRouteServicer):
                 release_list = new_d["release_package_list"][0]["release_list"]
             app_status = {
                 "valid_hub_uuid": new_d["valid_hub_uuid"],
-                "valid_app": new_d["release_package_list"] and len(new_d["release_package_list"][0]["release_list"]),
+                "valid_app": new_d["release_package_list"] and len(
+                    new_d["release_package_list"][0]["release_list"]) != 0,
                 "valid_data": new_d["release_package_list"] and new_d["release_package_list"][0] is not None,
                 "release_info": release_list,
             }
-            return {
-                "app_status": app_status
-            }
+            return ParseDict({"app_status": app_status}, Response())
         except Exception:
             logging.exception('gRPC: GetAppStatus')
             return None
@@ -66,7 +65,7 @@ class Greeter(route_pb2_grpc.UpdateServerRouteServicer):
             asset_index = request["asset_index"]
             new_d = MessageToDict(self.__get_download_info(hub_uuid, None, app_id_dict, asset_index),
                                   preserving_proto_field_name=True)
-            return new_d["list"][0]
+            return ParseDict(new_d["list"][0], DownloadInfo())
         except Exception:
             logging.exception('gRPC: GetDownloadInfo')
             return None
