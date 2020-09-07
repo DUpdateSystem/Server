@@ -15,7 +15,7 @@ class BaseHub(metaclass=ABCMeta):
 
     def get_release_list(self, app_id_list: list, auth: dict or None = None) -> dict or None:
         data_dict = get_manager_dict()
-        fun_list = [call_async_fun_with_id(app_id, lambda: self.__call_release_list_fun(app_id, auth))
+        fun_list = [call_async_fun_with_id(app_id, lambda: self.__call_release_list_fun(data_dict, app_id, auth))
                     for app_id in app_id_list]
         call_fun_list_in_loop(fun_list)
         return data_dict
@@ -64,7 +64,7 @@ class BaseHub(metaclass=ABCMeta):
         """
         pass
 
-    def __call_release_list_fun(self, data_dict: dict, app_id: dict, auth: dict or None = None):
+    def __call_release_list_fun(self, data_dict: dict, app_id: dict, auth: dict or None):
         """
         当软件源未实现 get_release_list 函数时，缺省调用 get_release 函数获取数据的协程函数
         """
@@ -76,12 +76,12 @@ class BaseHub(metaclass=ABCMeta):
             # 缓存数据，包括 404 None 数据
         except HTTPError as e:
             status_code = e.response.status_code
-            logging.warning(f"""app_info: {app_id}
+            logging.warning(f"""app_id: {app_id}
             HTTP CODE {status_code} ERROR: {e}""")
             if status_code == 404:
                 release_list = []
             else:
                 raise e
         except Exception:
-            logging.error(f"""app_info: {app_id} \nERROR: """, exc_info=server_config.debug_mode)
+            logging.error(f"""app_id: {app_id} \nERROR: """, exc_info=server_config.debug_mode)
         data_dict[frozenset(app_id)] = release_list

@@ -44,15 +44,16 @@ class CoolApk(BaseHub):
             if self is hub_dict[uuid]:
                 hub_uuid = uuid
                 break
-        release_info = data_manager.get_release_dict(hub_uuid, app_id, auth)[app_id]["app_status"]["release_info"]
-        download_url = release_info[asset_index[0]]["assets"][asset_index[1]]["download_url"]
+        release_dict = data_manager.get_release_dict(hub_uuid, [app_id], auth)
+        release_list = next(iter(release_dict.values()))
+        download_url = release_list[asset_index[0]]["assets"][asset_index[1]]["download_url"]
         try:
             get_session().head(download_url).raise_for_status()
             logging.debug("网址验证正确")
         except HTTPError:
             logging.debug("网址错误，尝试重新获取")
-            release_info = data_manager.get_release_list(hub_uuid, app_id, use_cache=False)["app_status"]
-            download_url = release_info[asset_index[0]]["assets"][asset_index[1]]["download_url"]
+            release_list = data_manager.get_release_list(hub_uuid, app_id, use_cache=False)["app_status"]
+            download_url = release_list[asset_index[0]]["assets"][asset_index[1]]["download_url"]
         return (download_url,),
 
 

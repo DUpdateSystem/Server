@@ -39,7 +39,7 @@ class DataManager:
         try:
             return hub.get_download_info(app_id, asset_index, auth)
         except Exception:
-            logging.error(f"""app_info: {app_id} \nERROR: """, exc_info=server_config.debug_mode)
+            logging.error(f"""app_id: {app_id} \nERROR: """, exc_info=server_config.debug_mode)
             return None
 
     @staticmethod

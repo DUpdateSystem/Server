@@ -14,8 +14,15 @@ def get_release_dict(hub_uuid: str, auth: dict or None, app_id_list: list,
                                                  use_cache=use_cache, cache_data=cache_data)
     if not release_dict:
         return {"valid_hub_uuid": False}
-    release_package_list = [{"app_id": app_id_index[f_app_id], "release_list": release_dict[f_app_id]}
-                            for f_app_id in release_dict]
+    release_package_list = []
+    for f_app_id in release_dict:
+        release_list = release_dict[f_app_id]
+        if release_list and release_list[0] is None:
+            release_list = [{"version_number": ""}]
+        release_package_list.append({
+            "app_id": dict_to_grcp_dict_list(app_id_index[f_app_id]),
+            "release_list": release_list
+        })
     return {
         "valid_hub_uuid": True,
         "release_package_list": release_package_list

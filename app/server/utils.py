@@ -6,6 +6,7 @@ from timeloop import Timeloop
 from colorlog import ColoredFormatter
 from requests import Response
 
+from app.server.config import server_config
 from app.server.hubs import hub_script_utils
 
 time_loop = Timeloop()
@@ -36,7 +37,8 @@ def get_response(url: str, throw_error=False, **kwargs) -> Response or None:
 def set_new_asyncio_loop():
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
-    loop.set_debug(True)
+    if server_config.debug_mode:
+        loop.set_debug(True)
     return loop
 
 
@@ -71,7 +73,7 @@ def grcp_dict_list_to_dict(grcp_dict: list or None) -> dict:
     d = {}
     if grcp_dict:
         for gd in grcp_dict:
-            d[gd.key] = gd.value
+            d[gd.k] = gd.v
     return d
 
 
@@ -79,7 +81,7 @@ def dict_to_grcp_dict_list(d: dict or None) -> list:
     g_dict = []
     if d:
         for k in d:
-            g_dict.append({"key": k, "value": d[k]})
+            g_dict.append({"k": k, "v": d[k]})
     return g_dict
 
 
