@@ -93,9 +93,9 @@ class DataManager:
         nocache_data = hub.get_release_list(nocache, auth)
         if nocache_data:
             data = {**data, **nocache_data}
-        if cache_data:
-            for app_id in data:
-                cache_manager.add_release_cache(hub_uuid, app_id, data[app_id])
+            if cache_data:
+                for app_id in nocache_data:
+                    cache_manager.add_release_cache(hub_uuid, next(iter(app_id)), data[app_id])
         return data
 
 
