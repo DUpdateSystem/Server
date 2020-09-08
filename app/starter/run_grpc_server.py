@@ -65,7 +65,8 @@ class Greeter(route_pb2_grpc.UpdateServerRouteServicer):
             asset_index = request["asset_index"]
             new_d = MessageToDict(self.__get_download_info(hub_uuid, None, app_id_dict, asset_index),
                                   preserving_proto_field_name=True)
-            return ParseDict(new_d["list"][0], DownloadInfo())
+            if "list" in new_d:
+                return ParseDict(new_d["list"][0], DownloadInfo())
         except Exception:
             logging.exception('gRPC: GetDownloadInfo')
             return None

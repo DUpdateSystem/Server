@@ -80,8 +80,6 @@ class BaseHub(metaclass=ABCMeta):
             HTTP CODE {status_code} ERROR: {e}""")
             if status_code == 404:
                 release_list = []
-            else:
-                raise e
         except Exception:
             logging.error(f"""app_id: {app_id} \nERROR: """, exc_info=server_config.debug_mode)
         data_dict[frozenset(app_id)] = release_list
