@@ -1,3 +1,4 @@
+from json import dumps
 from ..base_hub import BaseHub
 from app.server.manager.asset_manager import write_byte_asset
 from gpapi.googleplay import GooglePlayAPI as _GooglePlayAPI
@@ -30,7 +31,7 @@ class GooglePlay(BaseHub):
         for i, l_details in enumerate(bulk_details):
             app_id = app_id_list[i]
             if l_details is None:
-                app_release_dict[frozenset(app_id)] = []
+                app_release_dict[dumps(app_id)] = []
             else:
                 # noinspection PyBroadException
                 try:
@@ -46,7 +47,7 @@ class GooglePlay(BaseHub):
                     }, ]
                 except Exception:
                     release_list = [None, ]
-                app_release_dict[frozenset(app_id)] = release_list
+                app_release_dict[dumps(app_id)] = release_list
         return app_release_dict
 
     def get_download_info(self, app_id: dict, asset_index: list, auth: dict or None = None) -> tuple or None:

@@ -1,3 +1,4 @@
+from json import dumps
 from xml.etree import ElementTree
 
 from app.server.utils import call_fun_list_in_loop, call_async_fun_with_id
@@ -16,7 +17,7 @@ class FDroid(BaseHub):
             call_async_fun_with_id(app_id, lambda: self.__get_release(app_id['android_app_package'], tree, repo_url))
             for app_id in app_id_list if 'android_app_package' in app_id]
         data_list = call_fun_list_in_loop(fun_list)
-        return {frozenset(key): value for key, value in data_list}
+        return {dumps(key): value for key, value in data_list}
 
     @staticmethod
     def __get_release(package: str, tree, url) -> tuple or None:

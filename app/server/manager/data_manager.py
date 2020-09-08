@@ -1,3 +1,4 @@
+import json
 from datetime import timedelta
 from urllib.parse import urlparse
 
@@ -77,7 +78,7 @@ class DataManager:
         for app_id in app_id_list:
             try:
                 release_list = cache_manager.get_release_cache(hub_uuid, app_id)
-                cache_data[frozenset(app_id)] = release_list
+                cache_data[json.dumps(app_id)] = release_list
             except (KeyError, NameError):
                 nocache.append(app_id)
         return nocache, cache_data
@@ -95,7 +96,7 @@ class DataManager:
             data = {**data, **nocache_data}
             if cache_data:
                 for app_id in nocache_data:
-                    cache_manager.add_release_cache(hub_uuid, next(iter(app_id)), data[app_id])
+                    cache_manager.add_release_cache(hub_uuid, json.loads(app_id), data[app_id])
         return data
 
 

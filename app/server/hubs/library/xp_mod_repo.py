@@ -1,3 +1,4 @@
+from json import dumps
 import gzip
 import tempfile
 from xml.etree import ElementTree
@@ -24,7 +25,7 @@ class XpModRepo(BaseHub):
             fun_list = [call_async_fun_with_id(app_id, lambda: self.__get_release(app_id['android_app_package'], tree))
                         for app_id in app_id_list if 'android_app_package' in app_id]
             data_list = call_fun_list_in_loop(fun_list)
-            return {frozenset(key): value for key, value in data_list}
+            return {dumps(key): value for key, value in data_list}
 
     @staticmethod
     def __get_release(package: str, tree) -> tuple or None:

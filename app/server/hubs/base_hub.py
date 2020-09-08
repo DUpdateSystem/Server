@@ -1,4 +1,5 @@
 from abc import ABCMeta
+from json import dumps
 
 from requests import HTTPError
 
@@ -32,7 +33,7 @@ class BaseHub(metaclass=ABCMeta):
 
         Return: tuple
             Keyword Args:
-                 app_id (frozenset)
+                 app_id
             value:
                 有用的信息: tuple
                 无用但是需要告知客户端的信息（不存在的软件）: empty tuple
@@ -82,4 +83,4 @@ class BaseHub(metaclass=ABCMeta):
                 release_list = []
         except Exception:
             logging.error(f"""app_id: {app_id} \nERROR: """, exc_info=server_config.debug_mode)
-        data_dict[frozenset(app_id)] = release_list
+        data_dict[dumps(app_id)] = release_list
