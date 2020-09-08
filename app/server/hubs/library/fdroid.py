@@ -7,7 +7,7 @@ from ..hub_script_utils import http_get, get_tmp_cache, add_tmp_cache, raise_no_
 
 class FDroid(BaseHub):
     def get_release_list(self, app_id_list: list, auth: dict or None = None) -> dict or None:
-        if 'repo_url' in auth:
+        if auth and 'repo_url' in auth:
             repo_url = auth["repo_url"]
         else:
             repo_url = 'https://f-droid.org/repo'
