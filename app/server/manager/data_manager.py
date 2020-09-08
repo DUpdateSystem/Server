@@ -88,8 +88,8 @@ class DataManager:
         data = {}
         nocache = app_id_list
         if use_cache:
-            nocache, cache_data = self.__get_release_cache(hub_uuid, app_id_list)
-            data = {**data, **cache_data}
+            nocache, cached_data = self.__get_release_cache(hub_uuid, app_id_list)
+            data = {**data, **cached_data}
         hub = hub_dict[hub_uuid]
         nocache_data = hub.get_release_list(nocache, auth)
         if nocache_data:
