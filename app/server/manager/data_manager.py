@@ -96,7 +96,9 @@ class DataManager:
             data = {**data, **nocache_data}
             if cache_data:
                 for app_id in nocache_data:
-                    cache_manager.add_release_cache(hub_uuid, json.loads(app_id), data[app_id])
+                    release_list = data[app_id]
+                    if (release_list and release_list[0] is not None) or not release_list:
+                        cache_manager.add_release_cache(hub_uuid, json.loads(app_id), release_list)
         return data
 
 
