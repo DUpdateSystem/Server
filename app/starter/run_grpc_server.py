@@ -6,13 +6,13 @@ import grpc
 from google.protobuf.json_format import ParseDict, MessageToDict
 from grpc import Server
 
-# 初始化配置
-from app.server.config import server_config
 from app.grpc_template import route_pb2_grpc
 from app.grpc_template.route_pb2 import *
 from app.server.api import *
-from app.server.manager.data_manager import time_loop
-from app.server.utils import logging, get_response, grcp_dict_list_to_dict
+# 初始化配置
+from app.server.config import server_config
+from app.server.manager.data.constant import logging, time_loop
+from app.server.utils import get_response, grcp_dict_list_to_dict
 
 
 class Greeter(route_pb2_grpc.UpdateServerRouteServicer):
@@ -35,17 +35,19 @@ class Greeter(route_pb2_grpc.UpdateServerRouteServicer):
             app_id_dict = {}
             for i in app_id:
                 app_id_dict[i["key"]] = i["value"]
-            new_d = MessageToDict(self.__get_app_release(hub_uuid, None, [app_id_dict]),
+            new_d = MessageToDict(next(self.__get_app_release(hub_uuid, None, [app_id_dict])),
                                   preserving_proto_field_name=True)
-            release_list = []
-            if new_d["release_package_list"] and new_d["release_package_list"][0]:
-                release_list = new_d["release_package_list"][0]["release_list"]
+            if "valid_hub" in new_d:
+                app_status = {
+                    "valid_hub_uuid": new_d["valid_hub"]
+                }
+                return ParseDict({"app_status": app_status}, Response())
+            release = new_d["release"]
             app_status = {
-                "valid_hub_uuid": new_d["valid_hub_uuid"],
-                "valid_app": new_d["release_package_list"] and len(
-                    new_d["release_package_list"][0]["release_list"]) != 0,
-                "valid_data": new_d["release_package_list"] and new_d["release_package_list"][0] is not None,
-                "release_info": release_list,
+                "valid_hub_uuid": new_d["valid_hub"],
+                "valid_app": not (release["valid_data"] and len(release["release_list"]) == 0),
+                "valid_data": release["valid_data"],
+                "release_info": release["release_list"]
             }
             return ParseDict({"app_status": app_status}, Response())
         except Exception:
@@ -87,7 +89,7 @@ class Greeter(route_pb2_grpc.UpdateServerRouteServicer):
         app_id_list: list = [grcp_dict_list_to_dict(item.app_id) for item in request.app_id_list]
         # noinspection PyBroadException
         try:
-            return self.__get_app_release(hub_uuid, auth, app_id_list)
+            yield self.__get_app_release(hub_uuid, auth, app_id_list)
         except Exception:
             logging.exception('gRPC: GetAppStatus')
             return None
@@ -111,8 +113,8 @@ class Greeter(route_pb2_grpc.UpdateServerRouteServicer):
 
     @staticmethod
     def __get_app_release(hub_uuid: str, auth: dict or None, app_id_list: list) -> ReleaseResponse:
-        release_list = get_release_dict(hub_uuid, auth, app_id_list)
-        return ParseDict(release_list, ReleaseResponse())
+        for item in get_release_dict(hub_uuid, auth, app_id_list):
+            yield ParseDict(item, ReleaseResponse())
 
     @staticmethod
     def __get_download_info(hub_uuid: str, auth: dict or None, app_id: dict, asset_index: list) -> GetDownloadResponse:

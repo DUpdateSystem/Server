@@ -2,7 +2,7 @@ import re
 
 from requests import HTTPError
 
-from app.server.utils import logging
+from app.server.manager.data.constant import logging
 from ..base_hub import BaseHub
 from ..hub_script_utils import parsing_http_page, get_session, raise_no_app_error
 
@@ -44,7 +44,7 @@ class CoolApk(BaseHub):
             if self is hub_dict[uuid]:
                 hub_uuid = uuid
                 break
-        release_dict = data_manager.get_release_dict(hub_uuid, [app_id], auth)
+        release_dict = next(data_manager.get_release_dict(hub_uuid, [app_id], auth))
         release_list = next(iter(release_dict.values()))
         download_url = release_list[asset_index[0]]["assets"][asset_index[1]]["download_url"]
         try:

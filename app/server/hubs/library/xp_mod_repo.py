@@ -1,19 +1,20 @@
-from json import dumps
 import gzip
 import tempfile
 from xml.etree import ElementTree
 
 from bs4 import BeautifulSoup
 
+from app.server.manager.data.generator_cache import GeneratorCache
 from app.server.utils import call_fun_list_in_loop, call_async_fun_with_id
 from ..base_hub import BaseHub
-from ..hub_script_utils import http_get, get_tmp_cache, add_tmp_cache, raise_no_app_error
+from ..hub_script_utils import http_get, get_tmp_cache, add_tmp_cache, return_value
 
 cache_key = "xposed_full_module_xml"
 
 
 class XpModRepo(BaseHub):
-    def get_release_list(self, app_id_list: list, auth: dict or None = None) -> dict or None:
+    def get_release_list(self, generator_cache: GeneratorCache,
+                         app_id_list: list, auth: dict or None = None):
         xml_str = get_tmp_cache(cache_key)
         if not xml_str:
             raw_str = http_get("https://dl-xda.xposed.info/repo/full.xml.gz", stream=True).raw.data
@@ -22,16 +23,17 @@ class XpModRepo(BaseHub):
                 add_tmp_cache(cache_key, xml_str)
         if xml_str:
             tree = ElementTree.fromstring(xml_str)
-            fun_list = [call_async_fun_with_id(app_id, lambda: self.__get_release(app_id['android_app_package'], tree))
+            fun_list = [call_async_fun_with_id(app_id, lambda: self.__get_release(generator_cache, app_id, tree))
                         for app_id in app_id_list if 'android_app_package' in app_id]
-            data_list = call_fun_list_in_loop(fun_list)
-            return {dumps(key): value for key, value in data_list}
+            call_fun_list_in_loop(fun_list)
+            return_value(generator_cache, None, None)
 
     @staticmethod
-    def __get_release(package: str, tree) -> tuple or None:
+    def __get_release(generator_cache: GeneratorCache, app_id: dict, tree):
+        package = app_id['android_app_package']
         module = tree.find(f'.//module[@package="{package}"]')
         if not module:
-            raise_no_app_error()
+            return_value(generator_cache, app_id, [])
         version_list = module.findall('version')
         data = []
         for version in version_list:
@@ -52,7 +54,7 @@ class XpModRepo(BaseHub):
                 }]
             }
             data.append(release_info)
-        return data
+        return_value(generator_cache, app_id, data)
 
 
 def _raw_to_xml_string(raw):

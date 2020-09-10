@@ -13,7 +13,7 @@ service UpdateServerRoute {
   rpc GetDownloadInfo(DownloadAssetIndex) returns (DownloadInfo) {}
 
   rpc InitHubAccount(AccountRequest) returns (AccountResponse) {}
-  rpc GetAppRelease(ReleaseRequest) returns (ReleaseResponse) {}
+  rpc GetAppRelease(ReleaseRequest) returns (stream ReleaseResponse) {}
   rpc DevGetDownloadInfo(GetDownloadRequest) returns (GetDownloadResponse) {}
 }
 
@@ -40,13 +40,16 @@ message ReleaseRequest{
 }
 
 message ReleaseResponse{
-  bool valid_hub_uuid = 1;
-  repeated ReleasePackage release_package_list = 2;
+  oneof release_oneof{
+    bool valid_hub = 1;
+    ReleasePackage release = 2;
+  }
 }
 
 message ReleasePackage{
   repeated Dict app_id = 1;
-  repeated ReleaseListItem release_list = 2;
+  bool valid_data = 2;
+  repeated ReleaseListItem release_list = 3;
 }
 
 message GetDownloadRequest {

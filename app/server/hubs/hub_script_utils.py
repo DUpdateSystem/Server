@@ -3,13 +3,12 @@ import tarfile
 import tempfile
 from io import BytesIO
 
-import requests
 from bs4 import BeautifulSoup
 from requests import Response, Session, HTTPError
 
 from app.server.manager.cache_manager import cache_manager
-
-__session = requests.Session()
+from app.server.manager.data.constant import session as __session
+from app.server.manager.data.generator_cache import GeneratorCache
 
 
 def parsing_http_page(url: str, params=None) -> BeautifulSoup:
@@ -41,7 +40,7 @@ def http_get(url: str, throw_error=True, **kwargs) -> Response or None:
         response.raise_for_status()
         return response
     except Exception as e:
-        if e is requests.HTTPError:
+        if e is HTTPError:
             raise e
         if throw_error:
             raise e
@@ -121,6 +120,13 @@ def add_tmp_cache(key: str, value: str):
             tar.addfile(tarinfo=info, fileobj=file)
 
         cache_manager.add_tmp_cache(key, out.getvalue())
+
+
+def return_value(generator_cache: GeneratorCache, app_id: dict or None, value):
+    if app_id is None:
+        generator_cache.add_value(None)
+    else:
+        generator_cache.add_value({"id": app_id, "v": value})
 
 
 def raise_no_app_error():

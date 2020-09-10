@@ -1,10 +1,12 @@
 from abc import ABCMeta
-from json import dumps
 
 from requests import HTTPError
 
 from app.server.config import server_config
-from app.server.utils import logging, call_fun_list_in_loop, call_async_fun_with_id, get_manager_dict
+from app.server.hubs.hub_script_utils import return_value
+from app.server.manager.data.constant import logging
+from app.server.manager.data.generator_cache import GeneratorCache
+from app.server.utils import call_fun_list_in_loop, call_async_fun_with_id
 
 
 class BaseHub(metaclass=ABCMeta):
@@ -14,12 +16,12 @@ class BaseHub(metaclass=ABCMeta):
     def init_account(self, account: dict) -> dict or None:
         pass
 
-    def get_release_list(self, app_id_list: list, auth: dict or None = None) -> dict or None:
-        data_dict = get_manager_dict()
-        fun_list = [call_async_fun_with_id(app_id, lambda: self.__call_release_list_fun(data_dict, app_id, auth))
+    def get_release_list(self, generator_cache: GeneratorCache,
+                         app_id_list: list, auth: dict or None = None):
+        fun_list = [call_async_fun_with_id(app_id, lambda: self.__call_release_list_fun(generator_cache, app_id, auth))
                     for app_id in app_id_list]
         call_fun_list_in_loop(fun_list)
-        return data_dict
+        return_value(generator_cache, None, None)
 
     def get_release(self, app_id: dict, auth: dict or None = None) -> tuple or None:
         """获取更新版本信息
@@ -65,7 +67,7 @@ class BaseHub(metaclass=ABCMeta):
         """
         pass
 
-    def __call_release_list_fun(self, data_dict: dict, app_id: dict, auth: dict or None):
+    def __call_release_list_fun(self, generator_cache: GeneratorCache, app_id: dict, auth: dict or None):
         """
         当软件源未实现 get_release_list 函数时，缺省调用 get_release 函数获取数据的协程函数
         """
@@ -83,4 +85,4 @@ class BaseHub(metaclass=ABCMeta):
                 release_list = []
         except Exception:
             logging.error(f"""app_id: {app_id} \nERROR: """, exc_info=server_config.debug_mode)
-        data_dict[dumps(app_id)] = release_list
+        return_value(generator_cache, app_id, release_list)

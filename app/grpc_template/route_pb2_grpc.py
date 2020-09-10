@@ -34,7 +34,7 @@ class UpdateServerRouteStub(object):
                 request_serializer=app_dot_grpc__template_dot_route__pb2.AccountRequest.SerializeToString,
                 response_deserializer=app_dot_grpc__template_dot_route__pb2.AccountResponse.FromString,
                 )
-        self.GetAppRelease = channel.unary_unary(
+        self.GetAppRelease = channel.unary_stream(
                 '/server_route.UpdateServerRoute/GetAppRelease',
                 request_serializer=app_dot_grpc__template_dot_route__pb2.ReleaseRequest.SerializeToString,
                 response_deserializer=app_dot_grpc__template_dot_route__pb2.ReleaseResponse.FromString,
@@ -108,7 +108,7 @@ def add_UpdateServerRouteServicer_to_server(servicer, server):
                     request_deserializer=app_dot_grpc__template_dot_route__pb2.AccountRequest.FromString,
                     response_serializer=app_dot_grpc__template_dot_route__pb2.AccountResponse.SerializeToString,
             ),
-            'GetAppRelease': grpc.unary_unary_rpc_method_handler(
+            'GetAppRelease': grpc.unary_stream_rpc_method_handler(
                     servicer.GetAppRelease,
                     request_deserializer=app_dot_grpc__template_dot_route__pb2.ReleaseRequest.FromString,
                     response_serializer=app_dot_grpc__template_dot_route__pb2.ReleaseResponse.SerializeToString,
@@ -207,7 +207,7 @@ class UpdateServerRoute(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/server_route.UpdateServerRoute/GetAppRelease',
+        return grpc.experimental.unary_stream(request, target, '/server_route.UpdateServerRoute/GetAppRelease',
             app_dot_grpc__template_dot_route__pb2.ReleaseRequest.SerializeToString,
             app_dot_grpc__template_dot_route__pb2.ReleaseResponse.FromString,
             options, channel_credentials,

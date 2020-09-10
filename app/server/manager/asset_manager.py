@@ -3,7 +3,7 @@ import time
 import pathlib
 from datetime import timedelta
 from app.server.config import server_config as _server_config
-from app.server.utils import time_loop
+from app.server.manager.data.constant import time_loop
 
 _asset_dir_path = _server_config.download_asset_dir_path
 _asset_dir_path.mkdir(parents=True, exist_ok=True)

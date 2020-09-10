@@ -1,9 +1,9 @@
 import json
 
-from app.server.config import server_config
 from app.server.api import *
+from app.server.config import server_config
 from app.server.hubs.hub_script_utils import get_session
-from app.server.utils import logging
+from app.server.manager.data.constant import logging
 
 
 def _debug(hub_uuid: str, test_options: dict, run_init_account: bool = False):
@@ -25,7 +25,7 @@ def _init_account_debug(hub_uuid: str, account: dict):
 def _standard_debug(hub_uuid: str, auth: dict, app_id: dict):
     logging.info(f"开始测试：hub_uuid: {hub_uuid}, app_id: {json.dumps(app_id)}, auth: {json.dumps(auth)}")
     logging.info("测试 get_app_status 函数")
-    release_dict = get_release_dict(hub_uuid, auth, [app_id], use_cache=False, cache_data=False)
+    release_dict = next(get_release_dict(hub_uuid, auth, [app_id], use_cache=False, cache_data=False))
     js = json.dumps(release_dict, sort_keys=True, indent=4, ensure_ascii=False)
     logging.debug(js)
     logging.info("测试 get_download_info 函数")

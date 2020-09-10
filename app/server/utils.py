@@ -1,37 +1,21 @@
 import asyncio
-import logging
 from multiprocessing import Manager
-from timeloop import Timeloop
 
-from colorlog import ColoredFormatter
 from requests import Response
 
 from app.server.config import server_config
-from app.server.hubs import hub_script_utils
-
-time_loop = Timeloop()
-
-LOG_LEVEL = logging.DEBUG
-LOG_FORMAT = "  %(log_color)s%(levelname)-8s%(reset)s | %(log_color)s%(message)s%(reset)s"
-
-
-def __init_logging():
-    logging.root.setLevel(LOG_LEVEL)
-    formatter = ColoredFormatter(LOG_FORMAT)
-    stream = logging.StreamHandler()
-    stream.setLevel(LOG_LEVEL)
-    stream.setFormatter(formatter)
-    log = logging.getLogger('base_logger')
-    log.setLevel(LOG_LEVEL)
-    log.addHandler(stream)
-    return log
-
-
-logging = __init_logging()
+from app.server.manager.data.constant import session as __session
 
 
 def get_response(url: str, throw_error=False, **kwargs) -> Response or None:
-    return hub_script_utils.http_get(url, throw_error, **kwargs)
+    try:
+        response = __session.get(url, **kwargs, timeout=15)
+        response.raise_for_status()
+        return response
+    except Exception as e:
+        if throw_error:
+            raise e
+        return None
 
 
 def set_new_asyncio_loop():

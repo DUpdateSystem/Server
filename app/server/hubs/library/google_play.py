@@ -1,7 +1,9 @@
-from json import dumps
-from ..base_hub import BaseHub
-from app.server.manager.asset_manager import write_byte_asset
 from gpapi.googleplay import GooglePlayAPI as _GooglePlayAPI
+
+from app.server.manager.asset_manager import write_byte_asset
+from app.server.manager.data.generator_cache import GeneratorCache
+from ..base_hub import BaseHub
+from ..hub_script_utils import return_value
 
 locale = "en_US"
 timezone = "UTC"
@@ -19,8 +21,8 @@ class GooglePlay(BaseHub):
             "authSubToken": api.authSubToken
         }
 
-    def get_release_list(self, app_id_list: list, auth: dict or None = None) -> dict or None:
-        app_release_dict = {}
+    def get_release_list(self, generator_cache: GeneratorCache,
+                         app_id_list: list, auth: dict or None = None):
         api = _GooglePlayAPI(locale=locale, timezone=timezone, device_codename=device_codename)
         gsf_id = int(auth['gsfId'])
         auth_sub_token = auth['authSubToken']
@@ -31,7 +33,7 @@ class GooglePlay(BaseHub):
         for i, l_details in enumerate(bulk_details):
             app_id = app_id_list[i]
             if l_details is None:
-                app_release_dict[dumps(app_id)] = []
+                return_value(generator_cache, app_id, [])
             else:
                 # noinspection PyBroadException
                 try:
@@ -47,8 +49,8 @@ class GooglePlay(BaseHub):
                     }, ]
                 except Exception:
                     release_list = [None, ]
-                app_release_dict[dumps(app_id)] = release_list
-        return app_release_dict
+                return_value(generator_cache, app_id, release_list)
+        return_value(generator_cache, None, None)
 
     def get_download_info(self, app_id: dict, asset_index: list, auth: dict or None = None) -> tuple or None:
         download_list = []

@@ -4,9 +4,9 @@ from threading import Thread
 
 from grpc import Server
 
+from app.server.manager.data.constant import logging
 from app.starter.run_debugger import debug
 from app.starter.run_grpc_server import serve
-from app.server.utils import logging
 
 
 def __run() -> [Server, Thread, Thread or None]:

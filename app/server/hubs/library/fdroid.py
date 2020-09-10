@@ -1,29 +1,31 @@
-from json import dumps
 from xml.etree import ElementTree
 
+from app.server.manager.data.generator_cache import GeneratorCache
 from app.server.utils import call_fun_list_in_loop, call_async_fun_with_id
 from ..base_hub import BaseHub
-from ..hub_script_utils import http_get, get_tmp_cache, add_tmp_cache, raise_no_app_error
+from ..hub_script_utils import http_get, get_tmp_cache, add_tmp_cache, return_value
 
 
 class FDroid(BaseHub):
-    def get_release_list(self, app_id_list: list, auth: dict or None = None) -> dict or None:
+    def get_release_list(self, generator_cache: GeneratorCache,
+                         app_id_list: list, auth: dict or None = None):
         if auth and 'repo_url' in auth:
             repo_url = auth["repo_url"]
         else:
             repo_url = 'https://f-droid.org/repo'
         tree = _get_xml_tree(repo_url)
         fun_list = [
-            call_async_fun_with_id(app_id, lambda: self.__get_release(app_id['android_app_package'], tree, repo_url))
+            call_async_fun_with_id(app_id, lambda: self.__get_release(generator_cache, app_id, tree, repo_url))
             for app_id in app_id_list if 'android_app_package' in app_id]
-        data_list = call_fun_list_in_loop(fun_list)
-        return {dumps(key): value for key, value in data_list}
+        call_fun_list_in_loop(fun_list)
+        return_value(generator_cache, None, None)
 
     @staticmethod
-    def __get_release(package: str, tree, url) -> tuple or None:
+    def __get_release(generator_cache: GeneratorCache, app_id: dict, tree, url):
+        package = app_id['android_app_package']
         module = tree.find(f'.//application[@id="{package}"]')
         if not module:
-            raise_no_app_error()
+            return_value(generator_cache, app_id, [])
         newest_changelog = module.find('changelog').text
         packages = module.findall('package')
         data = []
@@ -44,7 +46,7 @@ class FDroid(BaseHub):
                 }]
             }
             data.append(release_info)
-        return data
+        return_value(generator_cache, app_id, data)
 
 
 def _get_xml_tree(url: str = 'https://f-droid.org/repo'):

@@ -4,7 +4,7 @@ from redis import BlockingConnectionPool
 from redis.client import Redis
 
 from app.server.config import server_config
-from app.server.utils import logging
+from .data.constant import logging
 from .data.local_cache import local_cache
 
 key_delimiter = '+'

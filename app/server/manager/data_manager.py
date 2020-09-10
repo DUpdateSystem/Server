@@ -5,7 +5,8 @@ from urllib.parse import urlparse
 from app.server.config import server_config
 from app.server.hubs.hub_list import hub_dict, hub_url_dict
 from app.server.manager.cache_manager import cache_manager
-from app.server.utils import logging, time_loop
+from app.server.manager.data.constant import logging, time_loop
+from app.server.manager.data.generator_cache import GeneratorCache
 
 
 class DataManager:
@@ -23,8 +24,8 @@ class DataManager:
             logging.error(f"""hub_uuid: {hub_uuid} \nERROR: """, exc_info=server_config.debug_mode)
             return None
 
-    def get_release_dict(self, hub_uuid: str, app_id_list: list, auth: dict or None = None,
-                         use_cache=True, cache_data=True) -> dict or None:
+    def get_release(self, hub_uuid: str, app_id_list: list, auth: dict or None = None,
+                    use_cache=True, cache_data=True) -> dict or None:
         if hub_uuid not in hub_dict:
             logging.warning(f"NO HUB: {hub_uuid}")
             return None
@@ -67,8 +68,8 @@ class DataManager:
         logging.info("refresh all data: start")
         cache_queue = cache_manager.cached_app_queue
         for hub_uuid in cache_queue.keys():
-            i += len(cache_queue)
-            self.__get_release(hub_uuid, cache_queue[hub_uuid], use_cache=False)
+            for _ in self.__get_release(hub_uuid, cache_queue[hub_uuid], use_cache=False):
+                i += 1
         logging.info(f"refresh all data: finish({i})")
 
     @staticmethod
@@ -84,22 +85,24 @@ class DataManager:
         return nocache, cache_data
 
     def __get_release(self, hub_uuid: str, app_id_list: list, auth: dict or None = None,
-                      use_cache=True, cache_data=True) -> dict:
-        data = {}
+                      use_cache=True, cache_data=True) -> dict or None:
         nocache = app_id_list
         if use_cache:
             nocache, cached_data = self.__get_release_cache(hub_uuid, app_id_list)
-            data = {**data, **cached_data}
+            for j_app_id, release_list in cached_data.items():
+                app_id = json.loads(j_app_id)
+                yield {"app_id": app_id, "release_list": release_list}
         hub = hub_dict[hub_uuid]
-        nocache_data = hub.get_release_list(nocache, auth)
-        if nocache_data:
-            data = {**data, **nocache_data}
+        generator_cache = GeneratorCache()
+        hub.get_release_list(generator_cache, nocache, auth)
+        for item in generator_cache:
+            app_id = item["id"]
+            release_list = item["v"]
             if cache_data:
-                for app_id in nocache_data:
-                    release_list = data[app_id]
-                    if (release_list and release_list[0] is not None) or not release_list:
-                        cache_manager.add_release_cache(hub_uuid, json.loads(app_id), release_list)
-        return data
+                if (release_list and release_list[0] is not None) or not release_list:
+                    cache_manager.add_release_cache(hub_uuid, json.loads(app_id), release_list)
+            yield {"app_id": app_id, "release_list": release_list}
+        raise StopIteration
 
 
 data_manager = DataManager()
