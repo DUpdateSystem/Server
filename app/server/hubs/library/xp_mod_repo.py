@@ -1,3 +1,4 @@
+import asyncio
 import gzip
 import tempfile
 from xml.etree import ElementTree
@@ -5,7 +6,6 @@ from xml.etree import ElementTree
 from bs4 import BeautifulSoup
 
 from app.server.manager.data.generator_cache import GeneratorCache
-from app.server.utils import call_fun_list_in_loop, call_async_fun_with_id
 from ..base_hub import BaseHub
 from ..hub_script_utils import http_get, get_tmp_cache, add_tmp_cache, return_value
 
@@ -13,8 +13,8 @@ cache_key = "xposed_full_module_xml"
 
 
 class XpModRepo(BaseHub):
-    def get_release_list(self, generator_cache: GeneratorCache,
-                         app_id_list: list, auth: dict or None = None):
+    async def get_release_list(self, generator_cache: GeneratorCache,
+                               app_id_list: list, auth: dict or None = None):
         xml_str = get_tmp_cache(cache_key)
         if not xml_str:
             raw_str = http_get("https://dl-xda.xposed.info/repo/full.xml.gz", stream=True).raw.data
@@ -23,13 +23,12 @@ class XpModRepo(BaseHub):
                 add_tmp_cache(cache_key, xml_str)
         if xml_str:
             tree = ElementTree.fromstring(xml_str)
-            fun_list = [call_async_fun_with_id(app_id, lambda: self.__get_release(generator_cache, app_id, tree))
-                        for app_id in app_id_list if 'android_app_package' in app_id]
-            call_fun_list_in_loop(fun_list)
+            fun_list = [self.__get_release(generator_cache, app_id, tree) for app_id in app_id_list]
+            await asyncio.gather(*fun_list)
             return_value(generator_cache, None, None)
 
     @staticmethod
-    def __get_release(generator_cache: GeneratorCache, app_id: dict, tree):
+    async def __get_release(generator_cache: GeneratorCache, app_id: dict, tree):
         package = app_id['android_app_package']
         module = tree.find(f'.//module[@package="{package}"]')
         if not module:

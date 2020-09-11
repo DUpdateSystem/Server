@@ -1,3 +1,4 @@
+import asyncio
 from abc import ABCMeta
 
 from requests import HTTPError
@@ -6,7 +7,6 @@ from app.server.config import server_config
 from app.server.hubs.hub_script_utils import return_value
 from app.server.manager.data.constant import logging
 from app.server.manager.data.generator_cache import GeneratorCache
-from app.server.utils import call_fun_list_in_loop, call_async_fun_with_id
 
 
 class BaseHub(metaclass=ABCMeta):
@@ -16,11 +16,10 @@ class BaseHub(metaclass=ABCMeta):
     def init_account(self, account: dict) -> dict or None:
         pass
 
-    def get_release_list(self, generator_cache: GeneratorCache,
-                         app_id_list: list, auth: dict or None = None):
-        fun_list = [call_async_fun_with_id(app_id, lambda: self.__call_release_list_fun(generator_cache, app_id, auth))
-                    for app_id in app_id_list]
-        call_fun_list_in_loop(fun_list)
+    async def get_release_list(self, generator_cache: GeneratorCache,
+                               app_id_list: list, auth: dict or None = None):
+        fun_list = [self.__call_release_list_fun(generator_cache, app_id, auth) for app_id in app_id_list]
+        await asyncio.gather(*fun_list)
         return_value(generator_cache, None, None)
 
     def get_release(self, app_id: dict, auth: dict or None = None) -> tuple or None:
@@ -67,7 +66,7 @@ class BaseHub(metaclass=ABCMeta):
         """
         pass
 
-    def __call_release_list_fun(self, generator_cache: GeneratorCache, app_id: dict, auth: dict or None):
+    async def __call_release_list_fun(self, generator_cache: GeneratorCache, app_id: dict, auth: dict or None):
         """
         当软件源未实现 get_release_list 函数时，缺省调用 get_release 函数获取数据的协程函数
         """

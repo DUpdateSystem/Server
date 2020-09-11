@@ -45,6 +45,10 @@ def call_fun_list_in_loop(core_list: list, loop=set_new_asyncio_loop()) -> tuple
     return call_def_in_loop_return_result(__call_fun_list_in_loop(core_list), loop)
 
 
+def call_fun_list_asyncio_no_return(core_list: list):
+    asyncio.run(__call_fun_list_in_loop(core_list))
+
+
 async def __call_fun_list_in_loop(core_list: list) -> tuple:
     return await asyncio.gather(*core_list)
 

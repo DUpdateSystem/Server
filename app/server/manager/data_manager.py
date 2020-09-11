@@ -1,3 +1,4 @@
+import asyncio
 import json
 from datetime import timedelta
 from urllib.parse import urlparse
@@ -95,7 +96,7 @@ class DataManager:
         if nocache:
             generator_cache = GeneratorCache()
             hub = hub_dict[hub_uuid]
-            hub.get_release_list(generator_cache, nocache, auth)
+            asyncio.run(hub.get_release_list(generator_cache, nocache, auth))
             for item in generator_cache:
                 app_id = item["id"]
                 release_list = item["v"]

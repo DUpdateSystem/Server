@@ -82,7 +82,7 @@ class Greeter(route_pb2_grpc.UpdateServerRouteServicer):
         hub_uuid: str = request.hub_uuid
         auth: dict = grcp_dict_list_to_dict(request.auth)
         app_id_list: list = [grcp_dict_list_to_dict(item.app_id) for item in request.app_id_list]
-        logging.warning(hub_uuid + str(auth) + str(len(app_id_list)))
+        logging.warning(f"{hub_uuid}, num: {len(app_id_list)}, auth: {auth}")
         # noinspection PyBroadException
         try:
             for item in self.__get_app_release(hub_uuid, auth, app_id_list):

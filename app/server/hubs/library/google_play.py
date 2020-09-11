@@ -21,8 +21,8 @@ class GooglePlay(BaseHub):
             "authSubToken": api.authSubToken
         }
 
-    def get_release_list(self, generator_cache: GeneratorCache,
-                         app_id_list: list, auth: dict or None = None):
+    async def get_release_list(self, generator_cache: GeneratorCache,
+                               app_id_list: list, auth: dict or None = None):
         api = _GooglePlayAPI(locale=locale, timezone=timezone, device_codename=device_codename)
         gsf_id = int(auth['gsfId'])
         auth_sub_token = auth['authSubToken']
