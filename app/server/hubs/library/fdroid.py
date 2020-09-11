@@ -15,18 +15,23 @@ class FDroid(BaseHub):
             repo_url = 'https://f-droid.org/repo'
         tree = _get_xml_tree(repo_url)
         fun_list = [
-            call_async_fun_with_id(app_id, lambda: self.__get_release(generator_cache, app_id, tree, repo_url))
-            for app_id in app_id_list if 'android_app_package' in app_id]
+            self.__get_release(generator_cache, app_id, tree, repo_url)
+            for app_id in app_id_list if 'android_app_package' in app_id
+        ]
         call_fun_list_in_loop(fun_list)
         return_value(generator_cache, None, None)
 
     @staticmethod
-    def __get_release(generator_cache: GeneratorCache, app_id: dict, tree, url):
+    async def __get_release(generator_cache: GeneratorCache, app_id: dict, tree, url):
         package = app_id['android_app_package']
         module = tree.find(f'.//application[@id="{package}"]')
         if not module:
             return_value(generator_cache, app_id, [])
-        newest_changelog = module.find('changelog').text
+            return
+        changelog_item = module.find('changelog')
+        newest_changelog = None
+        if changelog_item:
+            newest_changelog = changelog_item.text
         packages = module.findall('package')
         data = []
         for i in range(len(packages)):

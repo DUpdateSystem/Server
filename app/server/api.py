@@ -22,12 +22,11 @@ def get_release_dict(hub_uuid: str, auth: dict or None, app_id_list: list,
         }
         if release_list and release_list[0] is None:
             release_package["valid_data"] = False
-            yield {
-                "release": release_package
-            }
-        release_package["valid_data"] = True
-        release_package["release_list"] = release_list
+        else:
+            release_package["valid_data"] = True
+            release_package["release_list"] = release_list
         yield {
+            "valid_hub": True,
             "release": release_package
         }
 

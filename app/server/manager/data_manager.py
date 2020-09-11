@@ -92,17 +92,17 @@ class DataManager:
             for j_app_id, release_list in cached_data.items():
                 app_id = json.loads(j_app_id)
                 yield {"app_id": app_id, "release_list": release_list}
-        hub = hub_dict[hub_uuid]
-        generator_cache = GeneratorCache()
-        hub.get_release_list(generator_cache, nocache, auth)
-        for item in generator_cache:
-            app_id = item["id"]
-            release_list = item["v"]
-            if cache_data:
-                if (release_list and release_list[0] is not None) or not release_list:
-                    cache_manager.add_release_cache(hub_uuid, json.loads(app_id), release_list)
-            yield {"app_id": app_id, "release_list": release_list}
-        raise StopIteration
+        if nocache:
+            generator_cache = GeneratorCache()
+            hub = hub_dict[hub_uuid]
+            hub.get_release_list(generator_cache, nocache, auth)
+            for item in generator_cache:
+                app_id = item["id"]
+                release_list = item["v"]
+                if cache_data:
+                    if (release_list and release_list[0] is not None) or not release_list:
+                        cache_manager.add_release_cache(hub_uuid, app_id, release_list)
+                yield {"app_id": app_id, "release_list": release_list}
 
 
 data_manager = DataManager()

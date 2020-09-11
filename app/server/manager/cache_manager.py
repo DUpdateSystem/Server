@@ -89,7 +89,7 @@ class CacheManager:
         value = json.dumps(release_info)
         self.__cache(self.__redis_release_cache_client, key, value, server_config.auto_refresh_time * 2)
         # 缓存完毕
-        logging.debug(f"release caching: {app_id}")
+        logging.debug(f"release caching: {key}")
 
     def __get_release_cache(self, hub_uuid: str, app_id: dict) -> dict or None:
         key = self.__get_app_cache_key(hub_uuid, app_id)
@@ -99,7 +99,7 @@ hub_uuid: {hub_uuid}
 app_id: {app_id}""", exc_info=server_config.debug_mode)
             raise NameError
         release_info = self.__get(self.__redis_release_cache_client, key)
-        logging.debug(f"release cached: {app_id}")
+        logging.debug(f"release cached: {key}")
         return json.loads(release_info)
 
     @property
@@ -121,9 +121,9 @@ app_id: {app_id}""", exc_info=server_config.debug_mode)
     @staticmethod
     def __get_app_cache_key(hub_uuid: str, app_id: dict) -> str or None:
         key = hub_uuid
-        for key in app_id:
+        for k in app_id:
             try:
-                key += (key_delimiter + key + value_dict_delimiter + app_id[key])
+                key += (key_delimiter + k + value_dict_delimiter + app_id[k])
             except TypeError:
                 return None
         return key

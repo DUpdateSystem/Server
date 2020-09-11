@@ -34,6 +34,7 @@ class XpModRepo(BaseHub):
         module = tree.find(f'.//module[@package="{package}"]')
         if not module:
             return_value(generator_cache, app_id, [])
+            return
         version_list = module.findall('version')
         data = []
         for version in version_list:

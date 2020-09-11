@@ -37,11 +37,6 @@ class Greeter(route_pb2_grpc.UpdateServerRouteServicer):
                 app_id_dict[i["key"]] = i["value"]
             new_d = MessageToDict(next(self.__get_app_release(hub_uuid, None, [app_id_dict])),
                                   preserving_proto_field_name=True)
-            if "valid_hub" in new_d:
-                app_status = {
-                    "valid_hub_uuid": new_d["valid_hub"]
-                }
-                return ParseDict({"app_status": app_status}, Response())
             release = new_d["release"]
             app_status = {
                 "valid_hub_uuid": new_d["valid_hub"],
@@ -87,9 +82,11 @@ class Greeter(route_pb2_grpc.UpdateServerRouteServicer):
         hub_uuid: str = request.hub_uuid
         auth: dict = grcp_dict_list_to_dict(request.auth)
         app_id_list: list = [grcp_dict_list_to_dict(item.app_id) for item in request.app_id_list]
+        logging.warning(hub_uuid + str(auth) + str(len(app_id_list)))
         # noinspection PyBroadException
         try:
-            yield self.__get_app_release(hub_uuid, auth, app_id_list)
+            for item in self.__get_app_release(hub_uuid, auth, app_id_list):
+                yield item
         except Exception:
             logging.exception('gRPC: GetAppStatus')
             return None

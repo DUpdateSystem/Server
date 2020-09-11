@@ -40,10 +40,8 @@ message ReleaseRequest{
 }
 
 message ReleaseResponse{
-  oneof release_oneof{
-    bool valid_hub = 1;
-    ReleasePackage release = 2;
-  }
+  bool valid_hub = 1;
+  ReleasePackage release = 2;
 }
 
 message ReleasePackage{
