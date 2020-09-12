@@ -33,15 +33,17 @@ class Greeter(route_pb2_grpc.UpdateServerRouteServicer):
             else:
                 app_id = []
             app_id_dict = {}
+            app_id_row = []
             for i in app_id:
                 app_id_dict[i["key"]] = i["value"]
+                app_id_row.append({'k': i["key"], 'v': i["value"]})
             new_d = MessageToDict(next(self.__get_app_release(hub_uuid, None, [app_id_dict])),
                                   preserving_proto_field_name=True)
             release = new_d["release"]
             app_id_l = release["app_id"]
-            if app_id != app_id_l:
+            if app_id_row != app_id_l:
                 logging.exception(f'gRPC: GetAppStatus: app_id 校验失败'
-                                  f'app_id: {app_id}, app_id_l: {app_id_l}')
+                                  f'app_id: {app_id_row}, app_id_l: {app_id_l}')
             valid_hub = new_d["valid_hub"]
             valid_app = not (release["valid_data"] and "release_list" in release and not release["release_list"])
             release_list = None
