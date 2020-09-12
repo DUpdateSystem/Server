@@ -50,7 +50,6 @@ class GooglePlay(BaseHub):
                 except Exception:
                     release_list = [None, ]
                 return_value(generator_cache, app_id, release_list)
-        return_value(generator_cache, None, None)
 
     def get_download_info(self, app_id: dict, asset_index: list, auth: dict or None = None) -> tuple or None:
         download_list = []

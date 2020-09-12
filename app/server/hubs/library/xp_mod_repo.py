@@ -25,7 +25,6 @@ class XpModRepo(BaseHub):
             tree = ElementTree.fromstring(xml_str)
             fun_list = [self.__get_release(generator_cache, app_id, tree) for app_id in app_id_list]
             await asyncio.gather(*fun_list)
-            return_value(generator_cache, None, None)
 
     @staticmethod
     async def __get_release(generator_cache: GeneratorCache, app_id: dict, tree):

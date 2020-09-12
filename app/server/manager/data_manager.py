@@ -1,5 +1,4 @@
 import asyncio
-import json
 from datetime import timedelta
 from urllib.parse import urlparse
 
@@ -74,34 +73,31 @@ class DataManager:
         logging.info(f"refresh all data: finish({i})")
 
     @staticmethod
-    def __get_release_cache(hub_uuid: str, app_id_list: list) -> tuple:
-        nocache = []
-        cache_data = {}
-        for app_id in app_id_list:
-            try:
-                release_list = cache_manager.get_release_cache(hub_uuid, app_id)
-                cache_data[json.dumps(app_id)] = release_list
-            except (KeyError, NameError):
-                nocache.append(app_id)
-        return nocache, cache_data
+    def __get_release_cache(hub_uuid: str, app_id: dict) -> dict or None:
+        try:
+            return cache_manager.get_release_cache(hub_uuid, app_id)
+        except (KeyError, NameError):
+            pass
 
     def __get_release(self, hub_uuid: str, app_id_list: list, auth: dict or None = None,
                       use_cache=True, cache_data=True) -> dict or None:
-        nocache = app_id_list
+        nocache = []
         if use_cache:
-            nocache, cached_data = self.__get_release_cache(hub_uuid, app_id_list)
-            for j_app_id, release_list in cached_data.items():
-                app_id = json.loads(j_app_id)
-                yield {"app_id": app_id, "release_list": release_list}
+            for app_id in app_id_list:
+                release_list = self.__get_release_cache(hub_uuid, app_id)
+                if release_list:
+                    yield {"app_id": app_id, "release_list": release_list}
+                else:
+                    nocache.append(app_id)
         if nocache:
-            generator_cache = GeneratorCache()
+            generator_cache = GeneratorCache(len(nocache))
             hub = hub_dict[hub_uuid]
             asyncio.run(hub.get_release_list(generator_cache, nocache, auth))
             for item in generator_cache:
                 app_id = item["id"]
                 release_list = item["v"]
                 if cache_data:
-                    if (release_list and release_list[0] is not None) or not release_list:
+                    if not (len(release_list) == 1 and release_list[0] is not None):
                         cache_manager.add_release_cache(hub_uuid, app_id, release_list)
                 yield {"app_id": app_id, "release_list": release_list}
 

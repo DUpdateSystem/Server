@@ -8,15 +8,18 @@ class GeneratorCache:
     __cache_queue = []
     __next_lock = Event()
 
+    def __init__(self, size):
+        self.__length = size
+
     def add_value(self, value):
         self.__cache_queue.append(value)
         self.__next_lock.set()
 
     def __next__(self):
-        v = call_def_in_loop_return_result(self.__get_next_item(), self.__loop)
-        if v is None:
+        self.__length -= 1
+        if self.__length < 0:
             raise StopIteration
-        return v
+        return call_def_in_loop_return_result(self.__get_next_item(), self.__loop)
 
     def __iter__(self):
         return self

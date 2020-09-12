@@ -122,11 +122,8 @@ def add_tmp_cache(key: str, value: str):
         cache_manager.add_tmp_cache(key, out.getvalue())
 
 
-def return_value(generator_cache: GeneratorCache, app_id: dict or None, value):
-    if app_id is None:
-        generator_cache.add_value(None)
-    else:
-        generator_cache.add_value({"id": app_id, "v": value})
+def return_value(generator_cache: GeneratorCache, app_id: dict, value):
+    generator_cache.add_value({"id": app_id, "v": value})
 
 
 def raise_no_app_error():

@@ -38,12 +38,22 @@ class Greeter(route_pb2_grpc.UpdateServerRouteServicer):
             new_d = MessageToDict(next(self.__get_app_release(hub_uuid, None, [app_id_dict])),
                                   preserving_proto_field_name=True)
             release = new_d["release"]
-            app_status = {
-                "valid_hub_uuid": new_d["valid_hub"],
-                "valid_app": not (release["valid_data"] and len(release["release_list"]) == 0),
-                "valid_data": release["valid_data"],
-                "release_info": release["release_list"]
-            }
+            valid_hub = new_d["valid_hub"]
+            valid_app = not (release["valid_data"] and "release_list" in release and not release["release_list"])
+            release_list = None
+            if valid_app:
+                release_list = release["release_list"]
+            if valid_hub:
+                app_status = {
+                    "valid_hub_uuid": valid_hub,
+                    "valid_app": valid_app,
+                    "valid_data": release["valid_data"],
+                    "release_info": release_list
+                }
+            else:
+                app_status = {
+                    "valid_hub_uuid": valid_hub,
+                }
             return ParseDict({"app_status": app_status}, Response())
         except Exception:
             logging.exception('gRPC: GetAppStatus')
