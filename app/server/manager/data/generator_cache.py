@@ -2,8 +2,10 @@ from multiprocessing import SimpleQueue
 
 
 class GeneratorCache:
-    __queue = SimpleQueue()
-    __closed = False
+
+    def __init__(self):
+        self.__queue = SimpleQueue()
+        self.__closed = False
 
     def close(self):
         self.__closed = True
