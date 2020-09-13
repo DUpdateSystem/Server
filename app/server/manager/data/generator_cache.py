@@ -1,11 +1,11 @@
 from asyncio import Event
 
-from app.server.utils import set_new_asyncio_loop, call_def_in_loop_return_result
+from app.server.utils import set_new_asyncio_loop, call_def_in_loop_return_result, get_manager_list
 
 
 class GeneratorCache:
     __loop = set_new_asyncio_loop()
-    __cache_queue = []
+    __cache_queue = get_manager_list()
     __next_lock = Event()
 
     def __init__(self, size):
