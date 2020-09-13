@@ -47,13 +47,14 @@ class Greeter(route_pb2_grpc.UpdateServerRouteServicer):
             valid_hub = new_d["valid_hub"]
             release_list = None
             if valid_hub:
-                valid_app = not (release["valid_data"] and "release_list" in release and not release["release_list"])
+                valid_data = "valid_data" in release and release["valid_data"]
+                valid_app = valid_data and "release_list" in release and len(release["release_list"]) != 0
                 if valid_app:
                     release_list = release["release_list"]
                 app_status = {
                     "valid_hub_uuid": valid_hub,
                     "valid_app": valid_app,
-                    "valid_data": release["valid_data"],
+                    "valid_data": valid_data,
                     "release_info": release_list
                 }
             else:

@@ -85,7 +85,7 @@ class DataManager:
         if use_cache:
             for app_id in app_id_list:
                 release_list = self.__get_release_cache(hub_uuid, app_id)
-                if release_list:
+                if release_list and not (len(release_list) == 1 and release_list[0] is None):
                     yield {"app_id": app_id, "release_list": release_list}
                 else:
                     nocache.append(app_id)
@@ -97,7 +97,7 @@ class DataManager:
                 app_id = item["id"]
                 release_list = item["v"]
                 if cache_data:
-                    if not (len(release_list) == 1 and release_list[0] is not None):
+                    if not (len(release_list) == 1 and release_list[0] is None):
                         cache_manager.add_release_cache(hub_uuid, app_id, release_list)
                 yield {"app_id": app_id, "release_list": release_list}
 
