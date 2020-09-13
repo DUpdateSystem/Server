@@ -1,32 +1,22 @@
-from asyncio import Event
-
-from app.server.utils import set_new_asyncio_loop, call_def_in_loop_return_result, get_manager_list
+from multiprocessing import SimpleQueue
 
 
 class GeneratorCache:
-    __loop = set_new_asyncio_loop()
-    __cache_queue = get_manager_list()
-    __next_lock = Event()
+    __queue = SimpleQueue()
+    __closed = False
 
-    def __init__(self, size):
-        self.__length = size
+    def close(self):
+        self.__closed = True
+        self.__queue.put(None)
 
     def add_value(self, value):
-        self.__cache_queue.append(value)
-        self.__next_lock.set()
+        self.__queue.put(value)
 
     def __next__(self):
-        self.__length -= 1
-        if self.__length < 0:
+        value = self.__queue.get()
+        if value is None and self.__closed:
             raise StopIteration
-        return call_def_in_loop_return_result(self.__get_next_item(), self.__loop)
+        return value
 
     def __iter__(self):
         return self
-
-    async def __get_next_item(self):
-        await self.__next_lock.wait()
-        v = self.__cache_queue.pop(0)
-        if not self.__cache_queue:
-            self.__next_lock.clear()
-        return v

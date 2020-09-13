@@ -1,5 +1,6 @@
 import asyncio
 from datetime import timedelta
+from threading import Thread
 from urllib.parse import urlparse
 
 from app.server.config import server_config
@@ -90,9 +91,7 @@ class DataManager:
                 else:
                     nocache.append(app_id)
         if nocache:
-            generator_cache = GeneratorCache(len(nocache))
-            hub = hub_dict[hub_uuid]
-            asyncio.run(hub.get_release_list(generator_cache, nocache, auth))
+            generator_cache, thread = self.__get_release_nocache(hub_uuid, nocache, auth)
             for item in generator_cache:
                 app_id = item["id"]
                 release_list = item["v"]
@@ -100,6 +99,16 @@ class DataManager:
                     if not (len(release_list) == 1 and release_list[0] is None):
                         cache_manager.add_release_cache(hub_uuid, app_id, release_list)
                 yield {"app_id": app_id, "release_list": release_list}
+            thread.join()
+
+    @staticmethod
+    def __get_release_nocache(hub_uuid: str, app_id_list: list, auth: dict or None = None) -> tuple:
+        generator_cache = GeneratorCache()
+        hub = hub_dict[hub_uuid]
+        thread = Thread(target=lambda: asyncio.run(
+            hub.get_release_list(generator_cache, app_id_list, auth)) and generator_cache.close(), )
+        thread.start()
+        return generator_cache, thread
 
 
 data_manager = DataManager()
