@@ -16,7 +16,6 @@ class FDroid(BaseHub):
         tree = _get_xml_tree(repo_url)
         fun_list = [self.__get_release(generator_cache, app_id, tree, repo_url) for app_id in app_id_list]
         await asyncio.gather(*fun_list)
-        return_value(generator_cache, None, None)
 
     @staticmethod
     async def __get_release(generator_cache: GeneratorCache, app_id: dict, tree, url):

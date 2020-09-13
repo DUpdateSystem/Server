@@ -7,7 +7,7 @@ headers = {
 
 
 class AppChina(BaseHub):
-    def get_release(self, app_id: dict, auth: dict or None = None) -> tuple or None:
+    def get_release(self, app_id: dict, auth: dict or None = None) -> list:
         package = app_id["android_app_package"]
         newest_json = {"type": "app.detailInfo", "packagename": "com.example.app"}
         history_json = {"type": "app.pastdetails", "id": 0, "packagename": "com.example.app"}

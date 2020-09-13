@@ -92,7 +92,7 @@ class Greeter(route_pb2_grpc.UpdateServerRouteServicer):
         try:
             return self.__init_account(hub_uuid, account)
         except Exception:
-            logging.exception('gRPC: InitHubAccount')
+            logging.exception(f'gRPC: InitHubAccount, hub_uuid: {hub_uuid}')
             return None
 
     def GetAppRelease(self, request: ReleaseRequest, context) -> ReleaseResponse:
@@ -105,7 +105,7 @@ class Greeter(route_pb2_grpc.UpdateServerRouteServicer):
             for item in self.__get_app_release(hub_uuid, auth, app_id_list):
                 yield item
         except Exception:
-            logging.exception('gRPC: GetAppStatus')
+            logging.exception(f'gRPC: GetAppStatus, hub_uuid: {hub_uuid}')
             return None
 
     def DevGetDownloadInfo(self, request: GetDownloadRequest, context: grpc.RpcContext) -> GetDownloadResponse:
@@ -117,7 +117,7 @@ class Greeter(route_pb2_grpc.UpdateServerRouteServicer):
         try:
             return self.__get_download_info(hub_uuid, auth, app_id, asset_index)
         except Exception:
-            logging.exception('gRPC: GetDownloadInfo')
+            logging.exception(f'gRPC: GetDownloadInfo, hub_uuid: {hub_uuid}')
             return None
 
     @staticmethod

@@ -21,7 +21,7 @@ class BaseHub(metaclass=ABCMeta):
         fun_list = [self.__call_release_list_fun(generator_cache, app_id, auth) for app_id in app_id_list]
         await asyncio.gather(*fun_list)
 
-    def get_release(self, app_id: dict, auth: dict or None = None) -> tuple or None:
+    def get_release(self, app_id: dict, auth: dict or None = None) -> list:
         """获取更新版本信息
         Args:
             app_id: 客户端上传的软件属性
