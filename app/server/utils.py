@@ -18,6 +18,11 @@ def get_response(url: str, throw_error=False, **kwargs) -> Response or None:
         return None
 
 
+def run_fun_list(core_list):
+    for core in core_list:
+        core()
+
+
 def set_new_asyncio_loop():
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)

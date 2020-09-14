@@ -8,6 +8,7 @@ from app.server.hubs.hub_list import hub_dict, hub_url_dict
 from app.server.manager.cache_manager import cache_manager
 from app.server.manager.data.constant import logging, time_loop
 from app.server.manager.data.generator_cache import GeneratorCache
+from app.server.utils import run_fun_list
 
 
 class DataManager:
@@ -105,8 +106,9 @@ class DataManager:
     def __get_release_nocache(hub_uuid: str, app_id_list: list, auth: dict or None = None) -> tuple:
         generator_cache = GeneratorCache()
         hub = hub_dict[hub_uuid]
-        thread = Thread(target=lambda: asyncio.run(
-            hub.get_release_list(generator_cache, app_id_list, auth)) and generator_cache.close(), )
+        thread = Thread(target=run_fun_list([lambda: asyncio.run(
+            hub.get_release_list(generator_cache, app_id_list, auth)),
+                                             lambda: generator_cache.close()]))
         thread.start()
         return generator_cache, thread
 
