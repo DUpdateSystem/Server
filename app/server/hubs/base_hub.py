@@ -73,7 +73,8 @@ class BaseHub(metaclass=ABCMeta):
         release_list = [None, ]
         # noinspection PyBroadException
         try:
-            release_list = self.get_release(app_id, auth)
+            aw = self.__call_fun(lambda: self.get_release(app_id, auth))
+            release_list = await asyncio.wait_for(aw, timeout=15)
             # 缓存数据，包括 404 None 数据
         except HTTPError as e:
             status_code = e.response.status_code
@@ -81,6 +82,18 @@ class BaseHub(metaclass=ABCMeta):
             HTTP CODE {status_code} ERROR: {e}""")
             if status_code == 404:
                 release_list = []
+        except asyncio.TimeoutError:
+            print(f'app_id: {app_id} timeout!')
         except Exception:
-            logging.error(f"""app_id: {app_id} \nERROR: """, exc_info=server_config.debug_mode)
+            debug_mode = server_config.debug_mode
+            log = f"app_id: {app_id}"
+            if debug_mode:
+                log += " \nERROR: "
+            else:
+                log += " ERROR"
+            logging.error(log, exc_info=debug_mode)
         return_value(generator_cache, app_id, release_list)
+
+    @staticmethod
+    async def __call_fun(core):
+        return core()

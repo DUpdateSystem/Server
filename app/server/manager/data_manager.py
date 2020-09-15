@@ -102,15 +102,21 @@ class DataManager:
                 yield {"app_id": app_id, "release_list": release_list}
             thread.join()
 
-    @staticmethod
-    def __get_release_nocache(hub_uuid: str, app_id_list: list, auth: dict or None = None) -> tuple:
+    def __get_release_nocache(self, hub_uuid: str, app_id_list: list, auth: dict or None = None) -> tuple:
         generator_cache = GeneratorCache()
         hub = hub_dict[hub_uuid]
-        thread = Thread(target=run_fun_list([lambda: asyncio.run(
-            hub.get_release_list(generator_cache, app_id_list, auth)),
+        core = self.__run_core(hub.get_release_list(generator_cache, app_id_list, auth), len(app_id_list) * 11.25)
+        thread = Thread(target=run_fun_list([lambda: asyncio.run(core),
                                              lambda: generator_cache.close()]))
         thread.start()
         return generator_cache, thread
+
+    @staticmethod
+    async def __run_core(aw, timeout):
+        try:
+            await asyncio.wait_for(aw, timeout=timeout)
+        except asyncio.TimeoutError:
+            print(f'aw: {aw} timeout!')
 
 
 data_manager = DataManager()
