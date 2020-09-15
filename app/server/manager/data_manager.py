@@ -91,6 +91,8 @@ class DataManager:
                     yield {"app_id": app_id, "release_list": release_list}
                 else:
                     nocache.append(app_id)
+        else:
+            nocache = app_id_list
         if nocache:
             generator_cache, thread = self.__get_release_nocache(hub_uuid, nocache, auth)
             for item in generator_cache:
