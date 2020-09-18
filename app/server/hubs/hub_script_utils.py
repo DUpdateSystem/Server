@@ -10,6 +10,8 @@ from app.server.manager.cache_manager import cache_manager
 from app.server.manager.data.constant import session as __session
 from app.server.manager.data.generator_cache import GeneratorCache
 
+android_app_key = 'android_app_package'
+
 
 def parsing_http_page(url: str, params=None) -> BeautifulSoup:
     """简易包装的获取并解析网页操作

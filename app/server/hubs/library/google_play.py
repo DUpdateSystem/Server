@@ -3,7 +3,7 @@ from gpapi.googleplay import GooglePlayAPI as _GooglePlayAPI
 from app.server.manager.asset_manager import write_byte_asset
 from app.server.manager.data.generator_cache import GeneratorCache
 from ..base_hub import BaseHub
-from ..hub_script_utils import return_value
+from ..hub_script_utils import android_app_key, return_value
 
 locale = "en_US"
 timezone = "UTC"
@@ -28,7 +28,8 @@ class GooglePlay(BaseHub):
         auth_sub_token = auth['authSubToken']
         api.gsfId = gsf_id
         api.setAuthSubToken(auth_sub_token)
-        package_list = [app_id['android_app_package'] for app_id in app_id_list]
+        [return_value(generator_cache, app_id, []) for app_id in app_id_list if android_app_key not in app_id]
+        package_list = [app_id[android_app_key] for app_id in app_id_list if android_app_key in app_id]
         bulk_details = api.bulkDetails(package_list)
         for i, l_details in enumerate(bulk_details):
             app_id = app_id_list[i]
@@ -52,8 +53,10 @@ class GooglePlay(BaseHub):
                 return_value(generator_cache, app_id, release_list)
 
     def get_download_info(self, app_id: dict, asset_index: list, auth: dict or None = None) -> tuple or None:
+        if android_app_key not in app_id:
+            return None
         download_list = []
-        doc_id = app_id['android_app_package']
+        doc_id = app_id[android_app_key]
         api = _GooglePlayAPI(locale=locale, timezone=timezone, device_codename=device_codename)
         gsf_id = int(auth['gsfId'])
         auth_sub_token = auth['authSubToken']

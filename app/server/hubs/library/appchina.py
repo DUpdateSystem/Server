@@ -1,5 +1,5 @@
 from ..base_hub import BaseHub
-from ..hub_script_utils import get_session
+from ..hub_script_utils import android_app_key, get_session
 
 headers = {
     "User-Agent": "Dalvik/2.1.0 (Linux; U; Android 10; ONEPLUS A6013 Build/QQ2A.200501.001.B2)"
@@ -8,7 +8,7 @@ headers = {
 
 class AppChina(BaseHub):
     def get_release(self, app_id: dict, auth: dict or None = None) -> list:
-        package = app_id["android_app_package"]
+        package = app_id[android_app_key]
         newest_json = {"type": "app.detailInfo", "packagename": "com.example.app"}
         history_json = {"type": "app.pastdetails", "id": 0, "packagename": "com.example.app"}
 

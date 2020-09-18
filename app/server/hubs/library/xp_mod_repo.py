@@ -7,7 +7,7 @@ from bs4 import BeautifulSoup
 
 from app.server.manager.data.generator_cache import GeneratorCache
 from ..base_hub import BaseHub
-from ..hub_script_utils import http_get, get_tmp_cache, add_tmp_cache, return_value
+from ..hub_script_utils import android_app_key, http_get, get_tmp_cache, add_tmp_cache, return_value
 
 cache_key = "xposed_full_module_xml"
 
@@ -28,7 +28,9 @@ class XpModRepo(BaseHub):
 
     @staticmethod
     async def __get_release(generator_cache: GeneratorCache, app_id: dict, tree):
-        package = app_id['android_app_package']
+        if android_app_key not in app_id:
+            return_value(generator_cache, app_id, [])
+        package = app_id[android_app_key]
         module = tree.find(f'.//module[@package="{package}"]')
         if not module:
             return_value(generator_cache, app_id, [])
