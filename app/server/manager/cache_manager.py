@@ -1,4 +1,5 @@
 import json
+from time import time
 
 from redis import BlockingConnectionPool
 from redis.client import Redis
@@ -11,6 +12,8 @@ key_delimiter = '+'
 value_dict_delimiter = ':'
 release_cache_db_index = 0
 tmp_cache_db_index = 1
+
+redis_renew_time_set_key = "renew_time"
 
 
 class CacheManager:
@@ -66,6 +69,7 @@ class CacheManager:
             if ex_h:
                 ex = ex_h * 3600
             redis_db.set(key, value, ex=ex)
+            redis_db.zadd(redis_renew_time_set_key, {key: int(time() / 60)}, incr=True)
 
     @staticmethod
     def __get(redis_db: Redis, key: str) -> str:
@@ -87,7 +91,7 @@ class CacheManager:
     def __add_release_cache(self, hub_uuid: str, app_id: dict, release_info: list or None = None):
         key = self.__get_app_cache_key(hub_uuid, app_id)
         value = json.dumps(release_info)
-        self.__cache(self.__redis_release_cache_client, key, value, server_config.auto_refresh_time * 2)
+        self.__cache(self.__redis_release_cache_client, key, value, server_config.auto_refresh_time * 4)
         # 缓存完毕
         logging.debug(f"release caching: {key}")
 
@@ -105,7 +109,9 @@ app_id: {app_id}""", exc_info=server_config.debug_mode)
     @property
     def cached_app_queue(self) -> dict:
         cache_app_id_dict = {}
-        for key in self.__redis_release_cache_client.scan_iter():
+        key_list = self.__redis_tmp_cache_client.zrangebyscore(redis_renew_time_set_key, -1,
+                                                               int(time() / 60) - server_config.auto_refresh_time * 60)
+        for key in key_list:
             # noinspection PyBroadException
             try:
                 hub_uuid, app_id = self.__parsing_app_id(key.decode("utf-8"))
