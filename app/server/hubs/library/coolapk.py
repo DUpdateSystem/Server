@@ -37,24 +37,26 @@ class CoolApk(BaseHub):
         return data
 
     def get_download_info(self, app_id: dict, asset_index: list, auth: dict or None = None) -> tuple or None:
-        from app.server.manager.data_manager import data_manager
         from app.server.hubs.hub_list import hub_dict
         hub_uuid = None
         for uuid in hub_dict:
             if self is hub_dict[uuid]:
                 hub_uuid = uuid
                 break
-        release_dict = next(data_manager.get_release_dict(hub_uuid, [app_id], auth))
-        release_list = next(iter(release_dict.values()))
-        download_url = release_list[asset_index[0]]["assets"][asset_index[1]]["download_url"]
+        download_url = _get_download_url(hub_uuid, app_id, asset_index, True)
         try:
             get_session().head(download_url).raise_for_status()
             logging.debug("网址验证正确")
         except HTTPError:
             logging.debug("网址错误，尝试重新获取")
-            release_list = data_manager.get_release_list(hub_uuid, app_id, use_cache=False)["app_status"]
-            download_url = release_list[asset_index[0]]["assets"][asset_index[1]]["download_url"]
+            download_url = _get_download_url(hub_uuid, app_id, asset_index, False)
         return (download_url,),
+
+
+def _get_download_url(hub_uuid, app_id, asset_index, use_cache):
+    from app.server.manager.data_manager import data_manager
+    release_list = next(data_manager.get_release(hub_uuid, [app_id], use_cache=use_cache))["release_list"]
+    return release_list[asset_index[0]]["assets"][asset_index[1]]["download_url"]
 
 
 def _get_url(app_package: str) -> str:
