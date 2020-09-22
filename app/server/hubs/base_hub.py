@@ -21,7 +21,7 @@ class BaseHub(metaclass=ABCMeta):
         fun_list = [self.__call_release_list_fun(generator_cache, app_id, auth) for app_id in app_id_list]
         await asyncio.gather(*fun_list)
 
-    def get_release(self, app_id: dict, auth: dict or None = None) -> list:
+    def get_release(self, app_id: dict, auth: dict or None = None) -> list or None:
         """获取更新版本信息
         Args:
             app_id: 客户端上传的软件属性
@@ -37,7 +37,7 @@ class BaseHub(metaclass=ABCMeta):
             value:
                 有用的信息: tuple
                 无用但是需要告知客户端的信息（不存在的软件）: empty tuple
-                无用的信息（信息获取失败）: [None, ]
+                无用的信息（信息获取失败）: None
             Example:
             [{
                 version_number: "",
@@ -70,7 +70,7 @@ class BaseHub(metaclass=ABCMeta):
         当软件源未实现 get_release_list 函数时，缺省调用 get_release 函数获取数据的协程函数
         """
         # 获取云端数据
-        release_list = [None, ]
+        release_list = None
         # noinspection PyBroadException
         try:
             aw = self.__call_fun(lambda: self.get_release(app_id, auth))

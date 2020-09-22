@@ -99,7 +99,7 @@ class DataManager:
                 app_id = item["id"]
                 release_list = item["v"]
                 if cache_data:
-                    if not (len(release_list) == 1 and release_list[0] is None):
+                    if release_list is not None:
                         cache_manager.add_release_cache(hub_uuid, app_id, release_list)
                 yield {"app_id": app_id, "release_list": release_list}
             thread.join()
