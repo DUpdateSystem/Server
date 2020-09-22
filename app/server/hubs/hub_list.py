@@ -19,7 +19,3 @@ hub_dict = {
     "e02a95a2-af76-426c-9702-c4c39a01f891": XpModRepo(),
     "28591e65-849f-4417-aead-9d9098520eed": ZLiveOfficial(),
 }
-
-hub_url_dict = {
-    "google-play": GooglePlay(),
-}

@@ -4,7 +4,7 @@ from threading import Thread
 from urllib.parse import urlparse
 
 from app.server.config import server_config
-from app.server.hubs.hub_list import hub_dict, hub_url_dict
+from app.server.hubs.hub_list import hub_dict
 from app.server.manager.cache_manager import cache_manager
 from app.server.manager.data.constant import logging, time_loop
 from app.server.manager.data.generator_cache import GeneratorCache
@@ -54,10 +54,10 @@ class DataManager:
             return None
         path_list = [path for path in o.path.split('/') if path]
         hub_url = path_list[0]
-        if hub_url not in hub_url_dict:
+        if hub_url not in hub_dict:
             logging.warning(f"NO HUB: {hub_url}")
             return None
-        hub = hub_url_dict[hub_url]
+        hub = hub_dict[hub_url]
         # noinspection PyBroadException
         try:
             return hub.download(path_list[1:], auth)
