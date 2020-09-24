@@ -4,6 +4,13 @@ import requests
 from colorlog import ColoredFormatter
 from timeloop import Timeloop
 
+from app.server.config import server_config
+
+proxies = {
+    'http': server_config.network_proxy,
+    'https': server_config.network_proxy
+}
+
 session = requests.Session()
 
 time_loop = Timeloop()

@@ -7,7 +7,7 @@ from bs4 import BeautifulSoup
 from requests import Response, Session, HTTPError
 
 from app.server.manager.cache_manager import cache_manager
-from app.server.manager.data.constant import session as __session
+from app.server.manager.data.constant import session as __session, proxies as __proxies
 from app.server.manager.data.generator_cache import GeneratorCache
 
 android_app_key = 'android_app_package'
@@ -38,7 +38,7 @@ def http_get(url: str, throw_error=True, **kwargs) -> Response or None:
         包装网站响应的 Request 对象
     """
     try:
-        response = __session.get(url, **kwargs, timeout=15)
+        response = __session.get(url, **kwargs, proxies=__proxies, timeout=15)
         response.raise_for_status()
         return response
     except Exception as e:

@@ -18,6 +18,7 @@ class _ServerConfig:
         self.redis_server_address = "localhost"
         self.redis_server_port = 6379
         self.redis_server_password = ""
+        self.network_proxy = None
         if config_path:
             self.init_config_file(config_path)
 

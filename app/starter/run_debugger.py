@@ -2,7 +2,6 @@ import json
 
 from app.server.api import *
 from app.server.config import server_config
-from app.server.hubs.hub_script_utils import get_session
 from app.server.manager.data.constant import logging
 
 
@@ -32,23 +31,6 @@ def _standard_debug(hub_uuid: str, auth: dict, app_id: dict):
     row_download_info = get_download_info(hub_uuid, auth, app_id, [0, 0])
     js = json.dumps(row_download_info, sort_keys=True, indent=4, ensure_ascii=False)
     logging.debug(js)
-
-
-def __process_proxy_request(method: str, url: str, headers_list: list, body_type: str, body_text: str) -> [int, str]:
-    headers = {}
-    for header in headers_list:
-        headers[header['key']] = header['value']
-    if body_type:
-        headers['Content-Type'] = body_type
-    if method == "get":
-        r = get_session().get(url, headers=headers, data=body_text)
-    elif method == 'post':
-        r = get_session().post(url, headers=headers, data=body_text)
-    else:
-        return
-    status_code = r.status_code
-    text = r.text
-    return status_code, text
 
 
 auth_key = '_auth'

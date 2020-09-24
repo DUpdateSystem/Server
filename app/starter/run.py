@@ -1,9 +1,11 @@
 import argparse
+import os
 import sys
 from threading import Thread
 
 from grpc import Server
 
+from app.server.config import server_config
 from app.server.manager.data.constant import logging
 from app.starter.run_debugger import debug
 from app.starter.run_grpc_server import serve
@@ -22,8 +24,18 @@ def __run() -> [Server, Thread, Thread or None]:
     parser.add_argument('--test_options', type=str, nargs='*', default=None,
                         help='测试软件源脚本的运行选项，以 key value 为组，例如：android_app_package net.xzos.upgradeall')
 
+    env_dist = os.environ
+    proxy = None
+    if 'all_proxy' in env_dist:
+        proxy = env_dist['all_proxy']
+    elif 'http_proxy' in env_dist:
+        proxy = env_dist['http_proxy']
+    elif 'https_proxy' in env_dist:
+        proxy = env_dist['https_proxy']
+    server_config.network_proxy = proxy
     run_args = parser.parse_args()
     server = server_thread = debug_thread = None
+
     if run_args.debug:
         # 运行 debug 程序
         debug_thread = Thread(target=debug, args=(run_args.hub_uuid, run_args.test_options, run_args.init_account))

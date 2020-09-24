@@ -4,12 +4,12 @@ from multiprocessing import Manager
 from requests import Response
 
 from app.server.config import server_config
-from app.server.manager.data.constant import session as __session
+from app.server.manager.data.constant import session as __session, proxies as __proxies
 
 
 def get_response(url: str, throw_error=False, **kwargs) -> Response or None:
     try:
-        response = __session.get(url, **kwargs, timeout=15)
+        response = __session.get(url, **kwargs, proxies=__proxies, timeout=15)
         response.raise_for_status()
         return response
     except Exception as e:
