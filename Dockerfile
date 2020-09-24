@@ -17,6 +17,7 @@ RUN apk add --no-cache --virtual .build-deps \
 
 
 RUN pip install --no-cache-dir -r requirements.txt
+RUN python -m pip install 'requests[socks]'
 
 RUN apk add --no-cache protoc
 RUN git clone --depth=1 https://github.com/NoMore201/googleplay-api
