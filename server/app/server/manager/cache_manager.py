@@ -1,8 +1,7 @@
 import json
 from time import time
 
-from redis import BlockingConnectionPool
-from redis.client import Redis
+from rediscluster import RedisCluster
 
 from app.server.config import server_config
 from .data.constant import logging
@@ -15,20 +14,16 @@ tmp_cache_db_index = 1
 
 redis_renew_time_set_key = "renew_time"
 
+startup_nodes = [{"host": server_config.redis_server_address, "port": server_config.redis_server_port}]
+
 
 class CacheManager:
 
     def __init__(self):
-        self.__redis_release_cache_client = Redis(
-            connection_pool=BlockingConnectionPool(host=server_config.redis_server_address,
-                                                   port=server_config.redis_server_port,
-                                                   password=server_config.redis_server_password,
-                                                   db=release_cache_db_index))
-        self.__redis_tmp_cache_client = Redis(
-            connection_pool=BlockingConnectionPool(host=server_config.redis_server_address,
-                                                   port=server_config.redis_server_port,
-                                                   password=server_config.redis_server_password,
-                                                   db=release_cache_db_index))
+        self.__redis_release_cache_client = \
+            self.__redis_tmp_cache_client = RedisCluster(startup_nodes=startup_nodes,
+                                                         decode_responses=True,
+                                                         password=server_config.redis_server_password)
 
     def add_release_cache(self, hub_uuid: str, app_id: dict, release_info: list or None = None):
         try:
@@ -61,7 +56,7 @@ class CacheManager:
             pass
 
     @staticmethod
-    def __cache(redis_db: Redis, key: str, value: str, ex_h: int = None):
+    def __cache(redis_db: RedisCluster, key: str, value: str, ex_h: int = None):
         if not server_config.use_cache_db:
             return
         if key:
@@ -72,7 +67,7 @@ class CacheManager:
             redis_db.zadd(redis_renew_time_set_key, {key: int(time() / 60)}, incr=True)
 
     @staticmethod
-    def __get(redis_db: Redis, key: str) -> str:
+    def __get(redis_db: RedisCluster, key: str) -> str:
         if not server_config.use_cache_db or redis_db.exists(key) == 0:
             raise KeyError
         return redis_db.get(key)
