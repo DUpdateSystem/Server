@@ -14,7 +14,7 @@ tmp_cache_db_index = 1
 
 redis_renew_time_set_key = "renew_time"
 
-startup_nodes = [{"host": server_config.redis_server_address, "port": server_config.redis_server_port}]
+startup_nodes = server_config.redis_node_list
 
 
 class CacheManager:

@@ -1,7 +1,7 @@
-import os
-from pathlib import Path, PurePath
 import configparser
+import os
 from distutils.util import strtobool
+from pathlib import Path, PurePath
 
 
 class _ServerConfig:
@@ -15,9 +15,8 @@ class _ServerConfig:
         self.download_asset_host = "localhost"
         self.download_asset_dir_path = self.__parse_file_path()
         self.use_cache_db = False
-        self.redis_server_address = "localhost"
-        self.redis_server_port = 6379
-        self.redis_server_password = ""
+        self.redis_node_list = [{"host": "localhost", "port": 6379}]
+        self.redis_server_password = None
         self.network_proxy = None
         if config_path:
             self.init_config_file(config_path)
@@ -37,9 +36,25 @@ class _ServerConfig:
         self.download_asset_dir_path = self.__parse_file_path(data_config['DownloadAssetDirPath'])
         cache_db_config = config['cache_db']
         self.use_cache_db = bool(strtobool(cache_db_config['UseCacheDB']))
-        self.redis_server_address = cache_db_config['RedisServerAddress']
-        self.redis_server_port = int(cache_db_config['RedisServerPort'])
-        self.redis_server_password = cache_db_config['RedisServerPassword']
+        self.__parse_redis_config(cache_db_config)
+
+    def __parse_redis_config(self, cache_db_config):
+        redis_host_list = cache_db_config['RedisServerAddress'].split()
+        redis_port_list = cache_db_config['RedisServerPort'].split()
+        if redis_host_list and redis_port_list:
+            self.redis_server_password = cache_db_config['RedisServerPassword']
+            self.redis_node_list.clear()
+            for i in range(len(redis_host_list)):
+                host: str = redis_host_list[i]
+                if i < len(redis_port_list):
+                    port: int = int(redis_port_list[i])
+                else:
+                    port: int = int(redis_port_list[0])
+                # noinspection PyTypeChecker
+                self.redis_node_list.append({
+                    "host": host,
+                    "port": port,
+                })
 
     @staticmethod
     def __parse_file_path(path: str = None) -> Path:
