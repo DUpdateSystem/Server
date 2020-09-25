@@ -22,7 +22,7 @@ class CacheManager:
     def __init__(self):
         self.__redis_release_cache_client = \
             self.__redis_tmp_cache_client = RedisCluster(startup_nodes=startup_nodes,
-                                                         decode_responses=True,
+                                                         decode_responses=False,
                                                          password=server_config.redis_server_password)
 
     def add_release_cache(self, hub_uuid: str, app_id: dict, release_info: list or None = None):
@@ -59,6 +59,7 @@ class CacheManager:
     def __cache(redis_db: RedisCluster, key: str, value: str, ex_h: int = None):
         if not server_config.use_cache_db:
             return
+        key = key.encode('utf-8').strip()
         if key:
             ex = None
             if ex_h:
@@ -68,6 +69,7 @@ class CacheManager:
 
     @staticmethod
     def __get(redis_db: RedisCluster, key: str) -> str:
+        key = key.encode('utf-8').strip()
         if not server_config.use_cache_db or redis_db.exists(key) == 0:
             raise KeyError
         return redis_db.get(key)
