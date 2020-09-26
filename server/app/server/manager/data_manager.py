@@ -73,7 +73,7 @@ class DataManager:
             release_iter = self.get_release(hub_uuid, cache_queue[hub_uuid], use_cache=False)
             if release_iter:
                 for _ in release_iter:
-                i += 1
+                    i += 1
         logging.info(f"refresh all data: finish({i})")
 
     @staticmethod
