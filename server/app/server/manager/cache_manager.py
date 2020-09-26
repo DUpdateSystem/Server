@@ -65,7 +65,8 @@ class CacheManager:
             if ex_h:
                 ex = ex_h * 3600
             redis_db.set(key, value, ex=ex)
-            redis_db.zadd(redis_renew_time_set_key, {key: int(time() / 60)}, incr=True)
+            redis_db.zrem(redis_renew_time_set_key, key)
+            redis_db.zadd(redis_renew_time_set_key, {key: int(time() / 60)})
 
     @staticmethod
     def __get(redis_db: RedisCluster, key: str) -> str:
@@ -106,7 +107,7 @@ app_id: {app_id}""", exc_info=server_config.debug_mode)
     @property
     def cached_app_queue(self) -> dict:
         cache_app_id_dict = {}
-        key_list = self.__redis_tmp_cache_client.zrangebyscore(redis_renew_time_set_key, -1,
+        key_list = self.__redis_tmp_cache_client.zrangebyscore(redis_renew_time_set_key, '-inf',
                                                                int(time() / 60) - server_config.auto_refresh_time * 60)
         for key in key_list:
             # noinspection PyBroadException
