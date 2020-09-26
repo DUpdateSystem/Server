@@ -21,6 +21,7 @@ class FDroid(BaseHub):
     async def __get_release(generator_cache: GeneratorCache, app_id: dict, tree, url):
         if android_app_key not in app_id:
             return_value(generator_cache, app_id, [])
+            return
         package = app_id[android_app_key]
         module = tree.find(f'.//application[@id="{package}"]')
         if not module:

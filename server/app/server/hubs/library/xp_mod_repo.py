@@ -30,6 +30,7 @@ class XpModRepo(BaseHub):
     async def __get_release(generator_cache: GeneratorCache, app_id: dict, tree):
         if android_app_key not in app_id:
             return_value(generator_cache, app_id, [])
+            return
         package = app_id[android_app_key]
         module = tree.find(f'.//module[@package="{package}"]')
         if not module:
