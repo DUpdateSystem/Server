@@ -70,7 +70,9 @@ class DataManager:
         logging.info("refresh all data: start")
         cache_queue = cache_manager.cached_app_queue
         for hub_uuid in cache_queue.keys():
-            for _ in self.__get_release(hub_uuid, cache_queue[hub_uuid], use_cache=False):
+            release_iter = self.get_release(hub_uuid, cache_queue[hub_uuid], use_cache=False)
+            if release_iter:
+                for _ in release_iter:
                 i += 1
         logging.info(f"refresh all data: finish({i})")
 
