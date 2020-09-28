@@ -1,9 +1,9 @@
-import asyncio
 from xml.etree import ElementTree
 
 from app.server.manager.data.generator_cache import GeneratorCache
 from ..base_hub import BaseHub
-from ..hub_script_utils import android_app_key, http_get, get_tmp_cache, add_tmp_cache, return_value
+from ..hub_script_utils import android_app_key, http_get, get_tmp_cache, add_tmp_cache, return_value, \
+    run_fun_list_without_error
 
 
 class FDroid(BaseHub):
@@ -15,18 +15,16 @@ class FDroid(BaseHub):
             repo_url = 'https://f-droid.org/repo'
         tree = _get_xml_tree(repo_url)
         fun_list = [self.__get_release(generator_cache, app_id, tree, repo_url) for app_id in app_id_list]
-        await asyncio.gather(*fun_list)
+        await run_fun_list_without_error(fun_list)
 
     @staticmethod
     async def __get_release(generator_cache: GeneratorCache, app_id: dict, tree, url):
         if android_app_key not in app_id:
             return_value(generator_cache, app_id, [])
-            return
         package = app_id[android_app_key]
         module = tree.find(f'.//application[@id="{package}"]')
         if not module:
             return_value(generator_cache, app_id, [])
-            return
         changelog_item = module.find('changelog')
         newest_changelog = None
         if changelog_item:

@@ -1,3 +1,4 @@
+import asyncio
 import re
 import tarfile
 import tempfile
@@ -126,9 +127,24 @@ def add_tmp_cache(key: str, value: str):
 
 def return_value(generator_cache: GeneratorCache, app_id: dict, value):
     generator_cache.add_value({"id": app_id, "v": value})
+    raise ReturnFun
 
 
-def raise_no_app_error():
-    response = Response()
-    response.status_code = 404
-    raise HTTPError(response=response)
+async def run_fun_list_without_error(fun_list):
+    fun_list = [__run_fun__without_error(fun) for fun in fun_list]
+    await asyncio.gather(*fun_list)
+
+
+async def __run_fun__without_error(fun):
+    # noinspection PyBroadException
+    try:
+        return fun()
+    except Exception as e:
+        if e is not ReturnFun:
+            raise e
+
+
+class ReturnFun(Exception):
+    """使调用 return_value 函数的函数即时停止
+    """
+    pass

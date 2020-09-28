@@ -31,15 +31,11 @@ class BaseHub(metaclass=ABCMeta):
                 }
             auth: 软件源身份验证信息
 
-        Return: tuple
-            Keyword Args:
-                 app_id
-            value:
-                有用的信息: tuple
-                无用但是需要告知客户端的信息（不存在的软件）: empty tuple
-                无用的信息（信息获取失败）: None
-            Example:
-            [{
+        Return: list
+            有效数据: list
+            无效但是需要告知客户端的信息（不存在的软件）: empty tuple
+            无效且无用的数据（信息获取失败）: None
+            Example: [{
                 version_number: "",
                 change_log: "",
                 assets: [{ file_name: "", download_url: "", file_type: "" }]
@@ -66,8 +62,7 @@ class BaseHub(metaclass=ABCMeta):
         pass
 
     async def __call_release_list_fun(self, generator_cache: GeneratorCache, app_id: dict, auth: dict or None):
-        """
-        当软件源未实现 get_release_list 函数时，缺省调用 get_release 函数获取数据的协程函数
+        """ 当软件源未实现 get_release_list 函数时，缺省调用 get_release 函数获取数据的协程函数
         """
         # 获取云端数据
         release_list = None

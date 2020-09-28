@@ -49,7 +49,7 @@ class DataManager:
     @staticmethod
     def download_file(url: str, auth: dict) -> dict or None:
         o = urlparse(url)
-        if o != 'grcp':
+        if o != 'grpc':
             logging.warning(f"UNSUPPORTED PROTOCOL: {url}")
             return None
         path_list = [path for path in o.path.split('/') if path]
