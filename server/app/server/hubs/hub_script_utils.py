@@ -136,12 +136,10 @@ async def run_fun_list_without_error(fun_list):
 
 
 async def __run_fun__without_error(fun):
-    # noinspection PyBroadException
     try:
-        return fun()
-    except Exception as e:
-        if e is not ReturnFun:
-            raise e
+        return await fun
+    except ReturnFun:
+        pass
 
 
 class ReturnFun(Exception):

@@ -4,7 +4,7 @@ from abc import ABCMeta
 from requests import HTTPError
 
 from app.server.config import server_config
-from app.server.hubs.hub_script_utils import return_value
+from app.server.hubs.hub_script_utils import return_value, run_fun_list_without_error
 from app.server.manager.data.constant import logging
 from app.server.manager.data.generator_cache import GeneratorCache
 
@@ -19,7 +19,7 @@ class BaseHub(metaclass=ABCMeta):
     async def get_release_list(self, generator_cache: GeneratorCache,
                                app_id_list: list, auth: dict or None = None):
         fun_list = [self.__call_release_list_fun(generator_cache, app_id, auth) for app_id in app_id_list]
-        await asyncio.gather(*fun_list)
+        await run_fun_list_without_error(fun_list)
 
     def get_release(self, app_id: dict, auth: dict or None = None) -> list or None:
         """获取更新版本信息
