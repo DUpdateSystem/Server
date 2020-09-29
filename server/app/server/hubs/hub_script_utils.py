@@ -106,7 +106,7 @@ def get_tmp_cache(key: str) -> str or None:
 
 
 def add_tmp_cache(key: str, value: str):
-    """获取临时缓存
+    """添加临时缓存
     Args:
         key: 缓存键值
         value: 缓存的字符串
