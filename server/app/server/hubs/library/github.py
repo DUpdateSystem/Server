@@ -1,4 +1,5 @@
 import json
+import time
 
 from ..base_hub import BaseHub
 from ..hub_script_utils import http_get, search_version_number_string
@@ -11,6 +12,7 @@ class Github(BaseHub):
         owner_name = app_id['owner']
         repo_name = app_id['repo']
         response = _get_response(owner_name, repo_name)
+        response.sort(key=_extract_time, reverse=True)
         data = []
         # 分版本号获取信息
         for release in response:
@@ -57,3 +59,8 @@ def _get_response(owner_name: str, repo_name: str) -> json:
     """
     api_url = _get_api_url(owner_name, repo_name)
     return http_get(api_url).json()
+
+
+def _extract_time(j):
+    time_str = j['created_at']
+    return time.mktime(time.strptime(time_str, "%Y-%m-%dT%H:%M:%SZ"))
