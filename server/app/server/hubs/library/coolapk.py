@@ -45,7 +45,7 @@ class CoolApk(BaseHub):
             })
         return data
 
-    def get_download_info(self, app_id: dict, asset_index: list, auth: dict or None = None) -> tuple or None:
+    def get_download_info(self, app_id: dict, asset_index: list, auth: dict or None = None) -> dict or tuple or None:
         from app.server.hubs.hub_list import hub_dict
         hub_uuid = None
         for uuid in hub_dict:
@@ -63,7 +63,7 @@ class CoolApk(BaseHub):
         except requests.HTTPError:
             logging.debug("网址错误，尝试重新获取")
             download_url = _re_get_download_url(hub_uuid, app_id, asset_index, False)
-        return (download_url,),
+        return download_url
 
 
 def _re_get_download_url(hub_uuid, app_id, asset_index, use_cache):

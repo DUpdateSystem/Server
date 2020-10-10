@@ -130,14 +130,25 @@ def return_value(generator_cache: GeneratorCache, app_id: dict, value):
     raise ReturnFun
 
 
+def return_value_no_break(generator_cache: GeneratorCache, app_id: dict, value):
+    return __run_return_value_fun0(lambda: return_value(generator_cache, app_id, value))
+
+
 async def run_fun_list_without_error(fun_list):
-    fun_list = [__run_fun__without_error(fun) for fun in fun_list]
+    fun_list = [__run_return_value_fun(fun) for fun in fun_list]
     await asyncio.gather(*fun_list)
 
 
-async def __run_fun__without_error(fun):
+async def __run_return_value_fun(fun):
     try:
         return await fun
+    except ReturnFun:
+        pass
+
+
+def __run_return_value_fun0(fun):
+    try:
+        return fun()
     except ReturnFun:
         pass
 

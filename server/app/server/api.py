@@ -35,23 +35,9 @@ def get_download_info(hub_uuid: str, auth: dict, app_id: dict,
                       asset_index: list) -> dict:
     logging.info(f"请求下载地址: hub_uuid: {hub_uuid} app_id: {app_id}")
     download_info_list = data_manager.get_download_info(hub_uuid, auth, app_id, asset_index)
-    download_info_dict = {}
-    if download_info_list:
-        download_package_list = []
-        for download_info in download_info_list:
-            download_package = {'url': download_info[0]}
-            if len(download_info) > 1:
-                download_package['request_header'] = dict_to_grcp_dict_list(download_info[1])
-            download_package_list.append(
-                download_package
-            )
-        download_info_dict = {'list': download_package_list}
+    if not download_info_list:
+        download_info_dict = {}
+    else:
+        download_info_dict = {'list': download_info_list}
     logging.info(f"回应下载资源: download_info: {download_info_dict}")
     return download_info_dict
-
-
-def download_file(url: str, auth: dict) -> dict:
-    logging.info(f"请求下载资源: url: {url} auth: {auth}")
-    download_file_byte_dict = data_manager.download_file(url, auth)
-    logging.info(f"回应下载资源: download_info: {download_file_byte_dict}")
-    return download_file_byte_dict

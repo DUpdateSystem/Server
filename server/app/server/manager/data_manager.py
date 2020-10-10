@@ -41,28 +41,13 @@ class DataManager:
         hub = hub_dict[hub_uuid]
         # noinspection PyBroadException
         try:
-            return hub.get_download_info(app_id, asset_index, auth)
+            download_info = hub.get_download_info(app_id, asset_index, auth)
+            if download_info is str:
+                return {"url", download_info}
+            else:
+                return download_info
         except Exception:
             logging.error(f"""app_id: {app_id} \nERROR: """, exc_info=server_config.debug_mode)
-            return None
-
-    @staticmethod
-    def download_file(url: str, auth: dict) -> dict or None:
-        o = urlparse(url)
-        if o != 'grpc':
-            logging.warning(f"UNSUPPORTED PROTOCOL: {url}")
-            return None
-        path_list = [path for path in o.path.split('/') if path]
-        hub_url = path_list[0]
-        if hub_url not in hub_dict:
-            logging.warning(f"NO HUB: {hub_url}")
-            return None
-        hub = hub_dict[hub_url]
-        # noinspection PyBroadException
-        try:
-            return hub.download(path_list[1:], auth)
-        except Exception:
-            logging.error(f"""url: {url} \nERROR: """, exc_info=server_config.debug_mode)
             return None
 
     def refresh_cache(self):

@@ -43,7 +43,7 @@ class BaseHub(metaclass=ABCMeta):
         """
         pass
 
-    def get_download_info(self, app_id: dict, asset_index: list, auth: dict or None = None) -> tuple or None:
+    def get_download_info(self, app_id: dict, asset_index: list, auth: dict or None = None) -> dict or tuple or None:
         """即时获取下载地址
         Args:
             app_id: 客户端上传的软件属性
@@ -53,7 +53,9 @@ class BaseHub(metaclass=ABCMeta):
 
         Returns: tuple
             Examples:
-                (({url}, {request_header_dict}), ...)
+                [url]
+                or
+                [{"name": [name]. "url": url, "header": "headers", [headers], "cookies": [cookies]}, ...]
                 可包含多个下载目标（为了同时下载/安装可能的依赖软件，例如：obb 文件）
                 request_header_dict 结构示例: {
                         "<请求头>": "<请求头参数>"

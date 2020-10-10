@@ -62,8 +62,11 @@ message GetDownloadResponse {
 }
 
 message DownloadPackage {
-  string url = 1;
-  repeated Dict request_header = 2;
+  string name = 1;
+  string url = 2;
+  repeated Dict headers = 3;
+  repeated Dict cookies = 4;
+  repeated Dict request_header = 5;
 }
 
 
