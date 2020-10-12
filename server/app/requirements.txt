@@ -1,8 +1,8 @@
-grpcio==1.30.0
-protobuf==3.12.2
-beautifulsoup4==4.9.1
+beautifulsoup4==4.9.3
+colorlog==4.4.0
+grpcio==1.32.0
 html5lib==1.1
+protobuf==3.13.0
+redis-py-cluster==2.1.0
 requests==2.24.0
-redis-py-cluster==2.0.0
 timeloop==1.0.2
-colorlog==4.1.0
