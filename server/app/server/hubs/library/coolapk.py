@@ -16,7 +16,7 @@ class CoolApk(BaseHub):
             return []
         url = _get_detail_url(package)
         request_json = _request(url).json()
-        if 'message' in request_json and request_json['message'] == '应用不存在':
+        if 'status' in request_json and request_json['status'] < 0:
             return []
         data = []
         detail = request_json['data']
@@ -32,7 +32,10 @@ class CoolApk(BaseHub):
         })
 
         url = _get_history_url(aid)
-        h_list = _request(url).json()['data']
+        request_json = _request(url).json()
+        if 'status' in request_json and request_json['status'] < 0:
+            return data
+        h_list = request_json['data']
         for h in h_list:
             version_number = h['versionName']
             version_id = h['versionId']
