@@ -41,19 +41,20 @@ def debug(hub_uuid: str, test_options: list, run_init_account: bool = False):
         app_id = {}
         auth = {}
         account = {}
-        l_size = len(test_options)
-        auth_index = 0
-        if run_init_account:
-            for i in range(0, l_size, 2):
-                account[test_options[i]] = test_options[i + 1]
-        else:
-            if auth_key in test_options:
-                l_size = auth_index = test_options.index(auth_key)
-            for i in range(0, l_size, 2):
-                app_id[test_options[i]] = test_options[i + 1]
-            if auth_index:
-                for i in range(auth_index + 1, len(test_options), 2):
-                    auth[test_options[i]] = test_options[i + 1]
+        if test_options:
+            l_size = len(test_options)
+            auth_index = 0
+            if run_init_account:
+                for i in range(0, l_size, 2):
+                    account[test_options[i]] = test_options[i + 1]
+            else:
+                if auth_key in test_options:
+                    l_size = auth_index = test_options.index(auth_key)
+                for i in range(0, l_size, 2):
+                    app_id[test_options[i]] = test_options[i + 1]
+                if auth_index:
+                    for i in range(auth_index + 1, len(test_options), 2):
+                        auth[test_options[i]] = test_options[i + 1]
         test_options = {
             'auth': auth,
             'app_id': app_id,
