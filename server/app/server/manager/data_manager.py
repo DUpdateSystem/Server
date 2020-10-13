@@ -42,8 +42,8 @@ class DataManager:
         # noinspection PyBroadException
         try:
             download_info = hub.get_download_info(app_id, asset_index, auth)
-            if download_info is str:
-                return {"url", download_info}
+            if type(download_info) is str:
+                return {"url": download_info}
             else:
                 return download_info
         except Exception:
