@@ -1,12 +1,16 @@
+import json
 from gpapi.googleplay import GooglePlayAPI as _GooglePlayAPI
 
 from app.server.manager.data.generator_cache import GeneratorCache
 from ..base_hub import BaseHub
-from ..hub_script_utils import android_app_key, return_value_no_break
+from app.server.manager.data.constant import logging
+from ..hub_script_utils import android_app_key, return_value_no_break, get_tmp_cache, add_tmp_cache
 
-_locale = "zh_CN"
+_locale = "en_US"
 _timezone = "UTC"
-_device_codename = "oneplus3"
+_device_codename = "walleye"
+
+_auth_cache_key = "google_play_def_token"
 
 
 class GooglePlay(BaseHub):
@@ -23,7 +27,7 @@ class GooglePlay(BaseHub):
     async def get_release_list(self, generator_cache: GeneratorCache,
                                app_id_list: list, auth: dict or None = None):
         api = _GooglePlayAPI(locale=_locale, timezone=_timezone, device_codename=_device_codename)
-        gsf_id, auth_sub_token = _get_auth(auth)
+        gsf_id, auth_sub_token = self.__get_auth(auth)
         api.gsfId = gsf_id
         api.setAuthSubToken(auth_sub_token)
         [return_value_no_break(generator_cache, app_id, []) for app_id in app_id_list if android_app_key not in app_id]
@@ -57,7 +61,7 @@ class GooglePlay(BaseHub):
         download_list = []
         doc_id = app_id[android_app_key]
         api = GooglePlayAPI(locale=_locale, timezone=_timezone, device_codename=_device_codename)
-        gsf_id, auth_sub_token = _get_auth(auth)
+        gsf_id, auth_sub_token = self.__get_auth(auth)
         api.gsfId = gsf_id
         api.setAuthSubToken(auth_sub_token)
         download = api.download(doc_id, expansion_files=True)
@@ -75,15 +79,34 @@ class GooglePlay(BaseHub):
                                   "cookies": obb_file['cookies']})
         return download_list
 
+    def __get_auth(self, auth: dict):
+        if 'gsfId' not in auth or 'authSubToken' not in auth:
+            auth = self.__get_def_auth()
+        return int(auth["gsfId"]), auth["authSubToken"]
 
-def _get_auth(auth: dict):
-    gsf_id = 3795870225151738800
-    if 'gsfId' in auth:
-        gsf_id = int(auth['gsfId'])
-    auth_sub_token = '0gf74zbMsmizfDxeaD9Sbq-Citv36vcsmoLfvOFhUNEtIJzQdGitNmCTVBP2juEDxQechg.'
-    if 'authSubToken' in auth:
-        auth_sub_token = auth['authSubToken']
-    return gsf_id, auth_sub_token
+    def __get_def_auth(self):
+        auth = get_tmp_cache(_auth_cache_key)
+        if not auth:
+            return self.__get_new_token()
+        else:
+            auth_json = json.loads(auth)
+            api = _GooglePlayAPI(locale=_locale, timezone=_timezone, device_codename=_device_codename)
+            gsf_id, auth_sub_token = self.__get_auth(auth_json)
+            api.gsfId = gsf_id
+            api.setAuthSubToken(auth_sub_token)
+            test_details = api.details("com.google.android.webview")
+            if not test_details:
+                return self.__get_new_token()
+            return auth_json
+
+    def __get_new_token(self) -> dict:
+        auth_json = self.init_account({
+            "mail": "xiangzhedev@gmail.com",
+            "passwd": "slzlpcugmdydxvii",
+        })
+        logging.info("GooglePlay: Renew Token")
+        add_tmp_cache(_auth_cache_key, json.dumps(auth_json))
+        return auth_json
 
 
 class GooglePlayAPI(_GooglePlayAPI):

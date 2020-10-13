@@ -1,5 +1,4 @@
 import gzip
-import gzip
 import tempfile
 from xml.etree import ElementTree
 
