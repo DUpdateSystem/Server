@@ -25,7 +25,7 @@ RUN cd ./googleplay-api && python setup.py build && python setup.py install
 RUN rm -rf ./googleplay-api
 
 RUN apk del .build-deps
-RUN apk add --no-cache libstdc++
+RUN apk add --no-cache libstdc++ libressl-dev
 
 COPY ./app ./app
 COPY ./config.ini ./
