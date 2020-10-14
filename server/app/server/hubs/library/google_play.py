@@ -1,5 +1,5 @@
 import json
-from gpapi.googleplay import GooglePlayAPI as _GooglePlayAPI
+from gpapi.googleplay import GooglePlayAPI as _GooglePlayAPI, RequestError
 
 from app.server.manager.data.generator_cache import GeneratorCache
 from ..base_hub import BaseHub
@@ -90,22 +90,57 @@ class GooglePlay(BaseHub):
             return self.__get_new_token()
         else:
             auth_json = json.loads(auth)
-            api = _GooglePlayAPI(locale=_locale, timezone=_timezone, device_codename=_device_codename)
-            gsf_id, auth_sub_token = self.__get_auth(auth_json)
-            api.gsfId = gsf_id
-            api.setAuthSubToken(auth_sub_token)
-            test_details = api.details("com.google.android.webview")
-            if not test_details:
-                return self.__get_new_token()
+            if not self.__check_health_limit_num(auth_json):
+                if self.__check_token(auth_json):
+                    self.__set_auth_limit_num(auth_json, 50)
+                    return auth_json
+                else:
+                    return self.__get_new_token()
+            self.__set_auth_limit_num(auth_json)
             return auth_json
+
+    def __check_health_limit_num(self, auth: dict):
+        return self.__have_health_limit_num(auth) and int(auth["health_limit_num"]) > 0
+
+    @staticmethod
+    def __have_health_limit_num(auth: dict):
+        try:
+            int(auth["health_limit_num"])
+            return True
+        except KeyError:
+            return False
+        except TypeError:
+            return False
+
+    def __set_auth_limit_num(self, auth: dict, limit_num: int or None = None):
+        if limit_num is None and self.__have_health_limit_num(auth):
+            limit_num = int(auth["health_limit_num"]) - 1
+        auth["health_limit_num"] = limit_num
+        add_tmp_cache(_auth_cache_key, json.dumps(auth))
+
+    def __check_token(self, auth: dict) -> bool:
+        logging.info("GooglePlay: Check Token")
+        api = _GooglePlayAPI(locale=_locale, timezone=_timezone, device_codename=_device_codename)
+        gsf_id, auth_sub_token = self.__get_auth(auth)
+        api.gsfId = gsf_id
+        api.setAuthSubToken(auth_sub_token)
+        test_details = api.details("com.google.android.webview")
+        try:
+            test_details = api.details("com.google.android.webview")
+        except RequestError:
+            pass
+        if test_details:
+            return True
+        else:
+            return False
 
     def __get_new_token(self) -> dict:
         auth_json = self.init_account({
             "mail": "xiangzhedev@gmail.com",
             "passwd": "slzlpcugmdydxvii",
         })
+        self.__set_auth_limit_num(auth_json, 50)
         logging.info("GooglePlay: Renew Token")
-        add_tmp_cache(_auth_cache_key, json.dumps(auth_json))
         return auth_json
 
 
