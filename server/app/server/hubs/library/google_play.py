@@ -6,7 +6,7 @@ from ..base_hub import BaseHub
 from app.server.manager.data.constant import logging
 from ..hub_script_utils import android_app_key, return_value_no_break, get_tmp_cache, add_tmp_cache
 
-_locale = "en_US"
+_locale = "zh_CN"
 _timezone = "UTC"
 _device_codename = "walleye"
 
