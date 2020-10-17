@@ -1,7 +1,6 @@
 import asyncio
 from datetime import timedelta
 from threading import Thread
-from urllib.parse import urlparse
 
 from app.server.config import server_config
 from app.server.hubs.hub_list import hub_dict

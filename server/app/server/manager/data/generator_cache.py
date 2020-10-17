@@ -12,8 +12,8 @@ class GeneratorCache:
         self.__closed = False
 
     def close(self):
-        self.__cache_queue.append(None)
         self.__closed = True
+        self.add_value(None)
 
     def add_value(self, value):
         self.__cache_queue.append(value)
