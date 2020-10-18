@@ -70,8 +70,7 @@ class BaseHub(metaclass=ABCMeta):
         release_list = None
         # noinspection PyBroadException
         try:
-            aw = self.__call_fun(lambda: self.get_release(app_id, auth))
-            release_list = await asyncio.wait_for(aw, timeout=15)
+            release_list = self.get_release(app_id, auth)
             # 缓存数据，包括 404 None 数据
         except HTTPError as e:
             status_code = e.response.status_code
