@@ -102,7 +102,10 @@ app_id: {app_id}""", exc_info=server_config.debug_mode)
             raise NameError
         release_info = self.__get(self.__redis_release_cache_client, key)
         logging.debug(f"release cached: {key}")
-        return json.loads(release_info)
+        if release_info:
+            return json.loads(release_info)
+        else:
+            return release_info
 
     @property
     def cached_app_queue(self) -> dict:

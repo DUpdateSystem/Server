@@ -37,7 +37,8 @@ class GooglePlay(BaseHub):
         try:
             bulk_details = api.bulkDetails(package_list)
         except Exception:
-            gsf_id, auth_sub_token = self.__get_auth(self.__get_new_token())
+            gsf_id, auth_sub_token = self.__get_auth()
+            api = _GooglePlayAPI(locale=_locale, timezone=_timezone, device_codename=_device_codename)
             api.gsfId = gsf_id
             api.setAuthSubToken(auth_sub_token)
             bulk_details = api.bulkDetails(package_list)
@@ -87,8 +88,8 @@ class GooglePlay(BaseHub):
                                   "cookies": obb_file['cookies']})
         return download_list
 
-    def __get_auth(self, auth: dict):
-        if 'gsfId' not in auth or 'authSubToken' not in auth:
+    def __get_auth(self, auth: dict = None):
+        if auth is None or 'gsfId' not in auth or 'authSubToken' not in auth:
             auth = self.__get_def_auth()
         return int(auth["gsfId"]), auth["authSubToken"]
 

@@ -14,6 +14,7 @@ def get_release_dict(hub_uuid: str, auth: dict or None, app_id_list: list,
                                         use_cache=use_cache, cache_data=cache_data)
     if iter_fun is None:
         yield {"valid_hub": False}
+        return
     for item in iter_fun:
         app_id = item["app_id"]
         release_list = item["release_list"]
