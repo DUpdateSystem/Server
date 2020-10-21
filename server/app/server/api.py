@@ -15,6 +15,8 @@ def get_release_dict(hub_uuid: str, auth: dict or None, app_id_list: list,
     if iter_fun is None:
         yield {"valid_hub": False}
         return
+    else:
+        yield {"valid_hub": True}
     for item in iter_fun:
         app_id = item["app_id"]
         release_list = item["release_list"]
@@ -26,10 +28,7 @@ def get_release_dict(hub_uuid: str, auth: dict or None, app_id_list: list,
         else:
             release_package["valid_data"] = True
             release_package["release_list"] = release_list
-        yield {
-            "valid_hub": True,
-            "release": release_package
-        }
+        yield {"release": release_package}
 
 
 def get_download_info(hub_uuid: str, auth: dict, app_id: dict,
