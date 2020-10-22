@@ -1,4 +1,5 @@
 import json
+import requests
 
 from gpapi.googleplay import GooglePlayAPI as _GooglePlayAPI
 
@@ -75,11 +76,18 @@ class GooglePlay(BaseHub):
         api.gsfId = gsf_id
         api.setAuthSubToken(auth_sub_token)
         download = api.download(doc_id, expansion_files=True)
-        apk_file = download['file']
+        main_apk_file = download['file']
         download_list.append({"name": f'{doc_id}.apk',
-                              "url": apk_file['url'],
-                              "headers": apk_file['headers'],
-                              "cookies": apk_file['cookies']})
+                              "url": main_apk_file['url'],
+                              "headers": main_apk_file['headers'],
+                              "cookies": main_apk_file['cookies']})
+        splits_apk_file = download['splits']
+        for apk in splits_apk_file:
+            apk_file = apk['file']
+            download_list.append({"name": f"{apk['name']}.apk",
+                                  "url": apk_file['url'],
+                                  "headers": apk_file['headers'],
+                                  "cookies": apk_file['cookies']})
         for obb in download['additionalData']:
             obb_file = obb['file']
             obb_file_name = obb['type'] + '.' + str(obb['versionCode']) + '.' + download['docId'] + '.obb'

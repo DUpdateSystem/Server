@@ -28,7 +28,7 @@ def _standard_debug(hub_uuid: str, auth: dict, app_id: dict):
         js = json.dumps(release_dict, sort_keys=True, indent=4, ensure_ascii=False)
         logging.debug(js)
     logging.info("测试 get_download_info 函数")
-    row_download_info = get_download_info(hub_uuid, auth, app_id, [0, 0])
+    row_download_info = get_download_info_list(hub_uuid, auth, app_id, [0, 0])
     js = json.dumps(row_download_info, sort_keys=True, indent=4, ensure_ascii=False)
     logging.debug(js)
 

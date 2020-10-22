@@ -115,7 +115,7 @@ class Greeter(route_pb2_grpc.UpdateServerRouteServicer):
         asset_index: list = request.asset_index
         # noinspection PyBroadException
         try:
-            return self.__get_download_info(hub_uuid, auth, app_id, asset_index)
+            return self.__get_download_info_list(hub_uuid, auth, app_id, asset_index)
         except Exception:
             logging.exception(f'gRPC: GetDownloadInfo, hub_uuid: {hub_uuid}')
             return None
@@ -131,8 +131,14 @@ class Greeter(route_pb2_grpc.UpdateServerRouteServicer):
             yield ParseDict(item, ReleaseResponse())
 
     @staticmethod
-    def __get_download_info(hub_uuid: str, auth: dict or None, app_id: dict, asset_index: list) -> GetDownloadResponse:
+    def __get_download_info(hub_uuid: str, auth: dict or None, app_id: dict, asset_index: list) -> DownloadInfo:
         download_info = get_download_info(hub_uuid, auth, app_id, asset_index)
+        return ParseDict(download_info, DownloadInfo)
+
+    @staticmethod
+    def __get_download_info_list(hub_uuid: str, auth: dict or None, app_id: dict,
+                                 asset_index: list) -> GetDownloadResponse:
+        download_info = get_download_info_list(hub_uuid, auth, app_id, asset_index)
         return ParseDict(download_info, GetDownloadResponse())
 
 
