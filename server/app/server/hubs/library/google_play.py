@@ -27,14 +27,15 @@ class GooglePlay(BaseHub):
 
     async def get_release_list(self, generator_cache: GeneratorCache,
                                app_id_list: list, auth: dict or None = None):
-        api = _GooglePlayAPI(locale=_locale, timezone=_timezone, device_codename=_device_codename)
-        gsf_id, auth_sub_token = self.__get_auth(auth)
-        api.gsfId = gsf_id
-        api.setAuthSubToken(auth_sub_token)
-        [return_value_no_break(generator_cache, app_id, []) for app_id in app_id_list if android_app_key not in app_id]
+        [return_value_no_break(generator_cache, app_id, []) for app_id in app_id_list if
+         android_app_key not in app_id]
         package_list = [app_id[android_app_key] for app_id in app_id_list if android_app_key in app_id]
         # noinspection PyBroadException
         try:
+            api = _GooglePlayAPI(locale=_locale, timezone=_timezone, device_codename=_device_codename)
+            gsf_id, auth_sub_token = self.__get_auth(auth)
+            api.gsfId = gsf_id
+            api.setAuthSubToken(auth_sub_token)
             bulk_details = api.bulkDetails(package_list)
         except Exception:
             gsf_id, auth_sub_token = self.__get_auth()
