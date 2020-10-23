@@ -71,12 +71,14 @@ class DataManager:
                       use_cache=True, cache_data=True) -> dict or None:
         nocache = []
         if use_cache:
-            for app_id in app_id_list:
+            release_list_iter, thread = self.__get_release_cache_iter(hub_uuid, app_id_list)
+            for app_id, release_list in release_list_iter:
                 release_list = self.__get_release_cache(hub_uuid, app_id)
                 if release_list and not (len(release_list) == 1 and release_list[0] is None):
                     yield {"app_id": app_id, "release_list": release_list}
                 else:
                     nocache.append(app_id)
+            thread.join()
         else:
             nocache = app_id_list
         if nocache:
@@ -89,6 +91,23 @@ class DataManager:
                         cache_manager.add_release_cache(hub_uuid, app_id, release_list)
                 yield {"app_id": app_id, "release_list": release_list}
             thread.join()
+
+    def __get_release_cache_iter(self, hub_uuid: str, app_id_list: list) -> tuple:
+        generator_cache = GeneratorCache()
+        core = self.__get_release_cache_async(generator_cache, hub_uuid, app_id_list)
+        thread = Thread(target=run_fun_list([lambda: asyncio.run(core),
+                                             lambda: generator_cache.close()]))
+        thread.start()
+        return generator_cache, thread
+
+    async def __get_release_cache_async(self, generator_cache: GeneratorCache,
+                                        hub_uuid: str, app_id_list: list):
+        core_list = [self.__get_release_cache_async0(generator_cache, hub_uuid, app_id) for app_id in app_id_list]
+        await asyncio.gather(*core_list)
+
+    async def __get_release_cache_async0(self, generator_cache: GeneratorCache,
+                                         hub_uuid: str, app_id: dict):
+        generator_cache.add_value((app_id, self.__get_release_cache(hub_uuid, app_id)))
 
     def __get_release_nocache(self, hub_uuid: str, app_id_list: list, auth: dict or None = None) -> tuple:
         generator_cache = GeneratorCache()
