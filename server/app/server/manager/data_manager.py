@@ -73,7 +73,6 @@ class DataManager:
         if use_cache:
             release_list_iter, thread = self.__get_release_cache_iter(hub_uuid, app_id_list)
             for app_id, release_list in release_list_iter:
-                release_list = self.__get_release_cache(hub_uuid, app_id)
                 if release_list and not (len(release_list) == 1 and release_list[0] is None):
                     yield {"app_id": app_id, "release_list": release_list}
                 else:
