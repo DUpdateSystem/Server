@@ -1,5 +1,4 @@
 import json
-import requests
 
 from gpapi.googleplay import GooglePlayAPI as _GooglePlayAPI
 
@@ -19,8 +18,7 @@ class GooglePlay(BaseHub):
     def init_account(self, account: dict) -> dict or None:
         mail = account['mail']
         passwd = account['passwd']
-        api = _GooglePlayAPI(locale=_locale, timezone=_timezone, device_codename=_device_codename)
-        api.login(email=mail, password=passwd)
+        api = self.__init_google_play_by_account(mail, passwd)
         return {
             "gsfId": api.gsfId,
             "authSubToken": api.authSubToken
@@ -33,16 +31,10 @@ class GooglePlay(BaseHub):
         package_list = [app_id[android_app_key] for app_id in app_id_list if android_app_key in app_id]
         # noinspection PyBroadException
         try:
-            api = _GooglePlayAPI(locale=_locale, timezone=_timezone, device_codename=_device_codename)
-            gsf_id, auth_sub_token = self.__get_auth(auth)
-            api.gsfId = gsf_id
-            api.setAuthSubToken(auth_sub_token)
+            api = self.__get_google_api(auth)
             bulk_details = api.bulkDetails(package_list)
         except Exception:
-            gsf_id, auth_sub_token = self.__get_auth(self.__get_new_token())
-            api = _GooglePlayAPI(locale=_locale, timezone=_timezone, device_codename=_device_codename)
-            api.gsfId = gsf_id
-            api.setAuthSubToken(auth_sub_token)
+            api = self.__get_def_google_play()
             bulk_details = api.bulkDetails(package_list)
         for i, l_details in enumerate(bulk_details):
             app_id = app_id_list[i]
@@ -73,16 +65,10 @@ class GooglePlay(BaseHub):
         doc_id = app_id[android_app_key]
         # noinspection PyBroadException
         try:
-            api = GooglePlayAPI(locale=_locale, timezone=_timezone, device_codename=_device_codename)
-            gsf_id, auth_sub_token = self.__get_auth(auth)
-            api.gsfId = gsf_id
-            api.setAuthSubToken(auth_sub_token)
+            api = self.__get_google_api(auth)
             download = api.download(doc_id, expansion_files=True)
         except Exception:
-            gsf_id, auth_sub_token = self.__get_auth(self.__get_new_token())
-            api = GooglePlayAPI(locale=_locale, timezone=_timezone, device_codename=_device_codename)
-            api.gsfId = gsf_id
-            api.setAuthSubToken(auth_sub_token)
+            api = self.__get_def_google_play()
             download = api.download(doc_id, expansion_files=True)
         main_apk_file = download['file']
         download_list.append({"name": f'{doc_id}.apk',
@@ -105,70 +91,46 @@ class GooglePlay(BaseHub):
                                   "cookies": obb_file['cookies']})
         return download_list
 
-    def __get_auth(self, auth: dict = None):
-        if auth is None or 'gsfId' not in auth or 'authSubToken' not in auth:
-            auth = self.__get_def_auth()
-        return int(auth["gsfId"]), auth["authSubToken"]
-
-    def __get_def_auth(self):
-        auth = get_tmp_cache(_auth_cache_key)
-        if not auth:
-            return self.__get_new_token()
+    def __get_google_api(self, auth: dict):
+        if auth:
+            gsf_id, auth_sub_token = self.__get_auth(auth)
         else:
-            auth_json = json.loads(auth)
-            if not self.__check_health_limit_num(auth_json):
-                if self.__check_token(auth_json):
-                    self.__set_auth_cache(auth_json, 25)
-                    return auth_json
-                else:
-                    return self.__get_new_token()
-            self.__set_auth_cache(auth_json)
-            return auth_json
+            auth = self.__get_cache_auth()
+            if auth:
+                gsf_id, auth_sub_token = auth
+            else:
+                return self.__get_def_google_play()
+        return self.__init_google_play_by_token(gsf_id, auth_sub_token)
 
-    def __check_health_limit_num(self, auth: dict):
-        return self.__have_health_limit_num(auth) and int(auth["health_limit_num"]) > 0
+    def __get_def_google_play(self) -> _GooglePlayAPI:
+        api = self.__init_google_play_by_account("xiangzhedev@gmail.com", "slzlpcugmdydxvii")
+        add_tmp_cache(_auth_cache_key, json.dumps({"gsfId": api.gsfId, "authSubToken": api.authSubToken}))
+        return api
 
     @staticmethod
-    def __have_health_limit_num(auth: dict):
-        try:
-            int(auth["health_limit_num"])
-            return True
-        except KeyError:
-            return False
-        except TypeError:
-            return False
+    def __init_google_play_by_account(mail: str, passwd: str) -> _GooglePlayAPI:
+        api = GooglePlayAPI(locale=_locale, timezone=_timezone, device_codename=_device_codename)
+        api.login(mail, passwd)
+        return api
 
-    def __set_auth_cache(self, auth: dict, limit_num: int or None = None):
-        if limit_num is None and self.__have_health_limit_num(auth):
-            limit_num = int(auth["health_limit_num"]) - 1
-        auth["health_limit_num"] = limit_num
-        add_tmp_cache(_auth_cache_key, json.dumps(auth))
-
-    def __check_token(self, auth: dict) -> bool:
-        logging.info("GooglePlay: Check Token")
-        api = _GooglePlayAPI(locale=_locale, timezone=_timezone, device_codename=_device_codename)
-        gsf_id, auth_sub_token = self.__get_auth(auth)
+    @staticmethod
+    def __init_google_play_by_token(gsf_id: int, auth_sub_token: str) -> _GooglePlayAPI:
+        api = GooglePlayAPI(locale=_locale, timezone=_timezone, device_codename=_device_codename)
         api.gsfId = gsf_id
         api.setAuthSubToken(auth_sub_token)
-        test_details = None
-        # noinspection PyBroadException
-        try:
-            test_details = api.details("com.google.android.webview")
-        except Exception:
-            pass
-        if test_details:
-            return True
-        else:
-            return False
+        logging.info("GooglePlay: Renew Auth")
+        return api
 
-    def __get_new_token(self) -> dict:
-        auth_json = self.init_account({
-            "mail": "xiangzhedev@gmail.com",
-            "passwd": "slzlpcugmdydxvii",
-        })
-        self.__set_auth_cache(auth_json, 25)
-        logging.info("GooglePlay: Renew Token")
-        return auth_json
+    def __get_cache_auth(self) -> tuple or None:
+        auth = get_tmp_cache(_auth_cache_key)
+        if auth:
+            return self.__get_auth(auth)
+        else:
+            return None
+
+    @staticmethod
+    def __get_auth(auth: dict):
+        return int(auth["gsfId"]), auth["authSubToken"]
 
 
 class GooglePlayAPI(_GooglePlayAPI):
