@@ -1,6 +1,8 @@
 import json
+import requests
 
-from gpapi.googleplay import GooglePlayAPI as _GooglePlayAPI
+from gpapi.googleplay import GooglePlayAPI as _GooglePlayAPI, PURCHASE_URL, ssl_verify, googleplay_pb2, \
+    LoginError, RequestError
 
 from app.server.manager.data.constant import logging
 from app.server.manager.data.generator_cache import GeneratorCache
@@ -28,7 +30,10 @@ class GooglePlay(BaseHub):
                                app_id_list: list, auth: dict or None = None):
         [return_value_no_break(generator_cache, app_id, []) for app_id in app_id_list if
          android_app_key not in app_id]
-        package_list = [app_id[android_app_key] for app_id in app_id_list if android_app_key in app_id]
+        package_list = ["com.google.android.webview"] + [app_id[android_app_key] for app_id in app_id_list if
+                                                         android_app_key in app_id]
+        package_list = set(package_list)
+        package_list = list(package_list)
         # noinspection PyBroadException
         try:
             api = self.__get_google_api(auth)
@@ -36,14 +41,23 @@ class GooglePlay(BaseHub):
         except Exception:
             api = self.__get_def_google_play()
             bulk_details = api.bulkDetails(package_list)
+        details_map = {}
         for i, l_details in enumerate(bulk_details):
-            app_id = app_id_list[i]
-            if l_details is None:
+            package = package_list[i]
+            details_map[package] = l_details
+        if details_map["com.google.android.webview"] is None:
+            api = self.__get_def_google_play()
+            bulk_details = api.bulkDetails(package_list)
+            for i, l_details in enumerate(bulk_details):
+                package = package_list[i]
+                details_map[package] = l_details
+        for package, details in details_map.items():
+            app_id = {android_app_key: package}
+            if details is None:
                 return_value_no_break(generator_cache, app_id, [])
             else:
                 # noinspection PyBroadException
                 try:
-                    package = package_list[i]
                     details = api.details(package)['details']['appDetails']
                     release = {
                         'version_number': details['versionString'],
@@ -105,6 +119,7 @@ class GooglePlay(BaseHub):
     def __get_def_google_play(self) -> _GooglePlayAPI:
         api = self.__init_google_play_by_account("xiangzhedev@gmail.com", "slzlpcugmdydxvii")
         add_tmp_cache(_auth_cache_key, json.dumps({"gsfId": api.gsfId, "authSubToken": api.authSubToken}))
+        logging.info("GooglePlay: Renew Auth")
         return api
 
     @staticmethod
@@ -118,13 +133,13 @@ class GooglePlay(BaseHub):
         api = GooglePlayAPI(locale=_locale, timezone=_timezone, device_codename=_device_codename)
         api.gsfId = gsf_id
         api.setAuthSubToken(auth_sub_token)
-        logging.info("GooglePlay: Renew Auth")
         return api
 
     def __get_cache_auth(self) -> tuple or None:
         auth = get_tmp_cache(_auth_cache_key)
         if auth:
-            return self.__get_auth(auth)
+            auth_json = json.loads(auth)
+            return self.__get_auth(auth_json)
         else:
             return None
 
@@ -134,6 +149,38 @@ class GooglePlay(BaseHub):
 
 
 class GooglePlayAPI(_GooglePlayAPI):
+    # noinspection PyPep8Naming
+    def download(self, packageName, versionCode=None, offerType=1, expansion_files=False):
+        """
+        避免 Unexpected end-group tag. 错误
+        参考：https://github.com/NoMore201/googleplay-api/issues/132
+        """
+
+        if self.authSubToken is None:
+            raise LoginError("You need to login before executing any request")
+
+        if versionCode is None:
+            # pick up latest version
+            appDetails = self.details(packageName).get('details').get('appDetails')
+            versionCode = appDetails.get('versionCode')
+
+        headers = self.getHeaders()
+        params = {'ot': str(offerType),
+                  'doc': packageName,
+                  'vc': str(versionCode)}
+        response = requests.post(PURCHASE_URL, headers=headers,
+                                 params=params, verify=ssl_verify,
+                                 timeout=60,
+                                 proxies=self.proxies_config)
+
+        response = googleplay_pb2.ResponseWrapper.FromString(response.content)
+        if response.commands.displayErrorMessage != "":
+            raise RequestError(response.commands.displayErrorMessage)
+        else:
+            dlToken = response.payload.buyResponse.downloadToken
+            return self.delivery(packageName, versionCode, offerType, dlToken,
+                                 expansion_files=expansion_files)
+
     def _deliver_data(self, url, cookies):
         headers = self.getHeaders()
         return {
