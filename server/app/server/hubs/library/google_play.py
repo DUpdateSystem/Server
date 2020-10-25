@@ -39,7 +39,7 @@ class GooglePlay(BaseHub):
             api.setAuthSubToken(auth_sub_token)
             bulk_details = api.bulkDetails(package_list)
         except Exception:
-            gsf_id, auth_sub_token = self.__get_auth()
+            gsf_id, auth_sub_token = self.__get_auth(self.__get_new_token())
             api = _GooglePlayAPI(locale=_locale, timezone=_timezone, device_codename=_device_codename)
             api.gsfId = gsf_id
             api.setAuthSubToken(auth_sub_token)
@@ -71,11 +71,19 @@ class GooglePlay(BaseHub):
             return None
         download_list = []
         doc_id = app_id[android_app_key]
-        api = GooglePlayAPI(locale=_locale, timezone=_timezone, device_codename=_device_codename)
-        gsf_id, auth_sub_token = self.__get_auth(auth)
-        api.gsfId = gsf_id
-        api.setAuthSubToken(auth_sub_token)
-        download = api.download(doc_id, expansion_files=True)
+        # noinspection PyBroadException
+        try:
+            api = GooglePlayAPI(locale=_locale, timezone=_timezone, device_codename=_device_codename)
+            gsf_id, auth_sub_token = self.__get_auth(auth)
+            api.gsfId = gsf_id
+            api.setAuthSubToken(auth_sub_token)
+            download = api.download(doc_id, expansion_files=True)
+        except Exception:
+            gsf_id, auth_sub_token = self.__get_auth(self.__get_new_token())
+            api = GooglePlayAPI(locale=_locale, timezone=_timezone, device_codename=_device_codename)
+            api.gsfId = gsf_id
+            api.setAuthSubToken(auth_sub_token)
+            download = api.download(doc_id, expansion_files=True)
         main_apk_file = download['file']
         download_list.append({"name": f'{doc_id}.apk',
                               "url": main_apk_file['url'],
@@ -110,11 +118,11 @@ class GooglePlay(BaseHub):
             auth_json = json.loads(auth)
             if not self.__check_health_limit_num(auth_json):
                 if self.__check_token(auth_json):
-                    self.__set_auth_limit_num(auth_json, 25)
+                    self.__set_auth_cache(auth_json, 25)
                     return auth_json
                 else:
                     return self.__get_new_token()
-            self.__set_auth_limit_num(auth_json)
+            self.__set_auth_cache(auth_json)
             return auth_json
 
     def __check_health_limit_num(self, auth: dict):
@@ -130,7 +138,7 @@ class GooglePlay(BaseHub):
         except TypeError:
             return False
 
-    def __set_auth_limit_num(self, auth: dict, limit_num: int or None = None):
+    def __set_auth_cache(self, auth: dict, limit_num: int or None = None):
         if limit_num is None and self.__have_health_limit_num(auth):
             limit_num = int(auth["health_limit_num"]) - 1
         auth["health_limit_num"] = limit_num
@@ -158,7 +166,7 @@ class GooglePlay(BaseHub):
             "mail": "xiangzhedev@gmail.com",
             "passwd": "slzlpcugmdydxvii",
         })
-        self.__set_auth_limit_num(auth_json, 25)
+        self.__set_auth_cache(auth_json, 25)
         logging.info("GooglePlay: Renew Token")
         return auth_json
 
