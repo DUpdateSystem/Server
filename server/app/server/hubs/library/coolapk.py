@@ -14,7 +14,7 @@ class CoolApk(BaseHub):
         package = app_id[android_app_key]
         if package == 'android':
             return []
-        url = _get_detail_url(package)
+        url = _mk_detail_url(package)
         request_json = _request(url).json()
         if 'status' in request_json and request_json['status'] < 0:
             return []
@@ -27,11 +27,11 @@ class CoolApk(BaseHub):
             "change_log": detail['changelog'],
             "assets": [{
                 "file_name": f"{package}-{newest_version_number}.apk",
-                "download_url": _get_redirect_url(_get_download_url(aid, package)),
+                "download_url": _get_redirect_url(_mk_download_url(aid, package)),
             }]
         })
 
-        url = _get_history_url(aid)
+        url = _mk_history_url(aid)
         request_json = _request(url).json()
         if 'status' in request_json and request_json['status'] < 0:
             return data
@@ -55,7 +55,7 @@ class CoolApk(BaseHub):
             if self is hub_dict[uuid]:
                 hub_uuid = uuid
                 break
-        download_url = _re_get_download_url(hub_uuid, app_id, asset_index, True)
+        download_url = _get_download_url(hub_uuid, app_id, asset_index, True)
         try:
             r = get_session().head(download_url)
             content_type = r.headers['Content-Type'].split(";")[0]
@@ -65,25 +65,25 @@ class CoolApk(BaseHub):
             logging.debug("网址验证正确")
         except requests.HTTPError:
             logging.debug("网址错误，尝试重新获取")
-            download_url = _re_get_download_url(hub_uuid, app_id, asset_index, False)
+            download_url = _get_download_url(hub_uuid, app_id, asset_index, False)
         return download_url
 
 
-def _re_get_download_url(hub_uuid, app_id, asset_index, use_cache):
+def _get_download_url(hub_uuid, app_id, asset_index, use_cache):
     from app.server.manager.data_manager import data_manager
     release_list = next(data_manager.get_release(hub_uuid, [app_id], use_cache=use_cache))["release_list"]
     return release_list[asset_index[0]]["assets"][asset_index[1]]["download_url"]
 
 
-def _get_detail_url(app_package: str) -> str:
+def _mk_detail_url(app_package: str) -> str:
     return f"https://api.coolapk.com/v6/apk/detail?id={app_package}"
 
 
-def _get_history_url(app_id: str) -> str:
+def _mk_history_url(app_id: str) -> str:
     return f"https://api.coolapk.com/v6/apk/downloadVersionList?id={app_id}"
 
 
-def _get_download_url(aid: str, app_package: str) -> str:
+def _mk_download_url(aid: str, app_package: str) -> str:
     return f"https://api.coolapk.com/v6/apk/download?pn={app_package}&aid={aid}"
 
 
