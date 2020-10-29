@@ -93,9 +93,11 @@ class DataManager:
 
     def __get_release_cache_iter(self, hub_uuid: str, app_id_list: list) -> tuple:
         generator_cache = GeneratorCache()
-        core = self.__get_release_cache_async(generator_cache, hub_uuid, app_id_list)
-        thread = Thread(target=run_fun_list([lambda: asyncio.run(core),
-                                             lambda: generator_cache.close()]))
+        thread = Thread(target=run_fun_list,
+                        args=([lambda: asyncio.run(
+                            self.__get_release_cache_async(generator_cache, hub_uuid, app_id_list),
+                            debug=server_config.debug_mode),
+                               generator_cache.close],))
         thread.start()
         return generator_cache, thread
 
@@ -115,11 +117,18 @@ class DataManager:
             timeout = len(app_id_list) * 11.25
         else:
             timeout = 30
-        core = self.__run_core(hub.get_release_list(generator_cache, app_id_list, auth), timeout)
-        thread = Thread(target=run_fun_list([lambda: asyncio.run(core),
-                                             lambda: generator_cache.close()]))
+        thread = Thread(target=run_fun_list,
+                        args=([lambda: asyncio.run(
+                            self.__run_get_release_fun(hub, generator_cache, timeout, app_id_list, auth),
+                            debug=server_config.debug_mode),
+                               generator_cache.close],))
         thread.start()
         return generator_cache, thread
+
+    async def __run_get_release_fun(self, hub, generator_cache: GeneratorCache, timeout: int, app_id_list: list,
+                                    auth: dict or None = None):
+        hub_core = hub.get_release_list(generator_cache, app_id_list, auth)
+        await self.__run_core(hub_core, timeout)
 
     @staticmethod
     async def __run_core(aw, timeout):

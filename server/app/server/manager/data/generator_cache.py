@@ -1,36 +1,23 @@
-from asyncio import Event
-
-from app.server.utils import set_new_asyncio_loop, call_def_in_loop_return_result
+from queue import SimpleQueue
 
 
 class GeneratorCache:
 
     def __init__(self):
-        self.__loop = set_new_asyncio_loop()
-        self.__cache_queue = []
-        self.__next_lock = Event()
-        self.__closed = False
+        self.__queue = SimpleQueue()
 
     def close(self):
-        self.__closed = True
-        self.add_value(None)
+        self.__queue.put(EOFError)
 
     def add_value(self, value):
-        self.__cache_queue.append(value)
-        self.__next_lock.set()
+        self.__queue.put(value)
 
     def __next__(self):
-        v = call_def_in_loop_return_result(self.__get_next_item(), self.__loop)
-        if self.__closed and v is None:
+        v = self.__queue.get()
+        if v is EOFError:
             raise StopIteration
-        return v
+        else:
+            return v
 
     def __iter__(self):
         return self
-
-    async def __get_next_item(self):
-        await self.__next_lock.wait()
-        v = self.__cache_queue.pop(0)
-        if not self.__cache_queue:
-            self.__next_lock.clear()
-        return v

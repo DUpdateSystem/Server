@@ -51,7 +51,7 @@ def call_fun_list_in_loop(core_list: list, loop=set_new_asyncio_loop()) -> tuple
 
 
 def call_fun_list_asyncio_no_return(core_list: list):
-    asyncio.run(__call_fun_list_in_loop(core_list))
+    asyncio.run(__call_fun_list_in_loop(core_list), debug=server_config.debug_mode)
 
 
 async def __call_fun_list_in_loop(core_list: list) -> tuple:
