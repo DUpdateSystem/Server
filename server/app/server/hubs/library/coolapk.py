@@ -2,11 +2,13 @@ import base64
 import hashlib
 import time
 
-import requests
+from requests import request, HTTPError
 
 from app.server.manager.data.constant import logging
 from ..base_hub import BaseHub
 from ..hub_script_utils import android_app_key, get_session
+
+__session = get_session()
 
 
 class CoolApk(BaseHub):
@@ -27,7 +29,7 @@ class CoolApk(BaseHub):
             "change_log": detail['changelog'],
             "assets": [{
                 "file_name": f"{package}-{newest_version_number}.apk",
-                "download_url": _get_redirect_url(_mk_download_url(aid, package)),
+                "download_url": _get_redirect_download_url(_mk_download_url(aid, package)),
             }]
         })
 
@@ -57,13 +59,13 @@ class CoolApk(BaseHub):
                 break
         download_url = _get_download_url(hub_uuid, app_id, asset_index, True)
         try:
-            r = get_session().head(download_url)
+            r = _redirect(download_url, None)
             content_type = r.headers['Content-Type'].split(";")[0]
             if content_type != 'application/vnd.android.package-archive':
                 logging.debug("返回非安装包数据")
-                raise requests.HTTPError
+                raise HTTPError
             logging.debug("网址验证正确")
-        except requests.HTTPError:
+        except HTTPError:
             logging.debug("网址错误，尝试重新获取")
             download_url = _get_download_url(hub_uuid, app_id, asset_index, False)
         return download_url
@@ -89,13 +91,17 @@ def _mk_download_url(aid: str, app_package: str) -> str:
 
 def _get_history_download_url(aid: str, app_package: str, version_id: str) -> str:
     row_url = f"https://api.coolapk.com/v6/apk/downloadHistory?pn={app_package}&aid={aid}&versionId={version_id}&downloadFrom=coolapk"
-    return _get_redirect_url(row_url)
+    return _get_redirect_download_url(row_url)
 
 
-def _get_redirect_url(url):
-    headers = __mk_headers()
-    r = requests.head(url, headers=headers, allow_redirects=True)
-    return r.url
+def _get_redirect_download_url(url):
+    r = _redirect(url, __mk_headers())
+    return _redirect(r.url, None).url
+
+
+def _redirect(url, headers) -> request:
+    r = __session.head(url, headers=headers, allow_redirects=True)
+    return r
 
 
 # 加密算法来自 https://github.com/ZCKun/CoolapkTokenCrack、https://zhuanlan.zhihu.com/p/69195418
@@ -104,7 +110,7 @@ __DEVICE_ID = "8513efac-09ea-3709-b214-95b366f1a185"
 
 def _request(url: str):
     headers = __mk_headers()
-    return requests.get(url, headers=headers)
+    return __session.get(url, headers=headers)
 
 
 def __get_app_token() -> str:
