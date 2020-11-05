@@ -1,8 +1,8 @@
 import json
-import requests
 
-from gpapi.googleplay import GooglePlayAPI as _GooglePlayAPI, PURCHASE_URL, ssl_verify, googleplay_pb2, \
-    LoginError, RequestError
+import requests
+from gpapi.googleplay import GooglePlayAPI as _GooglePlayAPI, \
+    PURCHASE_URL, ssl_verify, googleplay_pb2, LoginError, RequestError
 
 from app.server.manager.data.constant import logging
 from app.server.manager.data.generator_cache import GeneratorCache
@@ -23,7 +23,7 @@ class GooglePlay(BaseHub):
         api = self.__init_google_play_by_account(mail, passwd)
         return {
             "gsfId": api.gsfId,
-            "authSubToken": api.authSubToken
+            "ac2dmToken": api.authSubToken
         }
 
     async def get_release_list(self, generator_cache: GeneratorCache,
@@ -82,8 +82,13 @@ class GooglePlay(BaseHub):
             api = self.__get_google_api(auth)
             download = api.download(doc_id, expansion_files=True)
         except Exception:
-            api = self.__get_def_google_play()
-            download = api.download(doc_id, expansion_files=True)
+            # noinspection PyBroadException
+            try:
+                api = self.__get_def_google_play()
+                download = api.download(doc_id, expansion_files=True)
+            except Exception:
+                api = self.__get_def_google_play(use_spare=True)
+                download = api.download(doc_id, expansion_files=True)
         main_apk_file = download['file']
         download_list.append({"name": f'{doc_id}.apk',
                               "url": main_apk_file['url'],
@@ -114,11 +119,16 @@ class GooglePlay(BaseHub):
                 gsf_id, auth_sub_token = auth
             else:
                 return self.__get_def_google_play()
-        return self.__init_google_play_by_token(gsf_id, auth_sub_token)
+        return self.__init_google_play_by_gsfid_and_token(auth_sub_token, gsf_id)
 
-    def __get_def_google_play(self) -> _GooglePlayAPI:
-        api = self.__init_google_play_by_account("xiangzhedev@gmail.com", "slzlpcugmdydxvii")
-        add_tmp_cache(_auth_cache_key, json.dumps({"gsfId": api.gsfId, "authSubToken": api.authSubToken}))
+    def __get_def_google_play(self, use_spare=False) -> _GooglePlayAPI:
+        if use_spare:
+            logging.warn("GooglePlay: Use Spare Aurora API")
+            email, token = _get_aurora_token(1)
+        else:
+            email, token = _get_aurora_token(0)
+        api = self.__init_google_play_by_email_and_token(email, token)
+        add_tmp_cache(_auth_cache_key, json.dumps({"gsfId": api.gsfId, "ac2dmToken": api.authSubToken}))
         logging.info("GooglePlay: Renew Auth")
         return api
 
@@ -129,10 +139,18 @@ class GooglePlay(BaseHub):
         return api
 
     @staticmethod
-    def __init_google_play_by_token(gsf_id: int, auth_sub_token: str) -> _GooglePlayAPI:
+    def __init_google_play_by_gsfid_and_token(auth_sub_token: str, gsf_id: int) -> _GooglePlayAPI:
         api = GooglePlayAPI(locale=_locale, timezone=_timezone, device_codename=_device_codename)
         api.gsfId = gsf_id
         api.setAuthSubToken(auth_sub_token)
+        return api
+
+    @staticmethod
+    def __init_google_play_by_email_and_token(email: str, ac2dm_token: str) -> _GooglePlayAPI:
+        api = GooglePlayAPI(locale=_locale, timezone=_timezone, device_codename=_device_codename)
+        api.gsfId = api.checkin(email, ac2dm_token)
+        api.setAuthSubToken(ac2dm_token)
+        api.uploadDeviceConfig()
         return api
 
     def __get_cache_auth(self) -> tuple or None:
@@ -145,10 +163,44 @@ class GooglePlay(BaseHub):
 
     @staticmethod
     def __get_auth(auth: dict):
-        return int(auth["gsfId"]), auth["authSubToken"]
+        return int(auth["gsfId"]), auth["ac2dmToken"]
+
+
+# 使用了 Aurora 公共帐号接口，感谢 AuroraStore 项目及其开发者 whyorean
+_aurora_token_api_url_list = ("http://auroraoss.com:8080", "http://auroraoss.in:8080")
+
+
+def _get_aurora_token(index: int) -> tuple:
+    aurora_token_api_url = _aurora_token_api_url_list[index]
+    email = requests.get(f"{aurora_token_api_url}/email").text
+    token = requests.get(f"{aurora_token_api_url}/token/email/{email}").text
+    return email, token
 
 
 class GooglePlayAPI(_GooglePlayAPI):
+
+    def getHeaders(self, upload_fields=False):
+        """Return the default set of request headers, which
+        can later be expanded, based on the request type"""
+
+        if upload_fields:
+            headers = self.deviceBuilder.getDeviceUploadHeaders()
+        else:
+            headers = self.deviceBuilder.getBaseHeaders()
+        if self.gsfId is not None:
+            headers["X-DFE-Device-Id"] = "{0:x}".format(self.gsfId)
+        if self.authSubToken is not None:
+            headers["Authorization"] = f"Bearer {self.authSubToken}"
+            # 依据 com.dragons.aurora.playstoreapiv2 的 GooglePlayAPI 类  getDefaultHeaders 函数 832 行修改
+            # 感谢 playstoreapiv2 项目及其开发者们
+        if self.device_config_token is not None:
+            headers["X-DFE-Device-Config-Token"] = self.device_config_token
+        if self.deviceCheckinConsistencyToken is not None:
+            headers["X-DFE-Device-Checkin-Consistency-Token"] = self.deviceCheckinConsistencyToken
+        if self.dfeCookie is not None:
+            headers["X-DFE-Cookie"] = self.dfeCookie
+        return headers
+
     # noinspection PyPep8Naming
     def download(self, packageName, versionCode=None, offerType=1, expansion_files=False):
         """
