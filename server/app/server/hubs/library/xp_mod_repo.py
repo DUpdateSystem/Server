@@ -13,6 +13,10 @@ cache_key = "xposed_full_module_xml"
 
 
 class XpModRepo(BaseHub):
+    @staticmethod
+    def get_uuid() -> str:
+        return 'e02a95a2-af76-426c-9702-c4c39a01f891'
+   
     async def get_release_list(self, generator_cache: GeneratorCache,
                                app_id_list: list, auth: dict or None = None):
         xml_str = get_tmp_cache(cache_key)

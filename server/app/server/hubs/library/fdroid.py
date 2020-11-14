@@ -7,6 +7,10 @@ from ..hub_script_utils import android_app_key, http_get, get_tmp_cache, add_tmp
 
 
 class FDroid(BaseHub):
+    @staticmethod
+    def get_uuid() -> str:
+        return '6a6d590b-1809-41bf-8ce3-7e3f6c8da945'
+
     async def get_release_list(self, generator_cache: GeneratorCache,
                                app_id_list: list, auth: dict or None = None):
         if auth and 'repo_url' in auth:

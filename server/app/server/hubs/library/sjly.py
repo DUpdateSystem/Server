@@ -5,6 +5,10 @@ from ..hub_script_utils import http_get
 
 
 class Sjly(BaseHub):
+    @staticmethod
+    def get_uuid() -> str:
+        return '1c010cc9-cff8-4461-8993-a86mm190d377'
+
     def get_release(self, app_id: dict, auth: dict or None = None) -> list:
         app_id = app_id['app_id']
         url = _get_url(app_id)

@@ -1,5 +1,5 @@
 import asyncio
-from abc import ABCMeta
+from abc import ABCMeta, abstractmethod
 
 from requests import HTTPError
 
@@ -9,9 +9,14 @@ from app.server.manager.data.constant import logging
 from app.server.manager.data.generator_cache import GeneratorCache
 
 
-class BaseHub(metaclass=ABCMeta):
+class BaseHub(object, metaclass=ABCMeta):
     """ 软件源脚本需要实现的抽象类
     """
+
+    @staticmethod
+    @abstractmethod
+    def get_uuid() -> str:
+        return ''
 
     def init_account(self, account: dict) -> dict or None:
         pass

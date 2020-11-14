@@ -9,6 +9,10 @@ from ..hub_script_utils import http_get
 class Gitlab(BaseHub):
     """Gitlab 软件源"""
 
+    @staticmethod
+    def get_uuid() -> str:
+        return 'a84e2fbe-1478-4db5-80ae-75d00454c7eb'
+
     def get_release(self, app_id: dict, auth: dict or None = None) -> list:
         owner_name = app_id['owner']
         repo_name = app_id['repo']

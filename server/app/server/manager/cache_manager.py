@@ -20,10 +20,22 @@ startup_nodes = server_config.redis_node_list
 class CacheManager:
 
     def __init__(self):
-        self.__redis_release_cache_client = \
-            self.__redis_tmp_cache_client = RedisCluster(startup_nodes=startup_nodes,
-                                                         decode_responses=False,
-                                                         password=server_config.redis_server_password)
+        self.__redis_client = None
+
+    @property
+    def __redis_release_cache_client(self):
+        return self.__redis_client
+
+    @property
+    def __redis_tmp_cache_client(self):
+        return self.__redis_client
+
+    def __get_redis_client(self) -> RedisCluster:
+        if not self.__redis_client:
+            self.__redis_client = RedisCluster(startup_nodes=startup_nodes,
+                                               decode_responses=False,
+                                               password=server_config.redis_server_password)
+        return self.__redis_client
 
     def add_release_cache(self, hub_uuid: str, app_id: dict, release_info: list or None = None):
         try:

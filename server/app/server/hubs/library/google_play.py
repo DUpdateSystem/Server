@@ -17,6 +17,10 @@ _auth_cache_key = "google_play_def_token"
 
 
 class GooglePlay(BaseHub):
+    @staticmethod
+    def get_uuid() -> str:
+        return '65c2f60c-7d08-48b8-b4ba-ac6ee924f6fa'
+
     def init_account(self, account: dict) -> dict or None:
         mail = account['mail']
         passwd = account['passwd']

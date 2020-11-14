@@ -12,6 +12,10 @@ __session = get_session()
 
 
 class CoolApk(BaseHub):
+    @staticmethod
+    def get_uuid() -> str:
+        return '1c010cc9-cff8-4461-8993-a86cd190d377'
+
     def get_release(self, app_id: dict, auth: dict or None = None) -> list:
         package = app_id[android_app_key]
         if package == 'android':

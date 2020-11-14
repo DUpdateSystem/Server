@@ -1,12 +1,17 @@
 from ..base_hub import BaseHub
 from ..hub_script_utils import android_app_key, get_session
 
-headers = {
+_headers = {
     "User-Agent": "Dalvik/2.1.0 (Linux; U; Android 10; ONEPLUS A6013 Build/QQ2A.200501.001.B2)"
 }
 
 
 class AppChina(BaseHub):
+
+    @staticmethod
+    def get_uuid() -> str:
+        return '4a23c3a5-8200-40bb-b961-c1bb5d7fd921'
+
     def get_release(self, app_id: dict, auth: dict or None = None) -> list:
         package = app_id[android_app_key]
         newest_json = {"type": "app.detailInfo", "packagename": "com.example.app"}
@@ -40,4 +45,4 @@ def _send_api(param: dict) -> dict:
     session = get_session()
     api_url = "https://mobile.appchina.com/market/api"
     format_json = {"param": str(param), "api": "market.MarketAPI", "\n": ""}
-    return session.post(url=api_url, headers=headers, data=format_json).json()
+    return session.post(url=api_url, headers=_headers, data=format_json).json()
