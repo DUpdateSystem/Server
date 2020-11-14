@@ -16,7 +16,7 @@ class BaseHub(object, metaclass=ABCMeta):
     @staticmethod
     @abstractmethod
     def get_uuid() -> str:
-        return ''
+        pass
 
     def init_account(self, account: dict) -> dict or None:
         pass
