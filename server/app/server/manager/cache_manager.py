@@ -24,11 +24,11 @@ class CacheManager:
 
     @property
     def __redis_release_cache_client(self):
-        return self.__redis_client
+        return self.__get_redis_client()
 
     @property
     def __redis_tmp_cache_client(self):
-        return self.__redis_client
+        return self.__redis_release_cache_client
 
     def __get_redis_client(self) -> RedisCluster:
         if not self.__redis_client:
