@@ -3,8 +3,6 @@ import os
 import sys
 from pathlib import Path
 
-from .base_hub import BaseHub
-
 root_module_name = 'app.server.hubs'
 module_name = 'library'
 

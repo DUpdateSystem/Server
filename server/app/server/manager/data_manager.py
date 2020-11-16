@@ -9,6 +9,8 @@ from app.server.manager.data.constant import logging, time_loop
 from app.server.manager.data.generator_cache import GeneratorCache
 from app.server.utils import run_fun_list
 
+from app.status_checker.status import set_hub_available, get_hub_available
+
 
 class DataManager:
 
@@ -127,8 +129,15 @@ class DataManager:
 
     async def __run_get_release_fun(self, hub, generator_cache: GeneratorCache, timeout: int, app_id_list: list,
                                     auth: dict or None = None):
-        hub_core = hub.get_release_list(generator_cache, app_id_list, auth)
-        await self.__run_core(hub_core, timeout)
+        hub_uuid = hub.get_uuid()
+        # noinspection PyBroadException
+        try:
+            if get_hub_available(hub_uuid):
+                hub_core = hub.get_release_list(generator_cache, app_id_list, auth)
+                await self.__run_core(hub_core, timeout)
+            set_hub_available(hub_uuid, True)
+        except Exception:
+            set_hub_available(hub_uuid, False)
 
     @staticmethod
     async def __run_core(aw, timeout):

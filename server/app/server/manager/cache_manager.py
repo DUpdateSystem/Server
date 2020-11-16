@@ -2,8 +2,10 @@ import json
 from time import time
 
 from rediscluster import RedisCluster
+from rediscluster.exceptions import RedisClusterException
 
 from app.server.config import server_config
+from app.status_checker.status import set_redis_availability, get_redis_availability
 from .data.constant import logging
 from .data.local_cache import local_cache
 
@@ -67,8 +69,18 @@ class CacheManager:
         except ConnectionError:
             pass
 
+    def __set(self, redis_db: RedisCluster, key: str, value: str, ex_h: int = None):
+        if not get_redis_availability():
+            return
+        # noinspection PyBroadException
+        try:
+            self.__set0(redis_db, key, value, ex_h)
+            set_redis_availability(True)
+        except Exception:
+            set_redis_availability(False)
+
     @staticmethod
-    def __cache(redis_db: RedisCluster, key: str, value: str, ex_h: int = None):
+    def __set0(redis_db: RedisCluster, key: str, value: str, ex_h: int = None):
         if not server_config.use_cache_db:
             return
         key = key.encode('utf-8').strip()
@@ -80,8 +92,20 @@ class CacheManager:
             redis_db.zrem(redis_renew_time_set_key, key)
             redis_db.zadd(redis_renew_time_set_key, {key: int(time() / 60)})
 
+    def __get(self, redis_db: RedisCluster, key: str) -> str:
+        if not get_redis_availability():
+            raise RedisClusterException()
+        # noinspection PyBroadException
+        try:
+            value = self.__get0(redis_db, key)
+            set_redis_availability(True)
+            return value
+        except Exception as e:
+            set_redis_availability(False)
+            raise e
+
     @staticmethod
-    def __get(redis_db: RedisCluster, key: str) -> str:
+    def __get0(redis_db: RedisCluster, key: str) -> str:
         key = key.encode('utf-8').strip()
         if not server_config.use_cache_db or redis_db.exists(key) == 0:
             raise KeyError
@@ -89,7 +113,7 @@ class CacheManager:
 
     def __add_tmp_cache(self, key, value: str, ex_h: int = server_config.auto_refresh_time * 2):
         local_cache.add(key, value)
-        self.__cache(self.__redis_tmp_cache_client, key, value, ex_h)
+        self.__set(self.__redis_tmp_cache_client, key, value, ex_h)
 
     def __get_tmp_cache(self, key) -> str:
         value = local_cache.get(key)
@@ -101,7 +125,7 @@ class CacheManager:
     def __add_release_cache(self, hub_uuid: str, app_id: dict, release_info: list or None = None):
         key = self.__get_app_cache_key(hub_uuid, app_id)
         value = json.dumps(release_info)
-        self.__cache(self.__redis_release_cache_client, key, value, server_config.auto_refresh_time * 4)
+        self.__set(self.__redis_release_cache_client, key, value, server_config.auto_refresh_time * 4)
         # 缓存完毕
         logging.debug(f"release caching: {key}")
 
