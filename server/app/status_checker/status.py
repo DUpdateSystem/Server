@@ -12,7 +12,7 @@ def get_redis_availability() -> bool:
         return True
 
 
-def set_redis_availability(value):
+def set_redis_availability(value: bool):
     global __redis_availability
     __redis_availability = value
 
@@ -22,7 +22,7 @@ __hub_available_setting_time_dict = {}
 __hub_available_key_list = []
 
 
-def get_hub_available(hub_uuid) -> bool:
+def get_hub_available(hub_uuid: str) -> bool:
     if hub_uuid not in __hub_available_key_list \
             and time.time() - __hub_available_setting_time_dict[hub_uuid] < __timeout:
         return True
@@ -30,10 +30,10 @@ def get_hub_available(hub_uuid) -> bool:
         return True
 
 
-def set_hub_available(hub_uuid, available):
+def set_hub_available(hub_uuid: str, available: bool):
     if available and hub_uuid in __hub_available_setting_time_dict:
-        __hub_available_setting_time_dict.pop(hub_uuid)
+        del __hub_available_setting_time_dict[hub_uuid]
         __hub_available_key_list.append(hub_uuid)
     elif not available and hub_uuid in __hub_available_key_list:
-        __hub_available_key_list.pop(hub_uuid)
+        __hub_available_key_list.remove(hub_uuid)
         __hub_available_setting_time_dict[hub_uuid] = time.time()
