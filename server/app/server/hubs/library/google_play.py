@@ -1,4 +1,5 @@
 import json
+from itertools import islice
 
 import requests
 from gpapi.googleplay import GooglePlayAPI as _GooglePlayAPI, \
@@ -32,6 +33,10 @@ class GooglePlay(BaseHub):
 
     async def get_release_list(self, generator_cache: GeneratorCache,
                                app_id_list: list, auth: dict or None = None):
+        [await self.__get_release_list(generator_cache, lice, auth) for lice in islice(app_id_list, 50)]
+
+    async def __get_release_list(self, generator_cache: GeneratorCache,
+                                 app_id_list: list, auth: dict or None = None):
         [return_value_no_break(generator_cache, app_id, []) for app_id in app_id_list if
          android_app_key not in app_id]
         package_list = ["com.google.android.webview"] + [app_id[android_app_key] for app_id in app_id_list if
