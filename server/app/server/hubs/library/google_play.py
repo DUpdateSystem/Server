@@ -1,5 +1,4 @@
 import json
-from itertools import islice
 
 import requests
 from gpapi.googleplay import GooglePlayAPI as _GooglePlayAPI, \
@@ -33,7 +32,8 @@ class GooglePlay(BaseHub):
 
     async def get_release_list(self, generator_cache: GeneratorCache,
                                app_id_list: list, auth: dict or None = None):
-        [await self.__get_release_list(generator_cache, lice, auth) for lice in islice(app_id_list, 50)]
+        [await self.__get_release_list(generator_cache, lice, auth) for lice in
+         [app_id_list[i: i + 50] for i in range(0, len(app_id_list), 50)]]
 
     async def __get_release_list(self, generator_cache: GeneratorCache,
                                  app_id_list: list, auth: dict or None = None):

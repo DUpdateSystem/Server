@@ -149,14 +149,7 @@ app_id: {app_id}""", exc_info=server_config.debug_mode)
         cache_app_id_dict = {}
         key_list = self.__redis_tmp_cache_client.zrangebyscore(redis_renew_time_set_key, '-inf',
                                                                int(time() / 60) - server_config.auto_refresh_time * 60)
-        list_size = len(key_list)
-        if list_size > auto_renew_queue_size:
-            slice_size = len(key_list) / 4
-            if slice_size > auto_renew_queue_size:
-                key_list = key_list[0:slice_size]
-            else:
-                key_list = key_list[0:auto_renew_queue_size]
-        for key in key_list:
+        for key in key_list[:auto_renew_queue_size]:
             # noinspection PyBroadException
             try:
                 hub_uuid, app_id = self.__parsing_app_id(key.decode("utf-8"))
