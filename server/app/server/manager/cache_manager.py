@@ -27,7 +27,14 @@ class CacheManager:
 
     @property
     def __redis_release_cache_client(self):
-        return self.__get_redis_client()
+        # noinspection PyBroadException
+        try:
+            redis_client = self.__get_redis_client()
+            set_redis_availability(True)
+            return redis_client
+        except Exception as e:
+            set_redis_availability(False)
+            raise e
 
     @property
     def __redis_tmp_cache_client(self):
