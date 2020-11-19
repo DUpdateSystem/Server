@@ -1,5 +1,6 @@
 beautifulsoup4==4.9.3
 colorlog==4.6.2
+flask==1.1.2
 grpcio==1.32.0
 html5lib==1.1
 protobuf==3.13.0

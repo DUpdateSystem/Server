@@ -9,6 +9,7 @@ from app.server.config import server_config
 from app.server.manager.data.constant import logging
 from app.starter.run_debugger import debug
 from app.starter.run_grpc_server import serve
+from app.status_checker.http_api import checker_thread
 
 
 def __run() -> [Server, Thread, Thread or None]:
@@ -49,6 +50,7 @@ def __run() -> [Server, Thread, Thread or None]:
 def run():
     server = None
     try:
+        checker_thread.start()
         server, server_thread, debug_thread = __run()
         if debug_thread:
             debug_thread.join()
@@ -58,6 +60,7 @@ def run():
     except KeyboardInterrupt:
         logging.info("正在停止")
     finally:
+        checker_thread.shutdown()
         if server:
             server.stop(5).wait()
             logging.info("已停止")

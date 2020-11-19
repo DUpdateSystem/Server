@@ -8,6 +8,7 @@ class _ServerConfig:
     def __init__(self, config_path: str or None = None):
         self.host = "localhost"
         self.port = 5000
+        self.checker_port = self.port + 1
         self.max_workers = 16
         self.debug_mode = True
         self.auto_refresh_time = 6
@@ -27,6 +28,7 @@ class _ServerConfig:
         base_config = config['base']
         self.host = base_config['Host']
         self.port = int(base_config['Port'])
+        self.checker_port = int(base_config['CheckerPort'])
         self.max_workers = int(base_config['MaxWorkers'])
         self.debug_mode = bool(strtobool(base_config['DebugMode']))
         data_config = config['data']
