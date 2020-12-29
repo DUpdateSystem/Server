@@ -64,8 +64,8 @@ class CoolApk(BaseHub):
         download_url = _get_download_url(hub_uuid, app_id, asset_index, True)
         try:
             r = _redirect(download_url, None)
-            content_type = r.headers['Content-Type'].split(";")[0]
-            if content_type != 'application/vnd.android.package-archive':
+            if 'Content-Type' not in r.headers\
+                    or (r.headers['Content-Type'].split(";")[0] != 'application/vnd.android.package-archive'):
                 logging.debug("返回非安装包数据")
                 raise HTTPError
             logging.debug("网址验证正确")
