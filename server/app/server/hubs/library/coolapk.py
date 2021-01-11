@@ -104,7 +104,7 @@ def _get_redirect_download_url(url):
 
 
 def _redirect(url, headers) -> request:
-    r = __session.head(url, headers=headers, allow_redirects=True)
+    r = __session.head(url, headers=headers, allow_redirects=True, timeout=15)
     return r
 
 
@@ -114,7 +114,7 @@ __DEVICE_ID = "8513efac-09ea-3709-b214-95b366f1a185"
 
 def _request(url: str):
     headers = __mk_headers()
-    return __session.get(url, headers=headers)
+    return __session.get(url, headers=headers, timeout=15)
 
 
 def __get_app_token() -> str:

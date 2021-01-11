@@ -45,4 +45,4 @@ def _send_api(param: dict) -> dict:
     session = get_session()
     api_url = "https://mobile.appchina.com/market/api"
     format_json = {"param": str(param), "api": "market.MarketAPI", "\n": ""}
-    return session.post(url=api_url, headers=_headers, data=format_json).json()
+    return session.post(url=api_url, headers=_headers, data=format_json, timeout=15).json()
