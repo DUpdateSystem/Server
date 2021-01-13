@@ -116,13 +116,10 @@ class DataManager:
     def __get_release_nocache(self, hub_uuid: str, app_id_list: list, auth: dict or None = None) -> tuple:
         generator_cache = GeneratorCache()
         hub = hub_dict[hub_uuid]
-        """
         if len(app_id_list) > 5:
             timeout = len(app_id_list) * 11.25
         else:
             timeout = 30
-        """
-        timeout = None
         thread = Thread(target=run_fun_list,
                         args=([lambda: asyncio.run(
                             self.__run_get_release_fun(hub, generator_cache, timeout, app_id_list, auth),
