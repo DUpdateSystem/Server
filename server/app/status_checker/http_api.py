@@ -1,3 +1,4 @@
+import logging
 from threading import Thread
 
 from flask import Flask
@@ -23,6 +24,9 @@ class ServerThread(Thread):
 
 
 app = Flask(__name__)
+app.logger.disabled = True
+log = logging.getLogger('werkzeug')
+log.setLevel(logging.ERROR)
 
 
 @app.route('/status')
