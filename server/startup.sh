@@ -7,6 +7,8 @@ docker_container_name="update-server"
 
 dockerfile="Dockerfile"
 
+docker_mount="-v $PWD/app:/app -v $PWD/config.ini:/config.ini"
+
 
 BLUE='\033[0;31m'
 NC='\033[0m' # No Color
@@ -30,13 +32,12 @@ then
 	docker stop $docker_container_name && docker container rm $docker_container_name
 	# run docker container on 80 port
 	echo "Start Server"
-	docker run -dit --restart unless-stopped --name=$docker_container_name -d -v $PWD/app:/app -p $docker_server_port:$server_port $docker_image_name $1
+	docker run -dit --restart unless-stopped --name=$docker_container_name -d $docker_mount -p $docker_server_port:$server_port $docker_image_name $1
 	# clear docker images and container
 	echo "Clear"
 	docker rm $(docker ps -a -q); docker rmi $(docker images -f "dangling=true" -q)
 else
 	echo "Start Server"
 	echo -e "${BLUE}---------------the following is the program output---------------${NC}\n"
-	docker run --rm $docker_image_name -v $PWD/app:/app -p $docker_server_port:$server_port $docker_image_name $@
+	docker run --rm $docker_image_name $docker_mount -p $docker_server_port:$server_port $docker_image_name $@
 fi
-
