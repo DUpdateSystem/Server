@@ -46,6 +46,8 @@ UpgradeAll 服务端代码仓库
 ```sh
 $ git clone --depth=1 https://github.com/DUpdateSystem/Server.git
 # 获取你的调试/开发的基础环境
+$ cd server
+# 进入 Server 主体代码文件夹
 ```
 
 ### 运行这个项目
@@ -92,6 +94,7 @@ $ docker run --rm xiangzhedev/upgradeall-server --debug 6a6d590b-1809-41bf-8ce3-
 ```
 
 #### Shell script
+该脚本只用于调试，脚本会自动本地编译新的 Docker 镜像并挂载代码文件夹以便调试
 ```sh
 $ ./startup.sh
 # 部署服务端
