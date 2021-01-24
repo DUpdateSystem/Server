@@ -9,7 +9,7 @@ dockerfile="Dockerfile"
 
 docker_mount_list=("$PWD/app:/app" "$PWD/config.ini:/config.ini")
 docker_mount=""
-for mount in ${docker_mount_list[@]}
+for mount in "${docker_mount_list[@]}"
 do
 	docker_mount="$docker_mount -v $mount"
 done
