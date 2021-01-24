@@ -21,8 +21,6 @@ fi
 # build docker image
 docker build -f $dockerfile -t $docker_image_name .
 
-# mkdir cache dir
-mkdir $PWD/asset
 
 if [ "$1" == "--normal" ] || [ -z "$1" ]
 # normal run in server mode
@@ -32,13 +30,13 @@ then
 	docker stop $docker_container_name && docker container rm $docker_container_name
 	# run docker container on 80 port
 	echo "Start Server"
-	docker run -dit --restart unless-stopped --name=$docker_container_name -d -v $PWD/asset:/asset -p $docker_server_port:$server_port $docker_image_name $1
+	docker run -dit --restart unless-stopped --name=$docker_container_name -d -v $PWD/app:/app -p $docker_server_port:$server_port $docker_image_name $1
 	# clear docker images and container
 	echo "Clear"
 	docker rm $(docker ps -a -q); docker rmi $(docker images -f "dangling=true" -q)
 else
 	echo "Start Server"
 	echo -e "${BLUE}---------------the following is the program output---------------${NC}\n"
-	docker run --rm $docker_image_name -v $PWD/asset:/asset -p $docker_server_port:$server_port $docker_image_name $@
+	docker run --rm $docker_image_name -v $PWD/app:/app -p $docker_server_port:$server_port $docker_image_name $@
 fi
 
