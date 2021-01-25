@@ -6,7 +6,7 @@ from requests import request, HTTPError
 
 from app.server.manager.data.constant import logging
 from ..base_hub import BaseHub
-from ..hub_script_utils import android_app_key, get_session
+from ..hub_script_utils import android_app_key, get_session, get_url_from_release_fun
 
 __session = get_session()
 
@@ -55,13 +55,8 @@ class CoolApk(BaseHub):
         return data
 
     def get_download_info(self, app_id: dict, asset_index: list, auth: dict or None = None) -> dict or tuple or None:
-        from app.server.hubs.hub_list import hub_dict
-        hub_uuid = None
-        for uuid in hub_dict:
-            if self is hub_dict[uuid]:
-                hub_uuid = uuid
-                break
-        download_url = _get_download_url(hub_uuid, app_id, asset_index, True)
+        hub_uuid = self.get_uuid()
+        download_url = get_url_from_release_fun(hub_uuid, app_id, asset_index, use_cache=True)
         try:
             r = _redirect(download_url, None)
             if 'Content-Type' not in r.headers\
@@ -71,14 +66,8 @@ class CoolApk(BaseHub):
             logging.debug("网址验证正确")
         except HTTPError:
             logging.debug("网址错误，尝试重新获取")
-            download_url = _get_download_url(hub_uuid, app_id, asset_index, False)
+            download_url = get_url_from_release_fun(hub_uuid, app_id, asset_index, use_cache=False)
         return download_url
-
-
-def _get_download_url(hub_uuid, app_id, asset_index, use_cache):
-    from app.server.manager.data_manager import data_manager
-    release_list = next(data_manager.get_release(hub_uuid, [app_id], use_cache=use_cache))["release_list"]
-    return release_list[asset_index[0]]["assets"][asset_index[1]]["download_url"]
 
 
 def _mk_detail_url(app_package: str) -> str:
