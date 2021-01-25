@@ -125,6 +125,20 @@ def add_tmp_cache(key: str, value: str):
         cache_manager.add_tmp_cache(key, out.getvalue())
 
 
+def get_release_by_uuid(uuid, app_id: dict, auth: dict or None = None, use_cache=True) -> list:
+    """获取对应 UUID 的软件源的 get_release 函数的输出
+    Args:
+        uuid: 软件源的 UUID
+        use_cache: 是否使用服务器缓存
+        app_id: 客户端上传的软件属性
+        auth: 软件源身份验证信息
+    Returns:
+        对应的下载地址
+    """
+    from app.server.manager.data_manager import data_manager
+    return next(data_manager.get_release(uuid, [app_id], auth, use_cache=use_cache))["release_list"]
+
+
 def get_url_from_release_fun(uuid, app_id: dict, asset_index, auth: dict or None = None, use_cache=True) -> str:
     """获取对应 UUID 的软件源的 get_release 函数输出的下载地址
     Args:
@@ -136,9 +150,9 @@ def get_url_from_release_fun(uuid, app_id: dict, asset_index, auth: dict or None
     Returns:
         对应的下载地址
     """
-    from app.server.manager.data_manager import data_manager
-    release_list = next(data_manager.get_release(uuid, [app_id], auth, use_cache=use_cache))["release_list"]
-    return release_list[asset_index[0]]["assets"][asset_index[1]]["download_url"]
+    release_list = get_release_by_uuid(uuid, app_id, auth, use_cache)
+    release: dict = release_list[asset_index[0]]
+    return release["assets"][asset_index[1]]["download_url"]
 
 
 def return_value(generator_cache: GeneratorCache, app_id: dict, value):
