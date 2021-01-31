@@ -24,7 +24,7 @@ class Greeter(route_pb2_grpc.UpdateServerRouteServicer):
             request = MessageToDict(request, preserving_proto_field_name=True)
             if request["s"] == "dev":
                 rule_hub_url = "https://raw.githubusercontent.com/DUpdateSystem/UpgradeAll-rules/" \
-                        "dev/rules/rules_list.json"
+                        "dev/rules/rules.json"
                 logging.info("使用 Dev 分支的云端配置仓库")
         except Exception:
             pass
