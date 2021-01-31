@@ -16,7 +16,7 @@ class UpdateServerRouteStub(object):
         """
         self.GetCloudConfig = channel.unary_unary(
                 '/server_route.UpdateServerRoute/GetCloudConfig',
-                request_serializer=app_dot_grpc__template_dot_route__pb2.Empty.SerializeToString,
+                request_serializer=app_dot_grpc__template_dot_route__pb2.Str.SerializeToString,
                 response_deserializer=app_dot_grpc__template_dot_route__pb2.Str.FromString,
                 )
         self.GetAppStatus = channel.unary_unary(
@@ -90,7 +90,7 @@ def add_UpdateServerRouteServicer_to_server(servicer, server):
     rpc_method_handlers = {
             'GetCloudConfig': grpc.unary_unary_rpc_method_handler(
                     servicer.GetCloudConfig,
-                    request_deserializer=app_dot_grpc__template_dot_route__pb2.Empty.FromString,
+                    request_deserializer=app_dot_grpc__template_dot_route__pb2.Str.FromString,
                     response_serializer=app_dot_grpc__template_dot_route__pb2.Str.SerializeToString,
             ),
             'GetAppStatus': grpc.unary_unary_rpc_method_handler(
@@ -140,7 +140,7 @@ class UpdateServerRoute(object):
             timeout=None,
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/server_route.UpdateServerRoute/GetCloudConfig',
-            app_dot_grpc__template_dot_route__pb2.Empty.SerializeToString,
+            app_dot_grpc__template_dot_route__pb2.Str.SerializeToString,
             app_dot_grpc__template_dot_route__pb2.Str.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)

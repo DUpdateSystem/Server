@@ -7,7 +7,7 @@ option java_outer_classname = "RouteProto";
 package server_route;
 
 service UpdateServerRoute {
-  rpc GetCloudConfig(Empty) returns (Str) {}
+  rpc GetCloudConfig(Str) returns (Str) {}
 
   rpc GetAppStatus(Request) returns (Response) {}
   rpc GetDownloadInfo(DownloadAssetIndex) returns (DownloadInfo) {}

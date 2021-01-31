@@ -18,7 +18,19 @@ from app.server.utils import get_response, grcp_dict_list_to_dict
 class Greeter(route_pb2_grpc.UpdateServerRouteServicer):
 
     def GetCloudConfig(self, request, context) -> Str:
-        response = get_response(server_config.cloud_rule_hub_url)
+        rule_hub_url = None
+        # noinspection PyBroadException
+        try:
+            request = MessageToDict(request, preserving_proto_field_name=True)
+            if request["s"] == "dev":
+                rule_hub_url = "https://raw.githubusercontent.com/DUpdateSystem/UpgradeAll-rules/" \
+                        "dev/rules/rules_list.json"
+                logging.info("使用 Dev 分支的云端配置仓库")
+        except Exception:
+            pass
+        if rule_hub_url is None:
+            rule_hub_url = server_config.cloud_rule_hub_url
+        response = get_response(rule_hub_url)
         if response:
             logging.info("已完成获取云端配置仓库数据请求")
             return Str(s=response.text)
