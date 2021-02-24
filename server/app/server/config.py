@@ -41,22 +41,23 @@ class _ServerConfig:
         self.__parse_redis_config(cache_db_config)
 
     def __parse_redis_config(self, cache_db_config):
-        redis_host_list = cache_db_config['RedisServerAddress'].split()
-        redis_port_list = cache_db_config['RedisServerPort'].split()
-        if redis_host_list and redis_port_list:
-            self.redis_server_password = cache_db_config['RedisServerPassword']
-            self.redis_node_list.clear()
-            for i in range(len(redis_host_list)):
-                host: str = redis_host_list[i]
-                if i < len(redis_port_list):
-                    port: int = int(redis_port_list[i])
-                else:
-                    port: int = int(redis_port_list[0])
-                # noinspection PyTypeChecker
-                self.redis_node_list.append({
-                    "host": host,
-                    "port": port,
-                })
+        redis_host_list = cache_db_config['RedisServerUrl'].split()
+        self.redis_server_password = cache_db_config['RedisServerPassword']
+        self.redis_node_list.clear()
+        for url in redis_host_list:
+            self.redis_node_list = [*self.redis_node_list, *self.__parse_redis_url(url)]
+
+    @staticmethod
+    def __parse_redis_url(url: str) -> list:
+        arg_list = url.split(":")
+        host_name = arg_list[0]
+        host_port_range = [int(i) for i in arg_list[1].split("-")]
+        if len(host_port_range) == 2:
+            host_port_list = range(host_port_range[0], host_port_range[1])
+        else:
+            host_port_list = host_port_range
+        host_url_list = [{"host": host_name, "port": port} for port in host_port_list]
+        return host_url_list
 
     @staticmethod
     def __parse_file_path(path: str = None) -> Path:
