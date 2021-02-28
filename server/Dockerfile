@@ -15,7 +15,6 @@ RUN apk add --no-cache --virtual .build-deps \
 
 COPY ./app/requirements.txt ./
 
-RUN apk add --no-cache py3-grpcio
 RUN pip install --no-cache-dir -r requirements.txt
 RUN python -m pip install 'requests[socks]'
 
