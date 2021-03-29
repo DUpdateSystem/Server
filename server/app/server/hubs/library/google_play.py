@@ -1,4 +1,5 @@
 import json
+from random import randrange
 
 import requests
 from gpapi.googleplay import GooglePlayAPI as _GooglePlayAPI, \
@@ -96,7 +97,7 @@ class GooglePlay(BaseHub):
                 api = self.__get_def_google_play()
                 download = api.download(doc_id, expansion_files=True)
             except Exception:
-                api = self.__get_def_google_play(use_spare=True)
+                api = self.__get_def_google_play(True)
                 download = api.download(doc_id, expansion_files=True)
         main_apk_file = download['file']
         download_list.append({"name": f'{doc_id}.apk',
@@ -130,12 +131,12 @@ class GooglePlay(BaseHub):
                 return self.__get_def_google_play()
         return self.__init_google_play_by_gsfid_and_token(auth_sub_token, gsf_id)
 
-    def __get_def_google_play(self, use_spare=False) -> _GooglePlayAPI:
-        if use_spare:
-            logging.warn("GooglePlay: Use Spare Aurora API")
-            email, token = _get_aurora_token(1)
-        else:
-            email, token = _get_aurora_token(0)
+    def __get_def_google_play(self, random=False) -> _GooglePlayAPI:
+        position = 0
+        if random:
+            # logging.warn("GooglePlay: Try Random Aurora API")
+            position = -1
+        email, token = _get_aurora_token(position)
         api = self.__init_google_play_by_email_and_token(email, token)
         add_tmp_cache(_auth_cache_key, json.dumps({"gsfId": api.gsfId, "ac2dmToken": api.authSubToken}))
         logging.info("GooglePlay: Renew Auth")
@@ -176,13 +177,16 @@ class GooglePlay(BaseHub):
 
 
 # 使用了 Aurora 公共帐号接口，感谢 AuroraStore 项目及其开发者 whyorean
-_aurora_token_api_url_list = ("http://auroraoss.com:8080", "http://auroraoss.in:8080")
+_aurora_token_api_url_list = ("http://goolag.store:1337/api/auth",)
 
 
 def _get_aurora_token(index: int) -> tuple:
+    if index == -1:
+        index = randrange(0, len(_aurora_token_api_url_list))
     aurora_token_api_url = _aurora_token_api_url_list[index]
-    email = requests.get(f"{aurora_token_api_url}/email").text
-    token = requests.get(f"{aurora_token_api_url}/token/email/{email}").text
+    data_json = requests.get(aurora_token_api_url).json()
+    email = data_json["email"]
+    token = data_json["auth"]
     return email, token
 
 
