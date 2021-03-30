@@ -15,6 +15,6 @@ class GithubProxy(BaseHub):
         for release in data:
             for asset in release["assets"]:
                 url = asset["download_url"]
-                asset["download_url"] = f'https://git.johnsonran.cn/{url}'
-                # 使用 johnsonran Github 下载加速服务，感谢 johnsonran
+                asset["download_url"] = f'http://git.521331.xyz/{url}'
+                # Github 下载加速服务，感谢 忘却的旋律.
         return data
