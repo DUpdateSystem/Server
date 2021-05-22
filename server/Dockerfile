@@ -7,26 +7,20 @@ FROM python:3.9-alpine
 #RUN pip install -i https://pypi.tuna.tsinghua.edu.cn/simple pip -U
 #RUN pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple
 
-
+COPY ./app/requirements.txt ./
 RUN apk add --no-cache --virtual .build-deps \
 	build-base python3-dev git linux-headers \
-	libressl-dev musl-dev libffi-dev cargo
-
-
-COPY ./app/requirements.txt ./
-
-RUN pip install --no-cache-dir -r requirements.txt
-RUN python -m pip install 'requests[socks]'
-
-RUN apk add --no-cache protoc
-RUN pip install setuptools-rust
-RUN git clone --depth=1 https://github.com/NoMore201/googleplay-api
-RUN cd ./googleplay-api && python setup.py build && python setup.py install
-RUN pip uninstall -y setuptools-rust semantic_version toml
-RUN rm -rf ./googleplay-api
-
-RUN apk del .build-deps
-RUN apk add --no-cache libstdc++ libressl-dev
+	libressl-dev musl-dev libffi-dev cargo && \
+pip install --no-cache-dir -r requirements.txt && \
+python -m pip install 'requests[socks]' && \
+apk add --no-cache protoc && \
+pip install setuptools-rust && \
+git clone --depth=1 https://github.com/NoMore201/googleplay-api && \
+cd ./googleplay-api && python setup.py build && python setup.py install && \
+pip uninstall -y setuptools-rust semantic_version toml && \
+rm -rf ./googleplay-api && \
+apk del .build-deps && \
+apk add --no-cache libstdc++ libressl-dev
 
 COPY ./app ./app
 COPY ./config.ini ./
