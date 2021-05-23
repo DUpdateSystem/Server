@@ -7,27 +7,9 @@ FROM python:3.9-alpine
 #RUN pip install -i https://pypi.tuna.tsinghua.edu.cn/simple pip -U
 #RUN pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple
 
-
-RUN apk add --no-cache --virtual .build-deps \
-	build-base python3-dev git linux-headers \
-	libressl-dev musl-dev libffi-dev cargo
-
-
 COPY ./app/requirements.txt ./
-
-RUN pip install --no-cache-dir -r requirements.txt
-RUN python -m pip install 'requests[socks]'
-
-RUN apk add --no-cache protoc
-RUN pip install setuptools-rust
-RUN git clone --depth=1 https://github.com/NoMore201/googleplay-api
-RUN cd ./googleplay-api && python setup.py build && python setup.py install
-RUN pip uninstall -y setuptools-rust semantic_version toml
-RUN rm -rf ./googleplay-api
-
-RUN apk del .build-deps
-RUN apk add --no-cache libstdc++ libressl-dev
-
+COPY ./DockerfileRUN.sh ./
+RUN ./DockerfileRUN.sh && rm ./DockerfileRUN.sh
 COPY ./app ./app
 COPY ./config.ini ./
 
