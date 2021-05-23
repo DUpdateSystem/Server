@@ -1,8 +1,0 @@
-FROM xiangzhedev/upgradeall-server
-
-COPY ./startup_docker-compose.sh ./
-RUN apt install redis-tool
-
-
-ENTRYPOINT ["/usr/bin/env"]
-CMD [ "sh", "./startup_docker-compose.sh" ]

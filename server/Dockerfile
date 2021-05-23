@@ -8,7 +8,7 @@ FROM python:3.9-alpine
 #RUN pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple
 
 COPY ./app/requirements.txt ./
-COPY ./DockerfileRUN.sh ./
+COPY ./oci_build/DockerfileRUN.sh ./
 RUN ./DockerfileRUN.sh && rm ./DockerfileRUN.sh
 COPY ./app ./app
 COPY ./config.ini ./
