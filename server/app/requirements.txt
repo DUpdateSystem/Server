@@ -8,3 +8,5 @@ redis==3.5.3
 redis-py-cluster==2.1.0
 requests==2.25.1
 timeloop==1.0.2
+setuptools-rust
+requests[socks]

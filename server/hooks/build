@@ -1,0 +1,9 @@
+#!/bin/bash
+
+export DOCKER_CLI_EXPERIMENTAL=enabled
+
+docker run --rm --privileged tonistiigi/binfmt:latest --install all
+
+docker buildx create --use --name=mybuilder --driver docker-container
+
+docker buildx build --push -f $DOCKERFILE_PATH -t $IMAGE_NAME --platform linux/amd64,linux/arm64 .
