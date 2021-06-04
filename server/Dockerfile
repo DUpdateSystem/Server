@@ -1,4 +1,4 @@
-FROM python:slim
+FROM python:3.9-slim
 
 #[1/2]本地调试默认源太慢，使用科大源，调试时可以取消注释。
 #RUN sed -i 's#deb.debian.org#mirrors.ustc.edu.cn#g' /etc/apt/sources.list
