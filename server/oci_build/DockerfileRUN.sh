@@ -12,4 +12,4 @@ rm -rf ./googleplay-api
 apt-get autoremove --purge -y python3-dev git musl-dev libffi-dev cargo
 apt-get clean
 rm -rf /var/lib/apt/lists/*
-rm -rf /tmp
+rm -rf /tmp/*
