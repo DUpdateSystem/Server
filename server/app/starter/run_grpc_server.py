@@ -1,18 +1,17 @@
+import asyncio
 import threading
-from concurrent import futures
-from threading import Thread
+from concurrent.futures import ThreadPoolExecutor
 
-import grpc
 from google.protobuf.json_format import ParseDict, MessageToDict
-from grpc import Server
+from grpc import RpcContext, aio
 
 from app.grpc_template import route_pb2_grpc
 from app.grpc_template.route_pb2 import *
 from app.server.api import *
 # 初始化配置
 from app.server.config import server_config
-from app.server.manager.data.constant import logging, time_loop
-from app.server.utils import get_response, grcp_dict_list_to_dict
+from app.server.manager.data.constant import logging
+from app.server.utils import get_response, grcp_dict_list_to_dict, set_new_asyncio_loop, call_def_in_loop_return_result
 
 
 class Greeter(route_pb2_grpc.UpdateServerRouteServicer):
@@ -24,7 +23,7 @@ class Greeter(route_pb2_grpc.UpdateServerRouteServicer):
             request = MessageToDict(request, preserving_proto_field_name=True)
             if request["s"] == "dev":
                 rule_hub_url = "https://raw.githubusercontent.com/DUpdateSystem/UpgradeAll-rules/" \
-                        "dev/rules/rules.json"
+                               "dev/rules/rules.json"
                 logging.info("使用 Dev 分支的云端配置仓库")
         except Exception:
             pass
@@ -120,7 +119,7 @@ class Greeter(route_pb2_grpc.UpdateServerRouteServicer):
             logging.exception(f'gRPC: GetAppStatus, hub_uuid: {hub_uuid}')
             return None
 
-    def DevGetDownloadInfo(self, request: GetDownloadRequest, context: grpc.RpcContext) -> GetDownloadResponse:
+    def DevGetDownloadInfo(self, request: GetDownloadRequest, context: RpcContext) -> GetDownloadResponse:
         hub_uuid: str = request.hub_uuid
         auth: dict = grcp_dict_list_to_dict(request.auth)
         app_id: dict = grcp_dict_list_to_dict(request.app_id)
@@ -154,17 +153,34 @@ class Greeter(route_pb2_grpc.UpdateServerRouteServicer):
         return ParseDict(download_info, GetDownloadResponse())
 
 
-def init():
-    if not server_config.debug_mode:
-        time_loop.start()
+__loop = set_new_asyncio_loop()
+__server: aio.server
+__lock = asyncio.Lock(loop=__loop)
 
 
-def serve() -> [Server, Thread]:
-    init()
-    server = grpc.server(futures.ThreadPoolExecutor(max_workers=server_config.max_workers))
-    route_pb2_grpc.add_UpdateServerRouteServicer_to_server(Greeter(), server)
-    server.add_insecure_port(f'{server_config.host}:{server_config.port}')
-    server.start()
-    t = threading.Thread(target=server.wait_for_termination)
+async def __run():
+    global __server
+    await __lock.acquire()
+    __server = aio.server(ThreadPoolExecutor(max_workers=server_config.max_workers))
+    route_pb2_grpc.add_UpdateServerRouteServicer_to_server(Greeter(), __server)
+    __server.add_insecure_port(f'{server_config.host}:{server_config.port}')
+    await __server.start()
+
+    # 等待停止信号
+    await __lock.acquire()
+    await __server.stop(3)
+    await __server.wait_for_termination()
+
+
+def serve() -> [threading.Thread]:
+    t = threading.Thread(target=call_def_in_loop_return_result, args=[__run(), __loop])
     t.start()
-    return server, t
+    return t
+
+
+async def __stop():
+    __lock.release()
+
+
+def stop():
+    call_def_in_loop_return_result(__stop(), __loop)
