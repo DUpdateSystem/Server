@@ -1,9 +1,8 @@
 import json
 from time import time
 
+from redis import ConnectionPool, Redis
 from rediscluster import RedisCluster
-from redis.client import Redis
-from redis import BlockingConnectionPool
 from rediscluster.exceptions import RedisClusterException
 
 from app.server.config import server_config
@@ -52,11 +51,10 @@ class CacheManager:
                 node = startup_nodes[0]
                 host = node["host"]
                 port = node["port"]
-                self.__redis_client = Redis(connection_pool=BlockingConnectionPool(
-                    host=host, port=port,
-                    password=server_config.redis_server_password,
-                    db=release_cache_db_index)
-                )
+                pool = ConnectionPool(host=host, port=port,
+                                      password=server_config.redis_server_password,
+                                      db=release_cache_db_index)
+                self.__redis_client = Redis(connection_pool=pool)
         return self.__redis_client
 
     def add_release_cache(self, hub_uuid: str, app_id: dict, release_info: list or None = None):
