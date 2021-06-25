@@ -2,6 +2,7 @@ import argparse
 import os
 import sys
 from threading import Thread
+from multiprocessing import Process
 
 from app.server.config import server_config
 from app.server.manager.data.constant import logging, time_loop
@@ -10,7 +11,7 @@ from app.starter.run_grpc_server import serve, stop
 from app.status_checker.http_api import checker_thread
 
 
-def __run() -> [Thread, Thread or None]:
+def __run() -> [Process, Thread or None]:
     parser = argparse.ArgumentParser(
         prog="DUpdateSystem Server",
         description='DUpdateSystem 服务端'
@@ -33,7 +34,7 @@ def __run() -> [Thread, Thread or None]:
         proxy = env_dist['https_proxy']
     server_config.network_proxy = proxy
     run_args = parser.parse_args()
-    server_thread = debug_thread = None
+    server_process = debug_thread = None
 
     if run_args.debug:
         # 运行 debug 程序
@@ -41,25 +42,27 @@ def __run() -> [Thread, Thread or None]:
         debug_thread.start()
     else:
         # 运行服务程序
-        server_thread = serve()
-    return server_thread, debug_thread
+        server_process = serve()
+    return server_process, debug_thread
 
 
 def run():
-    server_thread = None
+    server_process = None
     try:
         checker_thread.start()
-        server_thread, debug_thread = __run()
+        server_process, debug_thread = __run()
         if debug_thread:
             debug_thread.join()
-        if server_thread:
+        if server_process:
             time_loop.start()
-            server_thread.join()
+            server_process.join()
     except KeyboardInterrupt:
         logging.info("正在停止")
+        stop()
     finally:
+        server_process.join()
         checker_thread.shutdown()
-        if server_thread:
-            stop()
+        if server_process:
+            server_process.kill()
             logging.info("已停止")
         sys.exit(0)

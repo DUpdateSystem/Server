@@ -1,5 +1,5 @@
 import asyncio
-import threading
+from multiprocessing import Process
 from concurrent.futures import ThreadPoolExecutor
 
 from google.protobuf.json_format import ParseDict, MessageToDict
@@ -164,22 +164,39 @@ async def __run():
     __server = aio.server(ThreadPoolExecutor(max_workers=server_config.max_workers))
     route_pb2_grpc.add_UpdateServerRouteServicer_to_server(Greeter(), __server)
     __server.add_insecure_port(f'{server_config.host}:{server_config.port}')
+    logging.info("gRPC 启动中")
     await __server.start()
+    logging.info("gRPC 已启动")
 
     # 等待停止信号
+    logging.info("启动 gRPC 进程运行阻塞锁（额外）")
     await __lock.acquire()
-    await __server.stop(3)
+    logging.info("脱离 gRPC 进程运行阻塞锁（额外）")
     await __server.wait_for_termination()
+    logging.info("脱离 gRPC 运行阻塞")
 
 
-def serve() -> [threading.Thread]:
-    t = threading.Thread(target=call_def_in_loop_return_result, args=[__run(), __loop])
+def _run():
+    try:
+        call_def_in_loop_return_result(__run(), __loop)
+        logging.info("gRPC 已脱离阻塞")
+    except KeyboardInterrupt:
+        logging.info("停止 gRPC")
+        stop()
+
+
+def serve() -> [Process]:
+    t = Process(target=_run)
     t.start()
     return t
 
 
 async def __stop():
+    logging.info("gRPC 停止中")
+    await __server.stop(5)
+    logging.info("gRPC 已停止")
     __lock.release()
+    logging.info("已取消 gRPC 进程运行阻塞锁（额外）")
 
 
 def stop():
