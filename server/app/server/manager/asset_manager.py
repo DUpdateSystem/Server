@@ -1,9 +1,13 @@
 import os
-import time
 import pathlib
+import time
 from datetime import timedelta
+
 from app.server.config import server_config as _server_config
+from app.server.manager.cache_manager import cache_manager
 from app.server.manager.data.constant import time_loop
+from app.server.utils import get_response
+from .data.constant import logging
 
 _asset_dir_path = _server_config.download_asset_dir_path
 _asset_dir_path.mkdir(parents=True, exist_ok=True)
@@ -38,3 +42,37 @@ def __auto_clean_old_file():
         current = time.time()
         if current - ctime >= 24 * 3600:
             os.remove(file)
+
+
+def get_cloud_config_str(dev_version: bool) -> str or None:
+    if dev_version:
+        cache_key = "cloud_config_dev"
+    else:
+        cache_key = "cloud_config"
+    try:
+        cache_str = cache_manager.get_tmp_cache(cache_key)
+    except KeyError:
+        cache_str = None
+    if cache_str:
+        logging.info("Cloud Config: 命中缓存")
+        return cache_str
+    else:
+        logging.info("Cloud Config: 未缓存")
+        cloud_config_str = __get_cloud_config_str(dev_version)
+        if cloud_config_str:
+            logging.info("Cloud Config: 配置获取成功")
+            cache_manager.add_tmp_cache(cache_key, cloud_config_str, 0.1)
+            return cloud_config_str
+        else:
+            logging.info(f"Cloud Config: 配置获取失败（dev: {dev_version}）")
+
+
+def __get_cloud_config_str(dev_version: bool) -> str or None:
+    if dev_version:
+        rule_hub_url = "https://raw.githubusercontent.com/DUpdateSystem/UpgradeAll-rules/" \
+                       "dev/rules/rules.json"
+    else:
+        rule_hub_url = _server_config.cloud_rule_hub_url
+    response = get_response(rule_hub_url)
+    if response:
+        return response.text

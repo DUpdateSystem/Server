@@ -1,6 +1,6 @@
 import asyncio
-from multiprocessing import Process
 from concurrent.futures import ThreadPoolExecutor
+from multiprocessing import Process
 
 from google.protobuf.json_format import ParseDict, MessageToDict
 from grpc import RpcContext, aio
@@ -10,29 +10,24 @@ from app.grpc_template.route_pb2 import *
 from app.server.api import *
 # 初始化配置
 from app.server.config import server_config
+from app.server.manager.asset_manager import get_cloud_config_str
 from app.server.manager.data.constant import logging
-from app.server.utils import get_response, grcp_dict_list_to_dict, set_new_asyncio_loop, call_def_in_loop_return_result
+from app.server.utils import grcp_dict_list_to_dict, set_new_asyncio_loop, call_def_in_loop_return_result
 
 
 class Greeter(route_pb2_grpc.UpdateServerRouteServicer):
 
     def GetCloudConfig(self, request, context) -> Str:
-        rule_hub_url = None
+        dev_version = False
         # noinspection PyBroadException
         try:
             request = MessageToDict(request, preserving_proto_field_name=True)
             if request["s"] == "dev":
-                rule_hub_url = "https://raw.githubusercontent.com/DUpdateSystem/UpgradeAll-rules/" \
-                               "dev/rules/rules.json"
+                dev_version = True
                 logging.info("使用 Dev 分支的云端配置仓库")
         except Exception:
             pass
-        if rule_hub_url is None:
-            rule_hub_url = server_config.cloud_rule_hub_url
-        response = get_response(rule_hub_url)
-        if response:
-            logging.info("已完成获取云端配置仓库数据请求")
-            return Str(s=response.text)
+        return Str(s=get_cloud_config_str(dev_version))
 
     def GetAppStatus(self, request, context) -> Response:
         # noinspection PyBroadException
