@@ -8,8 +8,10 @@ from bs4 import BeautifulSoup
 from requests import Response, Session, HTTPError
 
 from app.server.manager.cache_manager import cache_manager
+from app.server.manager.data.constant import logging
 from app.server.manager.data.constant import session as __session, proxies as __proxies
 from app.server.manager.data.generator_cache import GeneratorCache
+from app.server.manager.webgetter.getter_utils import get_release
 
 android_app_key = 'android_app_package'
 
@@ -135,8 +137,7 @@ def get_release_by_uuid(uuid, app_id: dict, auth: dict or None = None, use_cache
     Returns:
         对应的下载地址
     """
-    from app.server.manager.data_manager import data_manager
-    return next(data_manager.get_release(uuid, [app_id], auth, use_cache=use_cache))["release_list"]
+    return next(get_release(uuid, [app_id], auth, use_cache=use_cache))[1]
 
 
 def get_url_from_release_fun(uuid, app_id: dict, asset_index, auth: dict or None = None, use_cache=True) -> str:
@@ -169,9 +170,11 @@ async def run_fun_list_without_error(fun_list):
     await asyncio.gather(*fun_list)
 
 
-async def __run_return_value_fun(fun):
+async def __run_return_value_fun(aw):
     try:
-        return await fun
+        return await asyncio.wait_for(aw, 10)
+    except asyncio.TimeoutError:
+        logging.debug(f'aw: {aw} timeout!')
     except ReturnFun:
         pass
 

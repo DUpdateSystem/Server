@@ -1,11 +1,12 @@
 import argparse
 import os
 import sys
-from threading import Thread
 from multiprocessing import Process
+from threading import Thread
 
 from app.server.config import server_config
 from app.server.manager.data.constant import logging, time_loop
+from app.server.manager.webgetter.getter import web_getter_manager
 from app.starter.run_debugger import debug
 from app.starter.run_grpc_server import serve, stop
 from app.status_checker.http_api import checker_thread
@@ -35,6 +36,7 @@ def __run() -> [Process, Thread or None]:
     server_config.network_proxy = proxy
     run_args = parser.parse_args()
     server_process = debug_thread = None
+    web_getter_manager.start()
 
     if run_args.debug:
         # 运行 debug 程序
@@ -53,14 +55,16 @@ def run():
         server_process, debug_thread = __run()
         if debug_thread:
             debug_thread.join()
+            web_getter_manager.stop()
         if server_process:
             time_loop.start()
             server_process.join()
+        web_getter_manager.join()
     except KeyboardInterrupt:
         logging.info("正在停止")
+        web_getter_manager.stop()
         stop()
     finally:
-        server_process.join()
         checker_thread.shutdown()
         if server_process:
             server_process.kill()

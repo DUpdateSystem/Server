@@ -95,3 +95,17 @@ def get_manager_list():
 
 def get_manager_dict():
     return __manager.dict()
+
+
+def hash_dict_list(func):
+    class HDict(dict):
+        def __hash__(self):
+            return hash(frozenset(self.items()))
+
+    def wrapper(*args, **kwargs):
+        print(args)
+        args = [tuple(arg) if type(arg) == list else HDict(arg) if isinstance(arg, dict) else arg for arg in args]
+        kwargs = {k: HDict(v) if isinstance(v, dict) else v for k, v in kwargs.items()}
+        return func(*args, **kwargs)
+
+    return wrapper

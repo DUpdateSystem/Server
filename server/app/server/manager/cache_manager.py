@@ -1,3 +1,4 @@
+import functools
 import json
 from time import time
 
@@ -81,6 +82,7 @@ class CacheManager:
         except ConnectionError:
             pass
 
+    @functools.lru_cache(maxsize=1024)
     def get_tmp_cache(self, key) -> str or None:
         try:
             return self.__get_tmp_cache(key)
@@ -154,12 +156,16 @@ class CacheManager:
 hub_uuid: {hub_uuid}
 app_id: {app_id}""", exc_info=server_config.debug_mode)
             raise NameError
-        release_info = self.__get(self.__redis_release_cache_client, key)
+        release_info = self.__get_release_cache0(key)
         logging.debug(f"release cached: {key}")
         if release_info:
             return json.loads(release_info)
         else:
             return release_info
+
+    @functools.lru_cache(maxsize=4096)
+    def __get_release_cache0(self, key):
+        return self.__get(self.__redis_release_cache_client, key)
 
     @property
     def cached_app_queue(self) -> dict:

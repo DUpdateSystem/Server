@@ -1,10 +1,11 @@
+from multiprocessing import Manager
 from queue import SimpleQueue
 
 
-class GeneratorCache:
+class BaseGeneratorCache:
 
-    def __init__(self):
-        self.__queue = SimpleQueue()
+    def __init__(self, queue):
+        self.__queue = queue
 
     def close(self):
         self.__queue.put(EOFError)
@@ -21,3 +22,18 @@ class GeneratorCache:
 
     def __iter__(self):
         return self
+
+
+m = Manager()
+
+
+class ProcessGeneratorCache(BaseGeneratorCache):
+
+    def __init__(self):
+        super().__init__(m.Queue())
+
+
+class GeneratorCache(BaseGeneratorCache):
+
+    def __init__(self):
+        super().__init__(SimpleQueue())
