@@ -58,7 +58,7 @@ def get_cloud_config_str(dev_version: bool) -> str or None:
         return cache_str
     else:
         logging.info("Cloud Config: 未缓存")
-        cloud_config_str = __get_cloud_config_str(dev_version)
+        cloud_config_str = __get_cloud_config_str(dev_version, True)
         if cloud_config_str:
             logging.info("Cloud Config: 配置获取成功")
             cache_manager.add_tmp_cache(cache_key, cloud_config_str, 0.1)
@@ -67,12 +67,18 @@ def get_cloud_config_str(dev_version: bool) -> str or None:
             logging.info(f"Cloud Config: 配置获取失败（dev: {dev_version}）")
 
 
-def __get_cloud_config_str(dev_version: bool) -> str or None:
+def __get_cloud_config_str(dev_version: bool, use_self_worker: bool = True) -> str or None:
     if dev_version:
         rule_hub_url = "https://raw.githubusercontent.com/DUpdateSystem/UpgradeAll-rules/" \
                        "dev/rules/rules.json"
     else:
         rule_hub_url = _server_config.cloud_rule_hub_url
+    back = rule_hub_url
+    if use_self_worker:
+        rule_hub_url = "https://re.flaw.workers.dev/" + rule_hub_url
     response = get_response(rule_hub_url)
     if response:
         return response.text
+    else:
+        response = get_response(back)
+        return response
