@@ -2,6 +2,7 @@ import asyncio
 from threading import Thread
 
 from app.server.manager.cache_manager import cache_manager
+from app.server.manager.data.constant import logging
 from app.server.manager.data.generator_cache import GeneratorCache
 from app.status_checker.status import set_hub_available, get_hub_available
 
@@ -12,7 +13,7 @@ def get_release(hub_uuid: str, app_id_list: list, auth: dict or None,
     hub = hub_dict[hub_uuid]
     response_queue = GeneratorCache()
     if use_cache:
-        release_list_iter, thread = _get_release_cache(hub_uuid, app_id_list, response_queue, close_queue=False)
+        release_list_iter, thread = _get_release_cache(hub_uuid, app_id_list, response_queue, close_queue=True)
         for app_id, release_list in release_list_iter:
             if release_list and not (len(release_list) == 1 and release_list[0] is None):
                 yield app_id, release_list
@@ -106,4 +107,4 @@ async def __run_core(aw, item_num: int):
     try:
         await asyncio.wait_for(aw, timeout=timeout)
     except asyncio.TimeoutError:
-        print(f'aw: {aw} timeout!')
+        logging.info(f'aw: {aw} timeout!')

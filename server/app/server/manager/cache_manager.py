@@ -55,7 +55,7 @@ class CacheManager:
                 pool = ConnectionPool(host=host, port=port,
                                       password=server_config.redis_server_password,
                                       db=release_cache_db_index)
-                self.__redis_client = Redis(connection_pool=pool)
+                self.__redis_client = Redis(connection_pool=pool, socket_timeout=15, socket_connect_timeout=15)
         return self.__redis_client
 
     def add_release_cache(self, hub_uuid: str, app_id: dict, release_info: list or None = None):
@@ -120,6 +120,8 @@ class CacheManager:
             value = self.__get0(redis_db, key)
             set_redis_availability(True)
             return value
+        except KeyError as e:
+            raise e
         except Exception as e:
             set_redis_availability(False)
             raise e
@@ -156,15 +158,23 @@ class CacheManager:
 hub_uuid: {hub_uuid}
 app_id: {app_id}""", exc_info=server_config.debug_mode)
             raise NameError
-        release_info = self.__get_release_cache0(key)
-        logging.debug(f"release cached: {key}")
+        release_info = self.__get_release_cache_value(key)
         if release_info:
             return json.loads(release_info)
         else:
             return release_info
 
+    def __get_release_cache_value(self, key):
+        # noinspection PyBroadException
+        try:
+            value = self.__get_release_cache_cache_core(key)
+            logging.debug(f"release cached: {key}")
+            return value
+        except Exception:
+            pass
+
     @functools.lru_cache(maxsize=4096)
-    def __get_release_cache0(self, key):
+    def __get_release_cache_cache_core(self, key):
         return self.__get(self.__redis_release_cache_client, key)
 
     @property
