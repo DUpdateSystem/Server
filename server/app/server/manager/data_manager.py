@@ -1,9 +1,9 @@
-from datetime import timedelta
+import schedule
 
-from app.server.config import server_config
+from app.server.config import server_config as _server_config
 from app.server.hubs.hub_list import hub_dict
 from app.server.manager.cache_manager import cache_manager
-from app.server.manager.data.constant import logging, time_loop
+from app.server.manager.data.constant import logging
 from app.server.manager.webgetter.getter_api import send_getter_request
 
 
@@ -19,7 +19,7 @@ class DataManager:
         try:
             return hub.init_account(account)
         except Exception:
-            logging.error(f"""hub_uuid: {hub_uuid} \nERROR: """, exc_info=server_config.debug_mode)
+            logging.error(f"""hub_uuid: {hub_uuid} \nERROR: """, exc_info=_server_config.debug_mode)
             return None
 
     @staticmethod
@@ -46,7 +46,7 @@ class DataManager:
             else:
                 return download_info
         except Exception:
-            logging.error(f"""app_id: {app_id} \nERROR: """, exc_info=server_config.debug_mode)
+            logging.error(f"""app_id: {app_id} \nERROR: """, exc_info=_server_config.debug_mode)
             return None
 
     def refresh_cache(self, uuid: str or None = None):
@@ -73,8 +73,10 @@ class DataManager:
 data_manager = DataManager()
 
 
-@time_loop.job(interval=timedelta(hours=server_config.auto_refresh_time))
 def _auto_refresh():
     logging.info("auto refresh data: start")
     data_manager.refresh_cache()
     logging.info("auto refresh data: finish")
+
+
+schedule.every(_server_config.auto_refresh_time).hours.do(_auto_refresh)

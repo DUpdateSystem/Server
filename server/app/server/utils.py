@@ -1,6 +1,9 @@
 import asyncio
+import time
 from multiprocessing import Manager
+from threading import Thread
 
+import schedule
 from requests import Response
 
 from app.server.config import server_config
@@ -109,3 +112,13 @@ def hash_dict_list(func):
         return func(*args, **kwargs)
 
     return wrapper
+
+
+def __start_schedule():
+    while True:
+        schedule.run_pending()
+        time.sleep(15 * 60)
+
+
+def start_schedule():
+    Thread(target=__start_schedule).start()

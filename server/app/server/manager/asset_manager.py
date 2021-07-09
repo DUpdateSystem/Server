@@ -1,11 +1,11 @@
 import os
 import pathlib
 import time
-from datetime import timedelta
+
+import schedule
 
 from app.server.config import server_config as _server_config
 from app.server.manager.cache_manager import cache_manager
-from app.server.manager.data.constant import time_loop
 from app.server.utils import get_response
 from .data.constant import logging
 
@@ -34,7 +34,6 @@ def read_byte_asset(file_name: str) -> bytes:
         return f.read()
 
 
-@time_loop.job(interval=timedelta(hours=_server_config.auto_refresh_time))
 def __auto_clean_old_file():
     for (dir_path, _, filenames) in os.walk(_asset_dir_path):
         file = pathlib.PurePath(dir_path, filenames)
@@ -42,6 +41,9 @@ def __auto_clean_old_file():
         current = time.time()
         if current - ctime >= 24 * 3600:
             os.remove(file)
+
+
+schedule.every(_server_config.auto_refresh_time).hours.do(__auto_clean_old_file)
 
 
 def get_cloud_config_str(dev_version: bool) -> str or None:

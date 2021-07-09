@@ -5,8 +5,9 @@ from multiprocessing import Process
 from threading import Thread
 
 from app.server.config import server_config
-from app.server.manager.data.constant import logging, time_loop
+from app.server.manager.data.constant import logging
 from app.server.manager.webgetter.getter import web_getter_manager
+from app.server.utils import start_schedule
 from app.starter.run_debugger import debug
 from app.starter.run_grpc_server import serve, stop
 from app.status_checker.http_api import checker_thread
@@ -57,7 +58,7 @@ def run():
             debug_thread.join()
             web_getter_manager.stop()
         if server_process:
-            time_loop.start()
+            start_schedule()
             server_process.join()
         web_getter_manager.join()
     except KeyboardInterrupt:
