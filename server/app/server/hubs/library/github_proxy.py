@@ -19,8 +19,8 @@ class GithubProxy(BaseHub):
             for asset in release["assets"]:
                 url = asset["download_url"]
                 asset["download_url"] = self.__get_proxy_url(url)
-                # Github 下载加速服务，感谢 JohnsonRan 的发现与 FastGit 提供下载服务.
-                # FastGit 文档/捐赠：https://doc.fastgit.org/zh-cn/#%E5%85%B3%E4%BA%8E-fastgit
+                # Github 下载加速服务，感谢 JohnsonRan 的发现与 FastGit UK 提供下载服务.
+                # FastGit UK 文档/捐赠：https://doc.fastgit.org/zh-cn/#%E5%85%B3%E4%BA%8E-fastgit
         return data
 
     @staticmethod
