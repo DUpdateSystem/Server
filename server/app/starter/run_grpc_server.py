@@ -25,9 +25,9 @@ class Greeter(route_pb2_grpc.UpdateServerRouteServicer):
             if request["s"] == "dev":
                 dev_version = True
                 logging.info("使用 Dev 分支的云端配置仓库")
+            return Str(s=get_cloud_config_str(dev_version, True))
         except Exception:
-            pass
-        return Str(s=get_cloud_config_str(dev_version))
+            logging.exception('gRPC: GetCloudConfig')
 
     def GetAppStatus(self, request, context) -> Response:
         # noinspection PyBroadException

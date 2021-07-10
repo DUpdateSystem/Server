@@ -4,6 +4,7 @@ import time
 
 import schedule
 
+from app.migration.migration import migrate_dev
 from app.server.config import server_config as _server_config
 from app.server.manager.cache_manager import cache_manager
 from app.server.utils import get_response
@@ -46,7 +47,18 @@ def __auto_clean_old_file():
 schedule.every(_server_config.auto_refresh_time).hours.do(__auto_clean_old_file)
 
 
-def get_cloud_config_str(dev_version: bool) -> str or None:
+def get_cloud_config_str(dev_version: bool, migrate_master: bool) -> str or None:
+    if dev_version and migrate_master:
+        r_dev_version = False
+    else:
+        r_dev_version = dev_version
+    cloud_config_str = _get_cloud_config_str(r_dev_version)
+    if migrate_master and cloud_config_str:
+        cloud_config_str = migrate_dev(cloud_config_str)
+    return cloud_config_str
+
+
+def _get_cloud_config_str(dev_version: bool) -> str or None:
     if dev_version:
         cache_key = "cloud_config_dev"
     else:

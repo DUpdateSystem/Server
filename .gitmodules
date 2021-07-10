@@ -1,0 +1,6 @@
+[submodule "server/UpgradeAll-rules"]
+	path = server/UpgradeAll-rules
+	url = https://github.com/DUpdateSystem/UpgradeAll-rules.git
+[submodule "server/app/UpgradeAll-rules"]
+	path = server/app/UpgradeAll-rules
+	url = https://github.com/DUpdateSystem/UpgradeAll-rules.git
