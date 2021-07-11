@@ -52,19 +52,19 @@ $ cd server
 
 ### 运行这个项目
 
-#### Docker
+#### Podman/Docker
 ```sh
-$ docker pull xiangzhedev/upgradeall-server
+$ podman pull docker.io/xiangzhedev/upgradeall-server
 # 更新镜像
-$ docker run --rm -p 5255:5255 xiangzhedev/upgradeall-server
+$ podman run --rm -p 5255:5255 xiangzhedev/upgradeall-server
 # 单次运行
-$ docker run --rm -v $PWD/app:/app -p 5255:5255 xiangzhedev/upgradeall-server
+$ podman run --rm -v $PWD/app:/app -p 5255:5255 xiangzhedev/upgradeall-server
 # 测试运行（在该项目的根目录下运行）
-$ docker run --rm -p 5255:5255 xiangzhedev/upgradeall-server --help
+$ podman run --rm -p 5255:5255 xiangzhedev/upgradeall-server --help
 # 查看参数帮助
-$ docker run -dit --restart unless-stopped --name=update-server -d -p 5255:5255 xiangzhedev/upgradeall-server
+$ podman run -dit --restart unless-stopped --name=update-server -d -p 5255:5255 xiangzhedev/upgradeall-server
 # 服务部署
-$ docker stop update-server && docker container rm update-server
+$ podman stop update-server && podman container rm update-server
 # 停止服务
 ```
 
@@ -85,45 +85,46 @@ $ python3 -m app --help
 ```
 
 ### 示例
-#### Docker
+#### Podman/Docker
 ```sh
-$ docker run -dit --restart unless-stopped --name=update-server -d -p 5255:5255 xiangzhedev/upgradeall-server
+$ podman run -dit --restart unless-stopped --name=update-server -d -p 5255:5255 xiangzhedev/upgradeall-server
 # 服务部署
-$ docker run --rm xiangzhedev/upgradeall-server --debug 6a6d590b-1809-41bf-8ce3-7e3f6c8da945 android_app_package com.nextcloud.client
+$ podman run --rm xiangzhedev/upgradeall-server --debug 6a6d590b-1809-41bf-8ce3-7e3f6c8da945 --test_options android_app_package com.nextcloud.client
 # 测试软件源
 ```
 
 #### Shell script
+> 不推荐使用
 该脚本只用于调试，脚本会自动本地编译新的 Docker 镜像并挂载代码文件夹以便调试
 ```sh
 $ ./startup.sh
 # 部署服务端
-$ ./startup.sh --debug 6a6d590b-1809-41bf-8ce3-7e3f6c8da945 android_app_package com.nextcloud.client
+$ ./startup.sh --debug 6a6d590b-1809-41bf-8ce3-7e3f6c8da945 --test_options android_app_package com.nextcloud.client
 # 测试软件源
 ```
 #### 手动运行
 ```sh
 $ python3 -m app
 # 部署服务端
-$ python3 -m app --debug 6a6d590b-1809-41bf-8ce3-7e3f6c8da945 android_app_package com.nextcloud.client
+$ python3 -m app --debug 6a6d590b-1809-41bf-8ce3-7e3f6c8da945 --test_options android_app_package com.nextcloud.client
 # 测试软件源
 ```
 ### 命令参数
 ```text
-usage: DUpdateSystem Server [-h] [--normal] [--debug]
-                            [hub_uuid] [hub_options [hub_options ...]]
+usage: DUpdateSystem Server [-h] [--normal] [--debug] [--init_account] [--test_options [TEST_OPTIONS ...]] [hub_uuid]
 
 DUpdateSystem 服务端
 
 positional arguments:
-  hub_uuid     测试的软件源脚本的 UUID
-  hub_options  测试软件源脚本的运行选项，以 key value 为组，例如：android_app_package
-               net.xzos.upgradeall
+  hub_uuid              测试的软件源脚本的 UUID
 
 optional arguments:
-  -h, --help   show this help message and exit
-  --normal     以 config.ini 配置正常运行服务端
-  --debug      运行软件源脚本测试
+  -h, --help            show this help message and exit
+  --normal              以 config.ini 配置正常运行服务端
+  --debug               运行软件源脚本测试
+  --init_account        测试的软件源脚本的帐号初始化函数
+  --test_options [TEST_OPTIONS ...]
+                        测试软件源脚本的运行选项，以 key value 为组，例如：android_app_package net.xzos.upgradeall
 ```
 
 ## 相关仓库
