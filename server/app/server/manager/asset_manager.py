@@ -53,7 +53,7 @@ def get_cloud_config_str(dev_version: bool, migrate_master: bool) -> str or None
     else:
         r_dev_version = dev_version
     cloud_config_str = _get_cloud_config_str(r_dev_version)
-    if migrate_master and cloud_config_str:
+    if dev_version and migrate_master and cloud_config_str:
         cloud_config_str = migrate_dev(cloud_config_str)
     return cloud_config_str
 
