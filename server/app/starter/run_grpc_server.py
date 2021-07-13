@@ -21,13 +21,23 @@ class Greeter(route_pb2_grpc.UpdateServerRouteServicer):
         dev_version = False
         # noinspection PyBroadException
         try:
+            return Str(s=get_cloud_config_str(self.__get_cloud_config_version(request), True))
+        except Exception:
+            logging.exception('gRPC: GetCloudConfig')
+
+    @staticmethod
+    def __get_cloud_config_version(request) -> bool:
+        dev_version = False
+        # noinspection PyBroadException
+        try:
             request = MessageToDict(request, preserving_proto_field_name=True)
             if request["s"] == "dev":
                 dev_version = True
                 logging.info("使用 Dev 分支的云端配置仓库")
-            return Str(s=get_cloud_config_str(dev_version, True))
         except Exception:
-            logging.exception('gRPC: GetCloudConfig')
+            logging.info("使用 Master 分支的云端配置仓库")
+            pass
+        return dev_version
 
     def GetAppStatus(self, request, context) -> Response:
         # noinspection PyBroadException
