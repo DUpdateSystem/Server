@@ -84,7 +84,7 @@ class BaseHub(object, metaclass=ABCMeta):
             if status_code == 404:
                 release_list = []
         except asyncio.TimeoutError:
-            print(f'app_id: {app_id} timeout!')
+            logging.warning(f'app_id: {app_id} timeout!')
         except Exception:
             debug_mode = server_config.debug_mode
             log = f"app_id: {app_id}"
@@ -92,7 +92,7 @@ class BaseHub(object, metaclass=ABCMeta):
                 log += " \nERROR: "
             else:
                 log += " ERROR"
-            logging.error(log, exc_info=debug_mode)
+            logging.exception(log, exc_info=debug_mode)
         return_value(generator_cache, app_id, release_list)
 
     @staticmethod

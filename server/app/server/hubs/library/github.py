@@ -1,6 +1,8 @@
 import json
 import time
 
+from requests.exceptions import ConnectionError
+
 from ..base_hub import BaseHub
 from ..hub_script_utils import http_get, search_version_number_string
 
@@ -43,7 +45,7 @@ class Github(BaseHub):
         return data
 
 
-def _get_api_url(owner_name: str, repo_name: str) -> str:
+def _get_api_url(owner_name: str, repo_name: str, cf_worker: bool = False) -> str:
     """获取 GitHub API 地址
     Arg:
         owner_name: 所有者名称
@@ -51,7 +53,10 @@ def _get_api_url(owner_name: str, repo_name: str) -> str:
     Return: String
         GitHub API 地址
     """
-    return f"https://api.github.com/repos/{owner_name}/{repo_name}/releases"
+    if not cf_worker:
+        return f"https://api.github.com/repos/{owner_name}/{repo_name}/releases"
+    else:
+        return f"https://github-api.flaw.workers.dev/repos/{owner_name}/{repo_name}/releases"
 
 
 def _get_response(owner_name: str, repo_name: str) -> json:
@@ -61,8 +66,12 @@ def _get_response(owner_name: str, repo_name: str) -> json:
         repo_name: Git 仓库名称
     Return: JSON
     """
-    api_url = _get_api_url(owner_name, repo_name)
-    return http_get(api_url).json()
+    try:
+        api_url = _get_api_url(owner_name, repo_name)
+        return http_get(api_url).json()
+    except ConnectionError:
+        api_url = _get_api_url(owner_name, repo_name, True)
+        return http_get(api_url).json()
 
 
 def _extract_time(j):
