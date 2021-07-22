@@ -58,7 +58,7 @@ def run():
             debug_thread.join()
             web_getter_manager.stop()
         if server_process:
-            start_schedule()
+            #start_schedule()
             server_process.join()
         web_getter_manager.join()
     except KeyboardInterrupt:
