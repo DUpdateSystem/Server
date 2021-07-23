@@ -84,13 +84,6 @@ class DataManager:
                     i += 1
         logging.info(f"refresh all data: finish({i})")
 
-    @staticmethod
-    def __get_release_cache(hub_uuid: str, app_id: dict) -> dict or None:
-        try:
-            return cache_manager.get_release_cache(hub_uuid, app_id)
-        except (KeyError, NameError):
-            pass
-
 
 data_manager = DataManager()
 
