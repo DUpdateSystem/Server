@@ -48,6 +48,10 @@ class BaseHub(object, metaclass=ABCMeta):
         """
         pass
 
+    async def _get_download_info(self, app_id: dict, asset_index: list,
+                                 auth: dict or None = None) -> dict or tuple or None:
+        return self.get_download_info(app_id, asset_index, auth)
+
     def get_download_info(self, app_id: dict, asset_index: list, auth: dict or None = None) -> dict or tuple or None:
         """即时获取下载地址
         Args:

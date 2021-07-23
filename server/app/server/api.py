@@ -13,8 +13,7 @@ def get_release_dict(hub_uuid: str, auth: dict or None, app_id_list: list,
     iter_fun = data_manager.get_release(hub_uuid, app_id_list, auth=auth,
                                         use_cache=use_cache, cache_data=cache_data)
     if iter_fun is None:
-        yield {"valid_hub": False}
-        return
+        return {"valid_hub": False}
     else:
         yield {"valid_hub": True}
     for item in iter_fun:

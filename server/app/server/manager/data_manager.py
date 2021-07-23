@@ -1,3 +1,5 @@
+import asyncio
+
 import schedule
 
 from app.server.config import server_config as _server_config
@@ -5,6 +7,7 @@ from app.server.hubs.hub_list import hub_dict
 from app.server.manager.cache_manager import cache_manager
 from app.server.manager.data.constant import logging
 from app.server.manager.webgetter.getter_api import send_getter_request
+from .data.generator_cache import GeneratorCache
 
 
 class DataManager:
@@ -32,15 +35,16 @@ class DataManager:
         for app_id, release_list in request_queue:
             yield {"app_id": app_id, "release_list": release_list}
 
-    @staticmethod
-    def get_download_info_list(hub_uuid: str, auth: dict, app_id: list, asset_index: list) -> tuple or None:
+    def get_download_info_list(self, hub_uuid: str, auth: dict, app_id: list, asset_index: list) -> tuple or None:
         if hub_uuid not in hub_dict:
             logging.warning(f"NO HUB: {hub_uuid}")
             return None
         hub = hub_dict[hub_uuid]
         # noinspection PyBroadException
         try:
-            download_info = hub.get_download_info(app_id, asset_index, auth)
+            cache = GeneratorCache()
+            asyncio.run(self.__run_download_core(hub_uuid, auth, app_id, asset_index, cache))
+            download_info = next(cache)
             if type(download_info) is str:
                 return [{"url": download_info}]
             else:
@@ -48,6 +52,24 @@ class DataManager:
         except Exception:
             logging.error(f"""app_id: {app_id} \nERROR: """, exc_info=_server_config.debug_mode)
             return None
+
+    @staticmethod
+    async def __run_download_core(hub_uuid: str, auth: dict, app_id: list, asset_index: list,
+                                  generator_cache: GeneratorCache):
+        if hub_uuid not in hub_dict:
+            logging.warning(f"NO HUB: {hub_uuid}")
+            return None
+        hub = hub_dict[hub_uuid]
+        aw = None
+        download_info = None
+        try:
+            # noinspection PyProtectedMember
+            aw = hub._get_download_info(app_id, asset_index, auth)
+            download_info = await asyncio.wait_for(aw, timeout=20)
+        except asyncio.TimeoutError:
+            logging.info(f'aw: {aw} timeout!')
+        generator_cache.add_value(download_info)
+        generator_cache.close()
 
     def refresh_cache(self, uuid: str or None = None):
         i = 0
