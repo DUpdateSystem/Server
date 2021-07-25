@@ -25,22 +25,37 @@ class Gitlab(BaseHub):
             name = release["name"]
             # 获取版本号
             release_info["version_number"] = name
-            # 获取更新日志
-            description_html = release["description_html"]
-            soup = BeautifulSoup(description_html, "html5lib")
-            release_info["change_log"] = soup.text
-            # 获取下载文件
-            link_list = soup.find_all(name='a')
             assets = []
-            for item in link_list:
-                url = item["href"]
-                if url[0] == '/':
-                    url = "https://gitlab.com" + url
-                asset_info = {
-                    "file_name": item.text,
-                    "download_url": url
-                }
-                assets.append(asset_info)
+            # 获取更新日志与存在于更新日志里的可下载文件
+            if "description_html" in release:
+                description_html = release["description_html"]
+                soup = BeautifulSoup(description_html, "html5lib")
+                release_info["change_log"] = soup.text
+                link_list = soup.find_all(name='a')
+                for item in link_list:
+                    url = item["href"]
+                    if url[0] == '/':
+                        url = "https://gitlab.com" + url
+                    asset_info = {
+                        "file_name": item.text,
+                        "download_url": url
+                    }
+                    assets.append(asset_info)
+            elif "description" in release:
+                release_info["change_log"] = release["description"]
+            else:
+                release_info["change_log"] = None
+            # 获取下载文件
+            try:
+                for raw_asset in release["assets"]["links"]:
+                    asset_info = {
+                        "file_name": raw_asset["name"],
+                        "download_url": raw_asset["url"]
+                    }
+                    assets.append(asset_info)
+            except KeyError:
+                pass
+
             release_info["assets"] = assets
             data.append(release_info)
         return data
