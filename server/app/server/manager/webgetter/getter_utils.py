@@ -63,7 +63,12 @@ async def __get_release_cache_async(hub_uuid: str, app_id_list: list,
 
 async def __get_release_cache_async_container(generator_cache: GeneratorCache,
                                               hub_uuid: str, app_id: dict):
-    generator_cache.add_value((app_id, __get_release_cache(hub_uuid, app_id)))
+    try:
+        release_cache = __run_core(__get_release_cache(hub_uuid, app_id), 1)
+        generator_cache.add_value((app_id, release_cache))
+    except asyncio.TimeoutError:
+        logging.info(f'get_release_cache: {app_id} timeout!')
+        pass
 
 
 def __get_release_cache(hub_uuid: str, app_id: dict) -> dict or None:
@@ -99,12 +104,14 @@ async def __run_get_release_fun(hub, app_id_list: list, auth: dict or None,
             generator_cache.close()
 
 
-async def __run_core(aw, item_num: int):
-    if item_num > 5:
-        timeout = item_num * 11.25
-    else:
-        timeout = 30
+async def __run_core(aw, item_num: int, raise_error: bool = False):
+    timeout = item_num * 15
+    if timeout > 120:
+        timeout = 120
     try:
         await asyncio.wait_for(aw, timeout=timeout)
     except asyncio.TimeoutError:
-        logging.info(f'aw: {aw} timeout!')
+        if raise_error:
+            raise asyncio.TimeoutError
+        else:
+            logging.info(f'aw: {aw} timeout!')
