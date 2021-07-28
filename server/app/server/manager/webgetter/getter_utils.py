@@ -64,14 +64,14 @@ async def __get_release_cache_async(hub_uuid: str, app_id_list: list,
 async def __get_release_cache_async_container(generator_cache: GeneratorCache,
                                               hub_uuid: str, app_id: dict):
     try:
-        release_cache = __run_core(__get_release_cache(hub_uuid, app_id), 1)
+        release_cache = await __run_core(__get_release_cache(hub_uuid, app_id), 1, True)
         generator_cache.add_value((app_id, release_cache))
     except asyncio.TimeoutError:
         logging.info(f'get_release_cache: {app_id} timeout!')
         pass
 
 
-def __get_release_cache(hub_uuid: str, app_id: dict) -> dict or None:
+async def __get_release_cache(hub_uuid: str, app_id: dict) -> dict or None:
     try:
         return cache_manager.get_release_cache(hub_uuid, app_id)
     except (KeyError, NameError):
