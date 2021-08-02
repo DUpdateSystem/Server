@@ -82,7 +82,7 @@ class CacheManager:
         except ConnectionError:
             pass
 
-    #@functools.lru_cache(maxsize=1024)
+    @functools.lru_cache(maxsize=16)
     def get_tmp_cache(self, key) -> str or None:
         try:
             return self.__get_tmp_cache(key)
@@ -173,7 +173,7 @@ app_id: {app_id}""", exc_info=server_config.debug_mode)
         except Exception:
             pass
 
-    #@functools.lru_cache(maxsize=4096)
+    @functools.lru_cache(maxsize=512)
     def __get_release_cache_cache_core(self, key):
         return self.__get(self.__redis_release_cache_client, key)
 
