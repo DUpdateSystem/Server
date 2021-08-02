@@ -15,7 +15,7 @@ def get_release(hub_uuid: str, app_id_list: list, auth: dict or None,
     if use_cache:
         release_list_iter, thread = _get_release_cache(hub_uuid, app_id_list, response_queue, close_queue=True)
         for app_id, release_list in release_list_iter:
-            if release_list and not (len(release_list) == 1 and release_list[0] is None):
+            if release_list is not None and not (len(release_list) == 1 and release_list[0] is None):
                 yield app_id, release_list
                 app_id_list.remove(app_id)
         thread.join()
@@ -72,7 +72,7 @@ async def __get_release_cache(generator_cache: GeneratorCache, hub_uuid: str, ap
     try:
         release_cache = cache_manager.get_release_cache(hub_uuid, app_id)
         generator_cache.add_value((app_id, release_cache))
-    except (KeyError, NameError):
+    except (KeyError,  NameError):
         pass
 
 
