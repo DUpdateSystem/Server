@@ -15,11 +15,11 @@ UpgradeAll 服务端代码仓库
 - [安装](#安装)
 - [使用说明](#使用说明)
    - [运行这个项目](#运行这个项目)
-      - [Docker](#docker)
+      - [Podman](#podmandocker)
       - [已安装 Docker 的 Linux 环境](#已安装-docker-的-linux-环境)
       - [手动安装并运行](#手动安装并运行适用于-termux)
    - [示例](#示例)
-      - [Docker](#docker-1)
+      - [Podman](#podmandocker-1)
       - [Shell script](#shell-script)
       - [手动运行](#手动运行)
    - [命令参数](#命令参数)
@@ -30,13 +30,16 @@ UpgradeAll 服务端代码仓库
 
 ## 背景
 
-`UpgradeAll 服务端` 最开始因为 [@yah](https://github.com/wangxiaoerYah) 在维护脚本时发觉本地爬虫的效率问题而被提出，并于 [0.1.2 版本（
-客户端版本）](https://github.com/DUpdateSystem/UpgradeAll/releases/tag/0.1.2-rc.2)的开发阶段实现。
+`UpgradeAll 服务端` 最开始因为 [@yah](https://github.com/wangxiaoerYah) 在维护脚本时发觉本地爬虫的效率问题而被提出，并于 [0.1.2 版本（客户端版本）](https://github.com/DUpdateSystem/UpgradeAll/releases/tag/0.1.2-rc.2)的开发阶段实现。
 
 
 ## 安装
 
 这个项目使用 [Python 3](https://www.python.org/)。请确保你本地安装了它们。
+> **TIPS**：gRPC proto 编译命令（在 server 目录下执行）：
+``` bash
+python -m grpc_tools.protoc -I./ --python_out=. --grpc_python_out=. ./app/grpc_template/route.proto
+```
 
 
 ## 使用说明
