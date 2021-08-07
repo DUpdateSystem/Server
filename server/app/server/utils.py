@@ -34,12 +34,19 @@ def set_new_asyncio_loop():
     return loop
 
 
-def call_def_in_loop_return_result(core, loop):
+def call_def_in_loop_return_result(core, _loop=None):
+    if _loop:
+        loop = _loop
+    else:
+        loop = set_new_asyncio_loop()
     try:
-        return loop.run_until_complete(core)
+        result = loop.run_until_complete(core)
     except RuntimeError:
         future = asyncio.run_coroutine_threadsafe(core, loop)
-    return future.result()
+        result = future.result()
+    if not _loop:
+        loop.close()
+    return result
 
 
 def call_def_in_loop(core, loop):

@@ -17,6 +17,9 @@ from app.server.utils import grcp_dict_list_to_dict, set_new_asyncio_loop, call_
 
 class Greeter(route_pb2_grpc.UpdateServerRouteServicer):
 
+    def GetServerStatus(self, request, context):
+        return Empty()
+
     def GetCloudConfig(self, request, context) -> Str:
         dev_version = False
         # noinspection PyBroadException

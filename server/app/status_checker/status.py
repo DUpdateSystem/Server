@@ -1,8 +1,34 @@
+import asyncio
 import time
+
+import grpc
+
+from app.grpc_template import route_pb2_grpc, route_pb2
+from app.server.config import server_config
+from app.server.utils import call_def_in_loop_return_result
 
 __redis_availability_setting_time = time.time()
 __redis_availability = True
 __timeout = 30
+
+__self_channel = grpc.insecure_channel(f'localhost:{server_config.port}')
+__self_stub = route_pb2_grpc.UpdateServerRouteStub(__self_channel)
+
+
+def get_grpc_available():
+    response = call_def_in_loop_return_result(_get_grpc_available())
+    return response
+
+
+async def _get_grpc_available():
+    try:
+        return await asyncio.wait_for(__get_grpc_available(), timeout=15)
+    except asyncio.TimeoutError as e:
+        return e
+
+
+async def __get_grpc_available():
+    return __self_stub.GetServerStatus(route_pb2.Empty())
 
 
 def get_redis_availability() -> bool:

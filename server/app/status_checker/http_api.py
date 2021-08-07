@@ -5,7 +5,7 @@ from flask import Flask
 from werkzeug.serving import make_server
 
 from app.server.config import server_config
-from .status import get_redis_availability, __hub_available_key_list
+from .status import get_grpc_available, get_redis_availability, __hub_available_key_list
 
 
 class ServerThread(Thread):
@@ -35,6 +35,8 @@ def check_status():
         return "no redis connect", 503
     elif len(__hub_available_key_list) == 0:
         return "no hub available", 503
+    elif isinstance(get_grpc_available(), Exception):
+        return f"grpc shutdown", 503
     else:
         return '', 204
 
