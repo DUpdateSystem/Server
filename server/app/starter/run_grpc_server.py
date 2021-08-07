@@ -3,7 +3,7 @@ from concurrent.futures import ThreadPoolExecutor
 from multiprocessing import Process
 
 from google.protobuf.json_format import ParseDict, MessageToDict
-from grpc import RpcContext, server
+from grpc import RpcContext, aio
 
 from app.grpc_template import route_pb2_grpc
 from app.grpc_template.route_pb2 import *
@@ -162,18 +162,25 @@ class Greeter(route_pb2_grpc.UpdateServerRouteServicer):
 
 
 __loop = set_new_asyncio_loop()
-__server: server
+__server: aio.server
 __lock = asyncio.Lock(loop=__loop)
+
+
+def restart_grpc():
+    logging.info("gRPC reboot")
+    __server.stop()
+    __server.start()
+    logging.info("gRPC rebooted")
 
 
 async def __run():
     global __server
     await __lock.acquire()
-    __server = server(ThreadPoolExecutor(max_workers=server_config.max_workers))
+    __server = aio.server(ThreadPoolExecutor(max_workers=server_config.max_workers))
     route_pb2_grpc.add_UpdateServerRouteServicer_to_server(Greeter(), __server)
     __server.add_insecure_port(f'{server_config.host}:{server_config.port}')
     logging.info("gRPC 启动中")
-    __server.start()
+    await __server.start()
     logging.info("gRPC 已启动")
 
     # 等待停止信号

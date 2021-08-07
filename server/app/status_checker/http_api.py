@@ -5,6 +5,7 @@ from flask import Flask
 from werkzeug.serving import make_server
 
 from app.server.config import server_config
+from app.starter.run_grpc_server import restart_grpc
 from .status import get_grpc_available, get_redis_availability, __hub_available_key_list
 
 
@@ -36,6 +37,7 @@ def check_status():
     elif len(__hub_available_key_list) == 0:
         return "no hub available", 503
     elif isinstance(get_grpc_available(), Exception):
+        restart_grpc()
         return f"grpc shutdown", 503
     else:
         return '', 204
