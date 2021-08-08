@@ -166,13 +166,6 @@ __server: aio.server
 __lock = asyncio.Lock(loop=__loop)
 
 
-def restart_grpc():
-    logging.info("gRPC reboot")
-    __server.stop()
-    __server.start()
-    logging.info("gRPC rebooted")
-
-
 async def __run():
     global __server
     await __lock.acquire()
