@@ -16,8 +16,8 @@ def get_release(hub_uuid: str, app_id_list: list, auth: dict or None,
         release_list_iter, thread = _get_release_cache(hub_uuid, app_id_list, response_queue, close_queue=True)
         for app_id, release_list in release_list_iter:
             if release_list is not None and not (len(release_list) == 1 and release_list[0] is None):
-                app_id_list.remove(app_id)
                 yield app_id, release_list
+                app_id_list.remove(app_id)
         thread.join()
     if app_id_list:
         release_list_iter, thread = _get_release_nocache(hub, app_id_list, auth, response_queue, close_queue=True)
@@ -25,6 +25,7 @@ def get_release(hub_uuid: str, app_id_list: list, auth: dict or None,
             app_id = item["id"]
             release_list = item["v"]
             yield app_id, release_list
+            app_id_list.remove(app_id)
             if cache_data:
                 if release_list is not None:
                     cache_manager.add_release_cache(hub_uuid, app_id, release_list)

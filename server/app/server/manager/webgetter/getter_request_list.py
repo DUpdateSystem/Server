@@ -30,7 +30,7 @@ class GetterRequestList:
     def __pop_processing_list(self, hub_uuid: str, auth: dict, use_cache: bool, app_id: dict):
         key = self.__get_key(hub_uuid, auth, use_cache)
         app_id_list: list = self.processing_request_dict[key]
-        # do not need remove app_id from list because it's just a reference
+        # sometimes do not need remove app_id from list because it's just a reference
         if not app_id_list[0]:
             self.processing_request_dict.pop(key)
         else:

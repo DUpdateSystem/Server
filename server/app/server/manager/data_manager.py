@@ -52,7 +52,6 @@ class DataManager:
         if hub_uuid not in hub_dict:
             logging.warning(f"NO HUB: {hub_uuid}")
             return None
-        hub = hub_dict[hub_uuid]
         # noinspection PyBroadException
         try:
             cache = GeneratorCache()
@@ -62,16 +61,13 @@ class DataManager:
                 return [{"url": download_info}]
             else:
                 return download_info
-        except Exception:
+        except Exception as e:
             logging.error(f"""app_id: {app_id} \nERROR: """, exc_info=_server_config.debug_mode)
-            return None
+            return e
 
     @staticmethod
     async def __run_download_core(hub_uuid: str, auth: dict, app_id: list, asset_index: list,
                                   generator_cache: GeneratorCache):
-        if hub_uuid not in hub_dict:
-            logging.warning(f"NO HUB: {hub_uuid}")
-            return None
         hub = hub_dict[hub_uuid]
         aw = None
         download_info = None
