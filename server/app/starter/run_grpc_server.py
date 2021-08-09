@@ -12,7 +12,7 @@ from app.server.api import *
 from app.server.config import server_config
 from app.server.manager.asset_manager import get_cloud_config_str
 from app.server.manager.data.constant import logging
-from app.server.utils import grcp_dict_list_to_dict, set_new_asyncio_loop, call_def_in_loop_return_result
+from app.server.utils.utils import grcp_dict_list_to_dict, set_new_asyncio_loop, call_def_in_loop_return_result
 
 
 class Greeter(route_pb2_grpc.UpdateServerRouteServicer):

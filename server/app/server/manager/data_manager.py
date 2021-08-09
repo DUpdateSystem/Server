@@ -1,4 +1,5 @@
 import asyncio
+from threading import Lock
 
 import schedule
 
@@ -6,7 +7,7 @@ from app.server.config import server_config as _server_config
 from app.server.hubs.hub_list import hub_dict
 from app.server.manager.cache_manager import cache_manager
 from app.server.manager.data.constant import logging
-from app.server.manager.webgetter.getter_api import send_getter_request
+from app.server.manager.webgetter.getter_api import send_getter_request, is_processing
 from .data.generator_cache import GeneratorCache
 
 
@@ -26,14 +27,26 @@ class DataManager:
             return None
 
     @staticmethod
-    def get_release(hub_uuid: str, app_id_list: list, auth: dict or None = None,
-                    use_cache: bool = True, cache_data: bool = True) -> dict or None:
+    def get_release(hub_uuid: str, auth: dict or None, app_id: dict, use_cache: bool = True) -> dict or None:
         if hub_uuid not in hub_dict:
             logging.warning(f"NO HUB: {hub_uuid}")
             return None
-        request_queue = send_getter_request(hub_uuid, app_id_list, auth, use_cache, cache_data)
-        for app_id, release_list in request_queue:
-            yield {"app_id": app_id, "release_list": release_list}
+        lock = Lock()
+        lock.acquire()
+        release_list = None
+
+        def callback(_release_list=None):
+            nonlocal release_list
+            release_list = _release_list
+            lock.release()
+
+        send_getter_request(hub_uuid, auth, app_id, callback=callback, use_cache=use_cache)
+        lock.acquire()
+        if not release_list:
+            process_time = is_processing(hub_uuid, auth, app_id, use_cache)
+            if process_time:
+                raise WaitingDataError(process_time)
+        return release_list
 
     def get_download_info_list(self, hub_uuid: str, auth: dict, app_id: list, asset_index: list) -> tuple or None:
         if hub_uuid not in hub_dict:
@@ -86,6 +99,13 @@ class DataManager:
 
 
 data_manager = DataManager()
+
+
+class WaitingDataError(TimeoutError):
+    def __init__(self, process_time: int):
+        self.process_time = process_time
+
+    pass
 
 
 def _auto_refresh():

@@ -1,6 +1,6 @@
 from .manager.data.constant import logging
 from .manager.data_manager import data_manager
-from .utils import dict_to_grcp_dict_list
+from .utils.utils import dict_to_grcp_dict_list
 
 
 def init_account(hub_uuid: str, account: dict) -> dict:
@@ -11,7 +11,7 @@ def init_account(hub_uuid: str, account: dict) -> dict:
 def get_release_dict(hub_uuid: str, auth: dict or None, app_id_list: list,
                      use_cache=True, cache_data=True) -> dict:
     iter_fun = data_manager.get_release(hub_uuid, app_id_list, auth=auth,
-                                        use_cache=use_cache, cache_data=cache_data)
+                                        use_cache=use_cache)
     if iter_fun is None:
         return {"valid_hub": False}
     else:

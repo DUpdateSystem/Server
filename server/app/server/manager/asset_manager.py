@@ -7,7 +7,7 @@ import schedule
 from app.migration.migration import migrate_dev
 from app.server.config import server_config as _server_config
 from app.server.manager.cache_manager import cache_manager
-from app.server.utils import get_response
+from app.server.utils.utils import get_response
 from .data.constant import logging
 
 _asset_dir_path = _server_config.download_asset_dir_path
