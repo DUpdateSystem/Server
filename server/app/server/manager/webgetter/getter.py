@@ -1,4 +1,5 @@
 from threading import Thread, RLock
+from time import sleep
 
 from .getter_request_list import getter_request_list
 from .getter_utils import get_release
@@ -24,9 +25,11 @@ class WebGetterManager:
 
     def __run_getter(self):
         while not getter_request_list.is_empty():
+            sleep(1)
             hub_uuid, auth, use_cache, app_id_list = getter_request_list.pop_request_list()
             thread = Thread(target=self.__do_getter, args=(hub_uuid, auth, use_cache, app_id_list))
             thread.start()
+            sleep(2)
         self.thread_lock.acquire()
         self.thread = None
         self.thread_lock.release()
