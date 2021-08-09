@@ -49,6 +49,8 @@ def get_app_release_list(api_version: str, hub_uuid: UUID, app_id_path: str):
         release_list = data_manager.get_release(str(hub_uuid), auth, app_id)
     except WaitingDataError as e:
         return str(e.process_time), 408
+    except KeyError:
+        return f'no hub: {hub_uuid}', 400
     if release_list:
         return json.dumps(release_list), 200
     elif release_list is not None and not release_list:
@@ -68,7 +70,10 @@ def get_extra_download_info_list(api_version: str, hub_uuid: UUID, app_id_path: 
         return f"wrong index format: {asset_index_path}", 400
     auth = get_auth()
     app_id = path_to_dict(app_id_path)
-    download_info_list = data_manager.get_download_info_list(str(hub_uuid), auth, app_id, asset_index)
+    try:
+        download_info_list = data_manager.get_download_info_list(str(hub_uuid), auth, app_id, asset_index)
+    except KeyError:
+        return f'no hub: {hub_uuid}', 400
     if download_info_list:
         return json.dumps(download_info_list), 200
     elif download_info_list is not None and not download_info_list:

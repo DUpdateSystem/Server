@@ -17,7 +17,7 @@ class DataManager:
     def init_account(hub_uuid: str, account: dict) -> dict or None:
         if hub_uuid not in hub_dict:
             logging.warning(f"NO HUB: {hub_uuid}")
-            return None
+            raise KeyError
         hub = hub_dict[hub_uuid]
         # noinspection PyBroadException
         try:
@@ -30,7 +30,7 @@ class DataManager:
     def get_release(hub_uuid: str, auth: dict or None, app_id: dict, use_cache: bool = True) -> dict or None:
         if hub_uuid not in hub_dict:
             logging.warning(f"NO HUB: {hub_uuid}")
-            return None
+            raise KeyError
         lock = Lock()
         lock.acquire()
         release_list = None
@@ -51,7 +51,7 @@ class DataManager:
     def get_download_info_list(self, hub_uuid: str, auth: dict, app_id: list, asset_index: list) -> tuple or None:
         if hub_uuid not in hub_dict:
             logging.warning(f"NO HUB: {hub_uuid}")
-            return None
+            raise KeyError
         # noinspection PyBroadException
         try:
             cache = GeneratorCache()
