@@ -1,4 +1,4 @@
-from threading import Thread, RLock
+from threading import Thread
 from time import sleep
 
 from .getter_request_list import getter_request_list
@@ -7,7 +7,6 @@ from .getter_utils import get_release
 
 class WebGetterManager:
     thread: Thread or None = None
-    thread_lock = RLock()
 
     def start(self) -> Thread:
         if not self.thread:
@@ -24,22 +23,24 @@ class WebGetterManager:
         self.start()
 
     def __run_getter(self):
+        thread_list = []
         while not getter_request_list.is_empty():
             sleep(1)
             hub_uuid, auth, use_cache, app_id_list = getter_request_list.pop_request_list()
             thread = Thread(target=self.__do_getter, args=(hub_uuid, auth, use_cache, app_id_list))
+            thread_list.append(thread)
             thread.start()
             sleep(2)
-        self.thread_lock.acquire()
+            thread_list = [thread for thread in thread_list if thread.is_alive()]
+        for thread in thread_list:
+            thread.join()
         self.thread = None
-        self.thread_lock.release()
 
-    def __do_getter(self, hub_uuid: str, auth: dict, use_cache: bool, app_id_list: list):
-        self.thread_lock.acquire(blocking=False)
+    @staticmethod
+    def __do_getter(hub_uuid: str, auth: dict, use_cache: bool, app_id_list: list):
         iter_core = get_release(hub_uuid, app_id_list, auth, use_cache)
         for app_id, release_list in iter_core:
             getter_request_list.callback_request(hub_uuid, auth, use_cache, app_id, release_list)
-        self.thread_lock.release()
 
 
 web_getter_manager = WebGetterManager()

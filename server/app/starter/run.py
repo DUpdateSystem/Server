@@ -58,7 +58,7 @@ def run():
         if debug_thread:
             debug_thread.join()
             web_getter_manager.stop()
-        app.run(host='localhost', port=5255)
+        app.run(host='0.0.0.0', port=5255)
         if server_process:
             # start_schedule()
             server_process.join()

@@ -1,4 +1,5 @@
 import json
+import logging
 from uuid import UUID
 
 from flask import Blueprint
@@ -32,6 +33,7 @@ def get_cloud_config(api_version: str, config_version: str):
 def get_app_release(api_version: str, hub_uuid: UUID, app_id_path: str):
     if api_version != 1:
         return 'v1 only', 400
+    logging.debug(f"get_app_release: {hub_uuid}, {app_id_path}")
     response, status = get_app_release_list(api_version, hub_uuid, app_id_path)
     if status == 200:
         return json.loads(response)[0], status
@@ -43,6 +45,7 @@ def get_app_release(api_version: str, hub_uuid: UUID, app_id_path: str):
 def get_app_release_list(api_version: str, hub_uuid: UUID, app_id_path: str):
     if api_version != 1:
         return 'v1 only', 400
+    logging.debug(f"get_app_release_list: {hub_uuid}, {app_id_path}")
     auth = get_auth()
     app_id = path_to_dict(app_id_path)
     try:
@@ -68,6 +71,7 @@ def get_extra_download_info_list(api_version: str, hub_uuid: UUID, app_id_path: 
         asset_index = path_to_int_list(asset_index_path)
     except ValueError:
         return f"wrong index format: {asset_index_path}", 400
+    logging.debug(f"get_extra_download_info_list: {hub_uuid}, {app_id_path}, {asset_index_path}")
     auth = get_auth()
     app_id = path_to_dict(app_id_path)
     try:
