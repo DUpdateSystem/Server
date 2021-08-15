@@ -41,7 +41,7 @@ class DataManager:
             lock.release()
 
         send_getter_request(hub_uuid, auth, app_id, callback=callback, use_cache=use_cache)
-        lock.acquire()
+        lock.acquire(timeout=15)
         if not release_list:
             process_time = is_processing(hub_uuid, auth, app_id, use_cache)
             if process_time:

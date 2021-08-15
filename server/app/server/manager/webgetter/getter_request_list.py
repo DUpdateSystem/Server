@@ -1,3 +1,4 @@
+from app.server.manager.data.constant import logging
 from json import loads, dumps
 from threading import Lock
 from time import time
@@ -15,7 +16,7 @@ class GetterRequestList:
             key, app_id_list = self.request_dict.popitem()
             self.processing_request_dict[key] = [app_id_list, time()]
             hub_uuid, auth, use_cache = self.__get_info(key)
-            return hub_uuid, auth, use_cache, app_id_list
+            return hub_uuid, auth, use_cache, app_id_list.copy()
 
     def add_request(self, hub_uuid: str, auth: dict, app_id: dict, callback, use_cache: bool = True):
         with self.request_dict_lock:
@@ -23,6 +24,12 @@ class GetterRequestList:
         function_register.add_function(f'{hub_uuid}{auth}{app_id}', callback)
 
     def callback_request(self, hub_uuid: str, auth: dict, use_cache: bool, app_id: dict, *args):
+        try:
+            self.__callback_request(hub_uuid, auth, use_cache, app_id, *args)
+        except Exception as e:
+            logging.exception(e)
+
+    def __callback_request(self, hub_uuid: str, auth: dict, use_cache: bool, app_id: dict, *args):
         with self.request_dict_lock:
             self.__pop_processing_list(hub_uuid, auth, use_cache, app_id)
         function_register.call_function(f'{hub_uuid}{auth}{app_id}', *args)
@@ -30,7 +37,10 @@ class GetterRequestList:
     def __pop_processing_list(self, hub_uuid: str, auth: dict, use_cache: bool, app_id: dict):
         key = self.__get_key(hub_uuid, auth, use_cache)
         app_id_list: list = self.processing_request_dict[key]
-        # sometimes do not need remove app_id from list because it's just a reference
+        try:
+            app_id_list.remove(app_id)
+        except ValueError:
+            pass
         if not app_id_list[0]:
             self.processing_request_dict.pop(key)
         else:

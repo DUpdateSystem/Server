@@ -25,7 +25,6 @@ def get_release(hub_uuid: str, app_id_list: list, auth: dict or None,
             app_id = item["id"]
             release_list = item["v"]
             yield app_id, release_list
-            app_id_list.remove(app_id)
             if cache_data:
                 if release_list is not None:
                     cache_manager.add_release_cache(hub_uuid, app_id, release_list)
