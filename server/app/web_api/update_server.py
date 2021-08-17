@@ -1,5 +1,4 @@
 import json
-import logging
 from uuid import UUID
 
 from flask import Blueprint
@@ -7,6 +6,7 @@ from flask import Blueprint
 from app.server.manager.asset_manager import get_cloud_config_str
 from app.server.manager.data_manager import data_manager, WaitingDataError
 from .utils import path_to_dict, path_to_int_list, get_auth
+from ..server.manager.data.constant import logging
 
 update_server_page = Blueprint('update_server_page', __name__)
 
@@ -34,7 +34,7 @@ def get_app_release(api_version: str, hub_uuid: UUID, app_id_path: str):
     if api_version != 1:
         return 'v1 only', 400
     logging.debug(f"get_app_release: {hub_uuid}, {app_id_path}")
-    response, status = get_app_release_list(api_version, hub_uuid, app_id_path)
+    response, status = __get_app_release_list(hub_uuid, app_id_path)
     if status == 200:
         return json.loads(response)[0], status
     else:
@@ -46,6 +46,10 @@ def get_app_release_list(api_version: str, hub_uuid: UUID, app_id_path: str):
     if api_version != 1:
         return 'v1 only', 400
     logging.debug(f"get_app_release_list: {hub_uuid}, {app_id_path}")
+    return __get_app_release_list(hub_uuid, app_id_path)
+
+
+def __get_app_release_list(hub_uuid: UUID, app_id_path: str):
     auth = get_auth()
     app_id = path_to_dict(app_id_path)
     try:
