@@ -14,7 +14,7 @@ class GetterRequestList:
     def pop_request_list(self) -> tuple[str, dict, bool, list[dict]]:
         with self.request_dict_lock:
             key, app_id_list = self.request_dict.popitem()
-            self.processing_request_dict[key] = (app_id_list, time())
+            self.processing_request_dict[key] = [app_id_list, time()]
             hub_uuid, auth, use_cache = self.__get_info(key)
             return hub_uuid, auth, use_cache, app_id_list.copy()
 
