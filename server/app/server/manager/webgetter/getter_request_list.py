@@ -14,7 +14,7 @@ class GetterRequestList:
     def pop_request_list(self) -> tuple[str, dict, bool, list[dict]]:
         with self.request_dict_lock:
             key, app_id_list = self.request_dict.popitem()
-            self.processing_request_dict[key] = [app_id_list, time()]
+            self.processing_request_dict[key] = (app_id_list, time())
             hub_uuid, auth, use_cache = self.__get_info(key)
             return hub_uuid, auth, use_cache, app_id_list.copy()
 
@@ -36,15 +36,16 @@ class GetterRequestList:
 
     def __pop_processing_list(self, hub_uuid: str, auth: dict, use_cache: bool, app_id: dict):
         key = self.__get_key(hub_uuid, auth, use_cache)
-        app_id_list: list = self.processing_request_dict[key]
+        processing_request_list: list = self.processing_request_dict[key]
+        app_id_list = processing_request_list[0]
         try:
             app_id_list.remove(app_id)
         except ValueError:
             pass
-        if not app_id_list[0]:
+        if not app_id_list:
             self.processing_request_dict.pop(key)
         else:
-            app_id_list[1] = time()
+            processing_request_list[1] = time()
 
     def is_processing(self, hub_uuid: str, auth: dict, app_id: dict, use_cache: bool = True) -> int or None:
         key = self.__get_key(hub_uuid, auth, use_cache)
