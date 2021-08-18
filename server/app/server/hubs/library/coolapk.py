@@ -98,7 +98,7 @@ def _redirect(url, headers) -> request:
 
 
 # 加密算法来自 https://github.com/ZCKun/CoolapkTokenCrack、https://zhuanlan.zhihu.com/p/69195418
-__DEVICE_ID = "8513efac-09ea-3709-b214-95b366f1a185"
+__DEVICE_ID = "55077056-48ee-46c8-80a6-2a21a9c5b12b"
 
 
 def _request(url: str):

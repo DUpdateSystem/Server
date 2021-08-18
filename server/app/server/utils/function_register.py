@@ -3,11 +3,12 @@ from threading import Thread
 from time import time, sleep
 
 from app.server.manager.data.constant import logging
+from app.server.config import server_config
 
 
 class FunctionRegister:
     thread = None
-    timeout = 15
+    timeout = server_config.network_timeout
     function_dict = dict()
 
     def add_function(self, _key, core):

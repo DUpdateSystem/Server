@@ -12,6 +12,7 @@ class _ServerConfig:
         self.max_workers = 16
         self.debug_mode = True
         self.auto_refresh_time = 6
+        self.network_timeout = 15
         self.cloud_rule_hub_url = ""
         self.download_asset_host = "localhost"
         self.download_asset_dir_path = self.__parse_file_path()
@@ -36,6 +37,7 @@ class _ServerConfig:
         self.cloud_rule_hub_url = data_config['CloudRuleHubUrl']
         self.download_asset_host = data_config['DownloadAssetHost']
         self.download_asset_dir_path = self.__parse_file_path(data_config['DownloadAssetDirPath'])
+        self.network_timeout = int(data_config['NetworkTimeout'])
         cache_db_config = config['cache_db']
         self.use_cache_db = bool(strtobool(cache_db_config['UseCacheDB']))
         self.__parse_redis_config(cache_db_config)
