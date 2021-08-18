@@ -72,22 +72,6 @@ async def call_async_fun_with_id(core_id, core) -> tuple:
     return core_id, core()
 
 
-def grcp_dict_list_to_dict(grcp_dict: list or None) -> dict:
-    d = {}
-    if grcp_dict:
-        for gd in grcp_dict:
-            d[gd.k] = gd.v
-    return d
-
-
-def dict_to_grcp_dict_list(d: dict or None) -> list:
-    g_dict = []
-    if d:
-        for k in d:
-            g_dict.append({"k": k, "v": d[k]})
-    return g_dict
-
-
 __manager = Manager()
 
 
