@@ -1,3 +1,6 @@
+# UpgradeAll Server
+cache.db
+
 # config_link
 /config.ini
 /asset/

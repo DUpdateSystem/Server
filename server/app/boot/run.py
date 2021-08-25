@@ -3,6 +3,7 @@ import os
 
 from app.boot.run_debugger import debug
 from app.boot.run_web_app import run_api
+from app.database.init import init_database
 from app.server.config import server_config
 from app.server.manager.data.constant import logging
 from app.server.manager.webgetter.getter import web_getter_manager
@@ -38,6 +39,8 @@ def __run():
                         help='测试软件源脚本的运行选项，以 key value 为组，例如：android_app_package net.xzos.upgradeall')
 
     run_args = parser.parse_args()
+
+    init_database()
 
     if run_args.debug:
         # 运行 debug 程序

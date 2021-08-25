@@ -1,7 +1,7 @@
 import asyncio
 from threading import Thread
 
-from app.server.manager.cache_manager import cache_manager
+from app.database.cache_api import add_release_cache, get_release_cache
 from app.server.manager.data.constant import logging
 from app.server.manager.data.generator_cache import GeneratorCache
 from app.status_checker.status import set_hub_available, get_hub_available
@@ -13,7 +13,7 @@ def get_release(hub_uuid: str, app_id_list: list, auth: dict or None,
     hub = hub_dict[hub_uuid]
     response_queue = GeneratorCache()
     if use_cache:
-        release_list_iter, thread = _get_release_cache(hub_uuid, app_id_list, response_queue, close_queue=True)
+        release_list_iter, thread = _get_release_cache(hub_uuid, auth, app_id_list, response_queue, close_queue=True)
         for app_id, release_list in release_list_iter:
             if release_list is not None and not (len(release_list) == 1 and release_list[0] is None):
                 yield app_id, release_list
@@ -27,7 +27,7 @@ def get_release(hub_uuid: str, app_id_list: list, auth: dict or None,
             yield app_id, release_list
             if cache_data:
                 if release_list is not None:
-                    cache_manager.add_release_cache(hub_uuid, app_id, release_list)
+                    add_release_cache(hub_uuid, auth, app_id, release_list)
         thread.join()
     if stop_core:
         stop_core()
@@ -42,35 +42,37 @@ def __check_response_queue(response_queue: GeneratorCache or None) -> tuple[Gene
     return response_queue, close_queue
 
 
-def _get_release_cache(hub_uuid: str, app_id_list: list,
+def _get_release_cache(hub_uuid: str, auth: dict or None, app_id_list: list,
                        response_queue: GeneratorCache or None, close_queue: bool = None) -> tuple:
     if close_queue is None or response_queue is None:
         response_queue, close_queue = __check_response_queue(response_queue)
     thread = Thread(target=asyncio.run,
-                    args=(__get_release_cache_async(hub_uuid, app_id_list, response_queue, close_queue),))
+                    args=(__get_release_cache_async(hub_uuid, auth, app_id_list, response_queue, close_queue),))
     thread.start()
     return response_queue, thread
 
 
-async def __get_release_cache_async(hub_uuid: str, app_id_list: list,
+async def __get_release_cache_async(hub_uuid: str, auth: dict or None, app_id_list: list,
                                     response_queue: GeneratorCache, close_queue: bool):
-    core_list = [__get_release_cache_async_container(response_queue, hub_uuid, app_id)
+    core_list = [__get_release_cache_async_container(response_queue, hub_uuid, auth, app_id)
                  for app_id in app_id_list]
     await asyncio.gather(*core_list)
     if close_queue:
         response_queue.close()
 
 
-async def __get_release_cache_async_container(generator_cache: GeneratorCache, hub_uuid: str, app_id: dict):
+async def __get_release_cache_async_container(generator_cache: GeneratorCache,
+                                              hub_uuid: str, auth: dict or None, app_id: dict):
     try:
-        await __run_core(__get_release_cache(generator_cache, hub_uuid, app_id), 1, True)
+        await __run_core(__get_release_cache(generator_cache, hub_uuid, auth, app_id), 1, True)
     except asyncio.TimeoutError:
         logging.info(f'get_release_cache: {app_id} timeout!')
 
 
-async def __get_release_cache(generator_cache: GeneratorCache, hub_uuid: str, app_id: dict) -> dict or None:
+async def __get_release_cache(generator_cache: GeneratorCache,
+                              hub_uuid: str, auth: dict or None, app_id: dict) -> dict or None:
     try:
-        release_cache = cache_manager.get_release_cache(hub_uuid, app_id)
+        release_cache = get_release_cache(hub_uuid, auth, app_id)
         generator_cache.add_value((app_id, release_cache))
     except (KeyError, NameError):
         pass
