@@ -1,10 +1,11 @@
 from urllib.parse import urlparse
 
 from .github import Github
+from ..base_hub import BaseHub
 from ..hub_script_utils import get_release_by_uuid
 
 
-class GithubProxy(Github):
+class GithubProxy(Github, BaseHub):
     """GitHub 下载加速源"""
 
     @staticmethod
