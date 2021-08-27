@@ -29,6 +29,9 @@ class AppChina(BaseHub):
             data_json.append(release_info)
         return data_json
 
+    def available_test_url(self) -> str:
+        return "https://mobile.appchina.com/"
+
 
 def _get_release(raw_dict: dict) -> dict:
     return {

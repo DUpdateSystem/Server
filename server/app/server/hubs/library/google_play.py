@@ -175,6 +175,10 @@ class GooglePlay(BaseHub):
     def __get_auth(auth: dict):
         return int(auth["gsfId"]), auth["ac2dmToken"]
 
+    @property
+    def available_test_url(self) -> str:
+        return "https://google.com/"
+
 
 # 使用了 Aurora 公共帐号接口，感谢 AuroraStore 项目及其开发者 whyorean
 _aurora_token_api_url_list = ("http://goolag.store:1337/api/auth",)

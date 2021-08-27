@@ -113,3 +113,18 @@ def __start_schedule():
 
 def start_schedule():
     Thread(target=__start_schedule).start()
+
+
+def test_reliability(core) -> int:
+    """可靠性测试，重复调用 core 并计算平均时间
+    Returns: int
+      如果 core 返回非空值，返回平均执行时间（取整）
+      否则，返回 -1
+    """
+    test_num = 3
+    start = time.perf_counter()
+    for _ in range(test_num):
+        if not core():
+            return -1
+    end = time.perf_counter()
+    return int((start - end) / test_num)

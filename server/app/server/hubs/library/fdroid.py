@@ -54,6 +54,10 @@ class FDroid(BaseHub):
             data.append(release_info)
         return_value(generator_cache, app_id, data)
 
+    @property
+    def available_test_url(self) -> str:
+        return "https://f-droid.org/"
+
 
 def _get_xml_tree(url: str = 'https://f-droid.org/repo'):
     xml_string = None

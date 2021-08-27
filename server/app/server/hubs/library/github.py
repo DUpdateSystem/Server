@@ -44,6 +44,9 @@ class Github(BaseHub):
             data.append(release_info)
         return data
 
+    def available_test(self) -> bool:
+        return http_get("https://github.com/").ok or http_get("https://workers.dev").ok
+
 
 def _get_api_url(owner_name: str, repo_name: str, cf_worker: bool = False) -> str:
     """获取 GitHub API 地址

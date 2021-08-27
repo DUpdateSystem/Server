@@ -1,4 +1,5 @@
 import asyncio
+import json
 from threading import Lock
 
 import schedule
@@ -8,10 +9,25 @@ from app.server.hubs.hub_list import hub_dict
 from app.server.manager.cache_manager import cache_manager
 from app.server.manager.data.constant import logging
 from app.server.manager.webgetter.getter_api import send_getter_request, is_processing
+from app.server.utils.utils import test_reliability
 from .data.generator_cache import GeneratorCache
 
 
 class DataManager:
+
+    @staticmethod
+    def reliability_hub_dict() -> dict:
+        key = "reliability_hub_dict"
+        cache = cache_manager.get_tmp_cache(key)
+        if cache:
+            return json.loads(cache)
+        reliability_hub_dict = {}
+        for hub in hub_dict.values():
+            test_time = test_reliability(lambda: hub.available_test())
+            if test_time >= 0:
+                reliability_hub_dict[hub.get_uuid()] = test_time
+        cache_manager.add_tmp_cache(key, json.dumps(reliability_hub_dict), ex_h=0.3)
+        return reliability_hub_dict
 
     @staticmethod
     def init_account(hub_uuid: str, account: dict) -> dict or None:

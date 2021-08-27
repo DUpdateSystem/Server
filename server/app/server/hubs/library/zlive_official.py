@@ -18,6 +18,10 @@ class ZLiveOfficial(BaseHub):
             }]
         }]
 
+    @property
+    def available_test_url(self) -> str:
+        return _get_url()
+
 
 def _get_url() -> str:
     return "https://zlive.linroid.com/api/app_version"

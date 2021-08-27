@@ -60,6 +60,10 @@ class Gitlab(BaseHub):
             data.append(release_info)
         return data
 
+    @property
+    def available_test_url(self) -> str:
+        return "https://gitlab.com"
+
 
 def _get_api_url(owner_name: str, repo_name: str) -> str:
     """获取 Gitlab API 地址

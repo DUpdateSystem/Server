@@ -59,7 +59,7 @@ class CoolApk(BaseHub):
         download_url = get_url_from_release_fun(hub_uuid, app_id, asset_index, use_cache=True)
         try:
             r = _redirect(download_url, None)
-            if 'Content-Type' not in r.headers\
+            if 'Content-Type' not in r.headers \
                     or (r.headers['Content-Type'].split(";")[0] != 'application/vnd.android.package-archive'):
                 logging.debug("返回非安装包数据")
                 raise HTTPError
@@ -68,6 +68,9 @@ class CoolApk(BaseHub):
             logging.debug("网址错误，尝试重新获取")
             download_url = get_url_from_release_fun(hub_uuid, app_id, asset_index, use_cache=False)
         return download_url
+
+    def available_test_url(self) -> str:
+        return "https://api.coolapk.com/"
 
 
 def _mk_detail_url(app_package: str) -> str:

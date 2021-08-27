@@ -39,6 +39,10 @@ class Sjly(BaseHub):
             data.append(release_info)
         return data
 
+    @property
+    def available_test_url(self) -> str:
+        return "https://soft.shouji.com.cn/"
+
 
 def _get_url(app_id: str) -> str:
     return f"https://soft.shouji.com.cn/down/{app_id}.html"
