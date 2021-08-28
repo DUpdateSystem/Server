@@ -36,7 +36,7 @@ def get_app_release(api_version: str, hub_uuid: UUID, app_id_path: str):
     logging.debug(f"get_app_release: {hub_uuid}, {app_id_path}")
     response, status = __get_app_release_list(hub_uuid, app_id_path)
     if status == 200:
-        return json.loads(response)[0], status
+        return response[0], status
     else:
         return response, status
 
@@ -59,7 +59,7 @@ def __get_app_release_list(hub_uuid: UUID, app_id_path: str):
     except KeyError:
         return f'no hub: {hub_uuid}', 400
     if release_list:
-        return json.dumps(release_list), 200
+        return release_list, 200
     elif release_list is not None and not release_list:
         return '', 410
     else:
