@@ -16,7 +16,7 @@ from .data.generator_cache import GeneratorCache
 class DataManager:
 
     @staticmethod
-    def reliability_hub_dict() -> dict:
+    def get_reliability_hub_dict() -> dict:
         key = "reliability_hub_dict"
         cache = cache_manager.get_tmp_cache(key)
         if cache:
@@ -26,7 +26,7 @@ class DataManager:
             test_time = test_reliability(lambda: hub.available_test())
             if test_time >= 0:
                 reliability_hub_dict[hub.get_uuid()] = test_time
-        cache_manager.add_tmp_cache(key, json.dumps(reliability_hub_dict), ex_h=0.3)
+        cache_manager.add_tmp_cache(key, json.dumps(reliability_hub_dict), ex_h=0.25)
         return reliability_hub_dict
 
     @staticmethod
@@ -43,7 +43,7 @@ class DataManager:
             return None
 
     @staticmethod
-    def get_release(hub_uuid: str, auth: dict or None, app_id: dict, use_cache: bool = True) -> dict or None:
+    def get_release(hub_uuid: str, auth: dict or None, app_id: dict, use_cache: bool = True) -> list or None:
         if hub_uuid not in hub_dict:
             logging.warning(f"NO HUB: {hub_uuid}")
             raise KeyError

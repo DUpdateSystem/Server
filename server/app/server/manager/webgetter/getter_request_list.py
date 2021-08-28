@@ -1,8 +1,8 @@
-from app.server.manager.data.constant import logging
 from json import loads, dumps
 from threading import Lock
 from time import time
 
+from app.server.manager.data.constant import logging
 from app.server.utils.function_register import function_register
 
 
@@ -63,8 +63,8 @@ class GetterRequestList:
             request_list = self.request_dict[self.__get_key(hub_uuid, auth)]
         except KeyError:
             request_list = []
-            self.request_dict[self.__get_key(hub_uuid, auth, use_cache)] = request_list
         request_list.append(app_id)
+        self.request_dict[self.__get_key(hub_uuid, auth, use_cache)] = request_list
 
     def is_empty(self) -> bool:
         return not self.request_dict

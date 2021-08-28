@@ -1,13 +1,13 @@
 import argparse
 import os
 
+from app.boot.run_cluster_api import run_cluster_api
 from app.boot.run_debugger import debug
-from app.boot.run_web_app import run_api
+from app.boot.run_web_app import run_api, app
 from app.database.init import init_database
 from app.server.config import server_config
 from app.server.manager.data.constant import logging
 from app.server.manager.webgetter.getter import web_getter_manager
-from app.web_api.app import app
 
 
 def __init_env():
@@ -22,7 +22,15 @@ def __init_env():
     server_config.network_proxy = proxy
 
 
-__init_env()
+def init():
+    # 避免 flask debug 模式代码重加载导致初始化两次
+    if server_config.debug_mode and os.environ.get("WERKZEUG_RUN_MAIN") != "true":
+        return
+    __init_env()
+    run_cluster_api()
+
+
+init()
 
 
 def __run():
@@ -66,4 +74,5 @@ def run():
         logging.info("已停止")
 
 
-app = app  # 只是个占位符
+# 只是个占位符
+app = app

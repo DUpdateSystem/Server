@@ -9,6 +9,3 @@ app = Flask(__name__)
 app.register_blueprint(update_server_page)
 app.register_blueprint(server_info_page)
 app.register_blueprint(server_status_page)
-
-if __name__ == "__main__":
-    app.run()

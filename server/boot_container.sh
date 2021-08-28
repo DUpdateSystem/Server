@@ -7,7 +7,7 @@ NC='\033[0m' # No Color
 if [ "$1" == "--normal" ] || [ -z "$1" ]
 then
 	echo "${BLUE}Booting by normal mode${NC}"
-	uwsgi uwsgi.ini
+	uwsgi uwsgi.ini && killall -9 uwsgi
 else
 	echo "Boot by test mode(raw python env)"
 	echo -e "${BLUE}---------------the following is the program output---------------${NC}\n"
