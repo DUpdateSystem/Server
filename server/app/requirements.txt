@@ -1,7 +1,9 @@
 beautifulsoup4==4.9.3
 colorlog==5.0.1
 Flask==2.0.1
+aiohttp==3.7.4.post0
 uWSGI==2.0.19.1
+python-socketio==5.4.0
 peewee==3.14.4
 grpcio==1.39.0
 html5lib==1.1

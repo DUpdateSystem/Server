@@ -27,6 +27,7 @@ def init():
     if server_config.debug_mode and os.environ.get("WERKZEUG_RUN_MAIN") != "true":
         return
     __init_env()
+    init_database()
     run_cluster_api()
 
 
@@ -47,8 +48,6 @@ def __run():
                         help='测试软件源脚本的运行选项，以 key value 为组，例如：android_app_package net.xzos.upgradeall')
 
     run_args = parser.parse_args()
-
-    init_database()
 
     if run_args.debug:
         # 运行 debug 程序
