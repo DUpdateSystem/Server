@@ -14,5 +14,6 @@ COPY ./boot_container.sh ./
 COPY ./app ./app
 COPY ./config.ini ./
 COPY ./uwsgi.ini ./
+VOLUME ["/data"]
 
 ENTRYPOINT [ "bash", "./boot_container.sh" ]

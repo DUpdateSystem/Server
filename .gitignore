@@ -1,4 +1,5 @@
 # UpgradeAll Server
+/server/data/
 cache.db
 
 # config_link
