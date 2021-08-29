@@ -26,7 +26,7 @@ class DataManager:
             test_time = test_reliability(lambda: hub.available_test())
             if test_time >= 0:
                 reliability_hub_dict[hub.get_uuid()] = test_time
-        cache_manager.add_tmp_cache(key, json.dumps(reliability_hub_dict), ex_h=0.25)
+        cache_manager.add_tmp_cache(key, json.dumps(reliability_hub_dict))
         return reliability_hub_dict
 
     @staticmethod
@@ -98,14 +98,7 @@ class DataManager:
     def refresh_cache(self, uuid: str or None = None):
         i = 0
         logging.info("refresh all data: start")
-        cache_queue = cache_manager.cached_app_queue
-        for hub_uuid in cache_queue.keys():
-            if uuid and hub_uuid != uuid:
-                continue
-            release_iter = self.get_release(hub_uuid, cache_queue[hub_uuid], use_cache=False)
-            if release_iter:
-                for _ in release_iter:
-                    i += 1
+        # TODO: empty
         logging.info(f"refresh all data: finish({i})")
 
 

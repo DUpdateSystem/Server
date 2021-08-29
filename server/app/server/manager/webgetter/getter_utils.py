@@ -1,7 +1,7 @@
 import asyncio
 from threading import Thread
 
-from app.database.cache_api import add_release_cache, get_release_cache
+from app.server.manager.cache_manager import cache_manager
 from app.server.manager.data.constant import logging
 from app.server.manager.data.generator_cache import GeneratorCache
 from app.status_checker.status import set_hub_available, get_hub_available
@@ -27,7 +27,7 @@ def get_release(hub_uuid: str, app_id_list: list, auth: dict or None,
             yield app_id, release_list
             if cache_data:
                 if release_list is not None:
-                    add_release_cache(hub_uuid, auth, app_id, release_list)
+                    cache_manager.add_release_cache(hub_uuid, auth, app_id, release_list)
         thread.join()
     if stop_core:
         stop_core()
@@ -72,7 +72,7 @@ async def __get_release_cache_async_container(generator_cache: GeneratorCache,
 async def __get_release_cache(generator_cache: GeneratorCache,
                               hub_uuid: str, auth: dict or None, app_id: dict) -> dict or None:
     try:
-        release_cache = get_release_cache(hub_uuid, auth, app_id)
+        release_cache = cache_manager.get_release_cache(hub_uuid, auth, app_id)
         generator_cache.add_value((app_id, release_cache))
     except (KeyError, NameError):
         pass

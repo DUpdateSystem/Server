@@ -75,7 +75,7 @@ def _get_cloud_config_str(dev_version: bool) -> str or None:
         cloud_config_str = __get_cloud_config_str(dev_version, True)
         if cloud_config_str:
             logging.info("Cloud Config: 配置获取成功")
-            cache_manager.add_tmp_cache(cache_key, cloud_config_str, 0.1)
+            cache_manager.add_tmp_cache(cache_key, cloud_config_str)
             return cloud_config_str
         else:
             logging.info(f"Cloud Config: 配置获取失败（dev: {dev_version}）")
