@@ -2,6 +2,7 @@ import asyncio
 from threading import Thread
 from time import sleep
 
+from app.server.utils.utils import set_new_asyncio_loop
 from .getter_request_list import getter_request_list
 from .getter_utils import get_release
 
@@ -11,7 +12,7 @@ class WebGetterManager:
 
     def start(self) -> Thread:
         if not self.thread:
-            self.thread = Thread(target=self.__run_getter)
+            self.thread = Thread(target=self._run_getter)
             self.thread.start()
         return self.thread
 
@@ -23,13 +24,18 @@ class WebGetterManager:
         getter_request_list.add_request(hub_uuid, auth, app_id, callback, use_cache)
         self.start()
 
-    def __run_getter(self):
-        while not getter_request_list.is_empty():
-            sleep(1)
-            hub_uuid, auth, use_cache, app_id_list = getter_request_list.pop_request_list()
-            asyncio.run(self.__do_getter(hub_uuid, auth, use_cache, app_id_list))
-            sleep(2)
+    def _run_getter(self):
+        loop = set_new_asyncio_loop()
+        loop.run_until_complete(self.__run_getter(loop))
+        loop.close()
         self.thread = None
+
+    async def __run_getter(self, loop):
+        while not getter_request_list.is_empty():
+            await asyncio.sleep(1)
+            hub_uuid, auth, use_cache, app_id_list = getter_request_list.pop_request_list()
+            loop.create_task(self.__do_getter(hub_uuid, auth, use_cache, app_id_list))
+            await asyncio.sleep(2)
 
     @staticmethod
     async def __do_getter(hub_uuid: str, auth: dict, use_cache: bool, app_id_list: list):
