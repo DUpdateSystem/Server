@@ -1,7 +1,7 @@
 import json
 from uuid import UUID
 
-from flask import Blueprint
+from flask import Blueprint, Response
 
 from app.server.manager.asset_manager import get_cloud_config_str
 from app.server.manager.data_manager import data_manager, WaitingDataError
@@ -46,7 +46,11 @@ def get_app_release_list(api_version: str, hub_uuid: UUID, app_id_path: str):
     if api_version != 1:
         return 'v1 only', 400
     logging.debug(f"get_app_release_list: {hub_uuid}, {app_id_path}")
-    return __get_app_release_list(hub_uuid, app_id_path)
+    value, status = __get_app_release_list(hub_uuid, app_id_path)
+    if status:
+        return Response(json.dumps(value), mimetype='application/json')
+    else:
+        return value, status
 
 
 def __get_app_release_list(hub_uuid: UUID, app_id_path: str):
