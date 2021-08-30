@@ -10,10 +10,10 @@ FROM python:3.9-slim
 COPY ./app/requirements.txt ./
 COPY ./oci_build/DockerfileRUN.sh ./
 RUN ./DockerfileRUN.sh && rm ./DockerfileRUN.sh
-COPY ./boot_container.sh ./
+COPY ./scripts/boot.sh ./
 COPY ./app ./app
 COPY ./config.ini ./
 COPY ./uwsgi.ini ./
 VOLUME ["/data"]
 
-ENTRYPOINT [ "bash", "./boot_container.sh" ]
+ENTRYPOINT [ "bash", "./boot.sh" ]

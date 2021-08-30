@@ -4,10 +4,10 @@ BLUE='\033[0;31m'
 NC='\033[0m' # No Color
 
 # pull newest code
-if [ "$1" == "--normal" ] || [ -z "$1" ]
+if [ -z "$1" ]
 then
-	echo "${BLUE}Booting by normal mode${NC}"
-	uwsgi uwsgi.ini && killall -9 uwsgi
+	echo "${BLUE}Deploy by uwsgi${NC}"
+	exec uwsgi uwsgi.ini
 else
 	echo "Boot by test mode(raw python env)"
 	echo -e "${BLUE}---------------the following is the program output---------------${NC}\n"
