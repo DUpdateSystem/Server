@@ -1,7 +1,7 @@
 import argparse
 import os
 
-from app.boot.run_cluster_api import run_cluster_api
+from app.boot.run_cluster_api import run_cluster_api, stop_server
 from app.boot.run_debugger import debug
 from app.boot.run_web_app import run_api, app
 from app.database.init import init_database
@@ -23,9 +23,6 @@ def __init_env():
 
 
 def init():
-    # 避免 flask debug 模式代码重加载导致初始化两次
-    if server_config.debug_mode and os.environ.get("WERKZEUG_RUN_MAIN") != "true":
-        return
     __init_env()
     init_database()
     run_cluster_api()
@@ -57,6 +54,7 @@ def __run():
 
 
 def __stop():
+    stop_server()
     web_getter_manager.stop()
 
 
