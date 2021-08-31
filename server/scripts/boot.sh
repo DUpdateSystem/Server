@@ -11,6 +11,6 @@ then
 else
 	echo "Boot by test mode(raw python env)"
 	echo -e "${BLUE}---------------the following is the program output---------------${NC}\n"
-	python3 -m app $@
+	exec python3 -m app $@
 fi
 
