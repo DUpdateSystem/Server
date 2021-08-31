@@ -6,7 +6,7 @@ from gpapi.googleplay import GooglePlayAPI as _GooglePlayAPI, \
     PURCHASE_URL, ssl_verify, googleplay_pb2, LoginError, RequestError
 
 from app.server.manager.data.constant import logging
-from app.server.manager.data.generator_cache import GeneratorCache
+from app.server.utils.generator_cache import GeneratorCache
 from ..base_hub import BaseHub
 from ..hub_script_utils import android_app_key, return_value_no_break, get_tmp_cache, add_tmp_cache
 

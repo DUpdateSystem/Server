@@ -10,8 +10,8 @@ from requests import Response, Session, HTTPError
 from app.server.manager.cache_manager import cache_manager
 from app.server.manager.data.constant import logging
 from app.server.manager.data.constant import session as __session, proxies as __proxies
-from app.server.manager.data.generator_cache import GeneratorCache
-from app.server.manager.webgetter.getter_utils import get_release
+from app.server.utils.generator_cache import GeneratorCache
+from app.server.request_processor.getter_utils import get_release
 
 android_app_key = 'android_app_package'
 

@@ -1,4 +1,4 @@
-from app.server.manager.data.generator_cache import ProcessGeneratorCache
+from app.server.utils.generator_cache import ProcessGeneratorCache
 
 
 class WebGetterRequest:

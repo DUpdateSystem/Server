@@ -1,6 +1,6 @@
 import asyncio
 import json
-from threading import Lock
+from multiprocessing import Event
 
 import schedule
 
@@ -8,9 +8,9 @@ from app.server.config import server_config as _server_config
 from app.server.hubs.hub_list import hub_dict
 from app.server.manager.cache_manager import cache_manager
 from app.server.manager.data.constant import logging
-from app.server.manager.webgetter.getter_api import send_getter_request, is_processing
-from app.server.utils.utils import test_reliability
-from .data.generator_cache import GeneratorCache
+from app.server.request_processor.getter_api import send_getter_request, is_processing
+from app.server.utils.generator_cache import GeneratorCache
+from app.server.utils.utils import test_reliability, get_manager_list
 
 
 class DataManager:
@@ -47,21 +47,20 @@ class DataManager:
         if hub_uuid not in hub_dict:
             logging.warning(f"NO HUB: {hub_uuid}")
             raise KeyError
-        lock = Lock()
-        lock.acquire()
-        release_list = None
+        event = Event()
+        release_list = get_manager_list()
 
         def callback(_release_list=None):
             nonlocal release_list
-            release_list = _release_list
-            lock.release()
+            release_list += _release_list
+            event.set()
 
         send_getter_request(hub_uuid, auth, app_id, callback=callback, use_cache=use_cache)
-        if not lock.acquire(timeout=_server_config.network_timeout) or release_list is None:
+        if not event.wait(timeout=_server_config.network_timeout):
             process_time = is_processing(hub_uuid, auth, app_id, use_cache)
             if process_time:
                 raise WaitingDataError(process_time)
-        return release_list
+        return list(release_list)
 
     def get_download_info_list(self, hub_uuid: str, auth: dict, app_id: list, asset_index: list) -> tuple or None:
         if hub_uuid not in hub_dict:

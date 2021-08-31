@@ -1,6 +1,6 @@
 from xml.etree import ElementTree
 
-from app.server.manager.data.generator_cache import GeneratorCache
+from app.server.utils.generator_cache import GeneratorCache
 from ..base_hub import BaseHub
 from ..hub_script_utils import android_app_key, http_get, get_tmp_cache, add_tmp_cache, return_value, \
     run_fun_list_without_error

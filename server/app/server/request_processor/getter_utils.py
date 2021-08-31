@@ -3,7 +3,7 @@ from threading import Thread
 
 from app.server.manager.cache_manager import cache_manager
 from app.server.manager.data.constant import logging
-from app.server.manager.data.generator_cache import GeneratorCache
+from app.server.utils.generator_cache import GeneratorCache
 from app.status_checker.status import set_hub_available, get_hub_available
 
 

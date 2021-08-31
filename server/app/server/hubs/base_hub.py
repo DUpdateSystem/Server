@@ -6,7 +6,7 @@ from requests import HTTPError
 from app.server.config import server_config
 from app.server.hubs.hub_script_utils import http_get, return_value, run_fun_list_without_error
 from app.server.manager.data.constant import logging
-from app.server.manager.data.generator_cache import GeneratorCache
+from app.server.utils.generator_cache import GeneratorCache
 
 
 class BaseHub(object, metaclass=ABCMeta):
