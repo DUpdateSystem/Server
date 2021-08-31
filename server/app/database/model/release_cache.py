@@ -2,9 +2,9 @@ from time import time
 
 from peewee import *
 
-from .hub_cache import HubCache
 from app.database.meta import BaseModel, BaseMeta
 from app.database.utils import from_json, to_json
+from .hub_cache import HubCache
 
 
 class ReleaseCache(BaseModel):

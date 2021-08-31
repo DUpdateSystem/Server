@@ -8,6 +8,7 @@ from app.database.model.release_cache import ReleaseCache
 from .utils import to_json
 from ..server.config import server_config
 from ..server.manager.data.constant import logging
+from .meta import local_memory_db, local_cache_db
 
 data_expire_sec = server_config.auto_refresh_time * 3600
 

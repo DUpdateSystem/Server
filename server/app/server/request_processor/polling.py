@@ -37,7 +37,6 @@ class RequestPolling:
 
     async def __run_getter(self):
         while not self.stop_event.is_set():
-            await asyncio.sleep(1)
             print("wait get")
             item = request_list.pop_request_list()
             if item is None:
@@ -45,7 +44,6 @@ class RequestPolling:
             hub_uuid, auth, use_cache, app_id_list = item
             print("get" + str(app_id_list))
             await asyncio.create_task(self.__do_getter(hub_uuid, auth, use_cache, app_id_list))
-            await asyncio.sleep(2)
 
     @staticmethod
     async def __do_getter(hub_uuid: str, auth: dict, use_cache: bool, app_id_list: list):

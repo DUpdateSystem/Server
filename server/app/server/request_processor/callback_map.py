@@ -53,22 +53,21 @@ def start_check_callback_polling():
 
 def check_callback_polling():
     with checker_lock:
+        clean_wait_barrier.register()
         __check_callback_polling()
+        clean_wait_barrier.unregister()
 
 
 def __check_callback_polling():
-    clean_wait_barrier.register()
-
     while callback_map:
         if call_wait_event.wait(15 / 3):
             try:
-                key, args = next(iter(args_map.items()))
+                for key, args in args_map.items():
+                    __call_callback(key, args)
                 clean_wait_barrier.wait()
-                __call_callback(key, args)
             except KeyError:
                 pass
         check_callback_timeout()
-    clean_wait_barrier.unregister()
 
 
 def __call_callback(key, args):
@@ -82,13 +81,14 @@ def __call_callback(key, args):
 
 
 def check_callback_timeout():
-    for key, callback_list in callback_map.items():
-        for callback_item in callback_list:
-            callback, timestamp = callback_item
-            if not check_timeout(timestamp):
-                callback_list.remove(callback_item)
-        if not callback_list:
-            del callback_map[key]
+    with callback_map_lock:
+        for key, callback_list in list(callback_map.items()):
+            for callback_item in callback_list:
+                callback, timestamp = callback_item
+                if not check_timeout(timestamp):
+                    callback_list.remove(callback_item)
+            if not callback_list:
+                del callback_map[key]
 
 
 def check_timeout(timestamp) -> bool:
