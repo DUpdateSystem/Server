@@ -4,7 +4,7 @@ from xml.etree import ElementTree
 
 from bs4 import BeautifulSoup
 
-from app.server.utils.generator_cache import GeneratorCache
+from app.server.utils.queue import ThreadQueue
 from ..base_hub import BaseHub
 from ..hub_script_utils import android_app_key, http_get, get_tmp_cache, add_tmp_cache, return_value, \
     run_fun_list_without_error
@@ -17,7 +17,7 @@ class XpModRepo(BaseHub):
     def get_uuid() -> str:
         return 'e02a95a2-af76-426c-9702-c4c39a01f891'
 
-    async def get_release_list(self, generator_cache: GeneratorCache,
+    async def get_release_list(self, generator_cache: ThreadQueue,
                                app_id_list: list, auth: dict or None = None):
         xml_str = get_tmp_cache(cache_key)
         if not xml_str:
@@ -31,7 +31,7 @@ class XpModRepo(BaseHub):
             await run_fun_list_without_error(fun_list)
 
     @staticmethod
-    async def __get_release(generator_cache: GeneratorCache, app_id: dict, tree):
+    async def __get_release(generator_cache: ThreadQueue, app_id: dict, tree):
         if android_app_key not in app_id:
             return_value(generator_cache, app_id, [])
         package = app_id[android_app_key]

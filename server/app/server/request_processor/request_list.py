@@ -34,8 +34,8 @@ class RequestList:
         add_callback(f'{hub_uuid}{auth}{app_id}', callback)
         self.wait_event.set()
 
-    def callback_request(self, hub_uuid: str, auth: dict, use_cache: bool, app_id: dict, *args):
-        self.__pop_processing_list(hub_uuid, auth, use_cache, app_id)
+    def callback_request(self, hub_uuid: str, auth: dict, app_id: dict, use_cache: bool, *args):
+        self.__pop_processing_list(hub_uuid, auth, app_id, use_cache)
         call_callback(f'{hub_uuid}{auth}{app_id}', *args)
 
     def is_processing(self, hub_uuid: str, auth: dict, app_id: dict, use_cache: bool = True) -> bool:
@@ -46,7 +46,7 @@ class RequestList:
         except KeyError:
             return False
 
-    def __pop_processing_list(self, hub_uuid: str, auth: dict, use_cache: bool, app_id: dict):
+    def __pop_processing_list(self, hub_uuid: str, auth: dict, app_id: dict, use_cache: bool):
         key = self.__get_key(hub_uuid, auth, use_cache)
         processing_list = self.processing_request_dict[key]
         try:

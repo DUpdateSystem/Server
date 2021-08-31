@@ -1,10 +1,10 @@
-from app.server.utils.generator_cache import ProcessGeneratorCache
+from app.server.utils.queue import ProcessQueue
 
 
 class WebGetterRequest:
     def __init__(self, hub_uuid: str, app_id_list: list, auth: dict or None,
                  use_cache: bool = True, cache_data: bool = True):
-        self.queue = ProcessGeneratorCache()
+        self.queue = ProcessQueue()
 
         self.hub_uuid: str = hub_uuid
         self.app_id_list = app_id_list

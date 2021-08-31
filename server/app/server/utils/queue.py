@@ -1,8 +1,9 @@
+from asyncio import Queue
 from multiprocessing import Manager
 from queue import SimpleQueue
 
 
-class BaseGeneratorCache:
+class BaseQueue:
 
     def __init__(self, queue):
         self.__queue = queue
@@ -10,11 +11,14 @@ class BaseGeneratorCache:
     def close(self):
         self.__queue.put(EOFError)
 
-    def add_value(self, value):
+    def put(self, value):
         self.__queue.put(value)
 
+    def get(self):
+        return self.__queue.get()
+
     def __next__(self):
-        v = self.__queue.get()
+        v = self.get()
         if v is EOFError:
             raise StopIteration
         else:
@@ -27,13 +31,24 @@ class BaseGeneratorCache:
 m = Manager()
 
 
-class ProcessGeneratorCache(BaseGeneratorCache):
+class ProcessQueue(BaseQueue):
 
     def __init__(self):
         super().__init__(m.Queue())
 
 
-class GeneratorCache(BaseGeneratorCache):
+class ThreadQueue(BaseQueue):
 
     def __init__(self):
         super().__init__(SimpleQueue())
+
+
+class LightQueue:
+    def __init__(self):
+        self.__queue = Queue()
+
+    async def put(self, value):
+        await self.__queue.put(value)
+
+    async def get(self):
+        return await self.__queue.get()

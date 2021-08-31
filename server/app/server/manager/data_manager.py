@@ -9,7 +9,7 @@ from app.server.hubs.hub_list import hub_dict
 from app.server.manager.cache_manager import cache_manager
 from app.server.manager.data.constant import logging
 from app.server.request_processor.getter_api import send_getter_request, is_processing
-from app.server.utils.generator_cache import GeneratorCache
+from app.server.utils.queue import ThreadQueue
 from app.server.utils.utils import test_reliability, get_manager_list
 
 
@@ -68,7 +68,7 @@ class DataManager:
             raise KeyError
         # noinspection PyBroadException
         try:
-            cache = GeneratorCache()
+            cache = ThreadQueue()
             asyncio.run(self.__run_download_core(hub_uuid, auth, app_id, asset_index, cache))
             download_info = next(cache)
             if type(download_info) is str:
@@ -81,7 +81,7 @@ class DataManager:
 
     @staticmethod
     async def __run_download_core(hub_uuid: str, auth: dict, app_id: list, asset_index: list,
-                                  generator_cache: GeneratorCache):
+                                  generator_cache: ThreadQueue):
         hub = hub_dict[hub_uuid]
         aw = None
         download_info = None
@@ -91,7 +91,7 @@ class DataManager:
             download_info = await asyncio.wait_for(aw, timeout=20)
         except asyncio.TimeoutError:
             logging.info(f'aw: {aw} timeout!')
-        generator_cache.add_value(download_info)
+        generator_cache.put(download_info)
         generator_cache.close()
 
     def refresh_cache(self, uuid: str or None = None):

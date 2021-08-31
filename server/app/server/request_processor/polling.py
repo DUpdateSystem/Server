@@ -1,8 +1,9 @@
 import asyncio
 from multiprocessing import Process, Event
 
+from app.server.utils.queue import LightQueue
 from app.server.utils.utils import set_new_asyncio_loop
-from .getter_utils import get_release
+from .release_getter import get_release
 from .request_list import request_list
 
 
@@ -32,10 +33,12 @@ class RequestPolling:
 
     def _run_getter(self):
         loop = set_new_asyncio_loop()
-        loop.run_until_complete(self.__run_getter())
+        queue = LightQueue()
+        loop.create_task(self.__callback(queue))
+        loop.run_until_complete(self.__run_getter(queue))
         loop.close()
 
-    async def __run_getter(self):
+    async def __run_getter(self, queue: LightQueue):
         while not self.stop_event.is_set():
             print("wait get")
             item = request_list.pop_request_list()
@@ -43,13 +46,19 @@ class RequestPolling:
                 return
             hub_uuid, auth, use_cache, app_id_list = item
             print("get" + str(app_id_list))
-            await asyncio.create_task(self.__do_getter(hub_uuid, auth, use_cache, app_id_list))
+            await asyncio.create_task(get_release(queue, hub_uuid, auth, app_id_list, use_cache))
 
     @staticmethod
-    async def __do_getter(hub_uuid: str, auth: dict, use_cache: bool, app_id_list: list):
-        iter_core = get_release(hub_uuid, app_id_list, auth, use_cache)
-        for app_id, release_list in iter_core:
-            request_list.callback_request(hub_uuid, auth, use_cache, app_id, release_list)
+    async def __callback(queue: LightQueue):
+        while True:
+            print("ping")
+            item = await queue.get()
+            if item is EOFError:
+                break
+            print(len(item))
+            hub_uuid, auth, app_id, use_cache, release_list = item
+            print("callback")
+            request_list.callback_request(hub_uuid, auth, app_id, use_cache, release_list)
 
 
 request_polling = RequestPolling()

@@ -6,7 +6,7 @@ from gpapi.googleplay import GooglePlayAPI as _GooglePlayAPI, \
     PURCHASE_URL, ssl_verify, googleplay_pb2, LoginError, RequestError
 
 from app.server.manager.data.constant import logging
-from app.server.utils.generator_cache import GeneratorCache
+from app.server.utils.queue import ThreadQueue
 from ..base_hub import BaseHub
 from ..hub_script_utils import android_app_key, return_value_no_break, get_tmp_cache, add_tmp_cache
 
@@ -31,12 +31,12 @@ class GooglePlay(BaseHub):
             "ac2dmToken": api.authSubToken
         }
 
-    async def get_release_list(self, generator_cache: GeneratorCache,
+    async def get_release_list(self, generator_cache: ThreadQueue,
                                app_id_list: list, auth: dict or None = None):
         [await self.__get_release_list(generator_cache, lice, auth) for lice in
          [app_id_list[i: i + 50] for i in range(0, len(app_id_list), 50)]]
 
-    async def __get_release_list(self, generator_cache: GeneratorCache,
+    async def __get_release_list(self, generator_cache: ThreadQueue,
                                  app_id_list: list, auth: dict or None = None):
         [return_value_no_break(generator_cache, app_id, []) for app_id in app_id_list if
          android_app_key not in app_id]

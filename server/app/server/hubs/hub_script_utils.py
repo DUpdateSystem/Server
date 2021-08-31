@@ -10,8 +10,8 @@ from requests import Response, Session, HTTPError
 from app.server.manager.cache_manager import cache_manager
 from app.server.manager.data.constant import logging
 from app.server.manager.data.constant import session as __session, proxies as __proxies
-from app.server.utils.generator_cache import GeneratorCache
-from app.server.request_processor.getter_utils import get_release
+from app.server.utils.queue import ThreadQueue
+from app.server.request_processor.release_getter import get_release
 
 android_app_key = 'android_app_package'
 
@@ -156,12 +156,12 @@ def get_url_from_release_fun(uuid, app_id: dict, asset_index, auth: dict or None
     return release["assets"][asset_index[1]]["download_url"]
 
 
-def return_value(generator_cache: GeneratorCache, app_id: dict, value):
-    generator_cache.add_value({"id": app_id, "v": value})
+def return_value(generator_cache: ThreadQueue, app_id: dict, value):
+    generator_cache.put({"id": app_id, "v": value})
     raise ReturnFun
 
 
-def return_value_no_break(generator_cache: GeneratorCache, app_id: dict, value):
+def return_value_no_break(generator_cache: ThreadQueue, app_id: dict, value):
     return __run_return_value_fun0(lambda: return_value(generator_cache, app_id, value))
 
 

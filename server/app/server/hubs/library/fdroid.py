@@ -1,6 +1,6 @@
 from xml.etree import ElementTree
 
-from app.server.utils.generator_cache import GeneratorCache
+from app.server.utils.queue import ThreadQueue
 from ..base_hub import BaseHub
 from ..hub_script_utils import android_app_key, http_get, get_tmp_cache, add_tmp_cache, return_value, \
     run_fun_list_without_error
@@ -11,7 +11,7 @@ class FDroid(BaseHub):
     def get_uuid() -> str:
         return '6a6d590b-1809-41bf-8ce3-7e3f6c8da945'
 
-    async def get_release_list(self, generator_cache: GeneratorCache,
+    async def get_release_list(self, generator_cache: ThreadQueue,
                                app_id_list: list, auth: dict or None = None):
         if auth and 'repo_url' in auth:
             repo_url = auth["repo_url"]
@@ -22,7 +22,7 @@ class FDroid(BaseHub):
         await run_fun_list_without_error(fun_list)
 
     @staticmethod
-    async def __get_release(generator_cache: GeneratorCache, app_id: dict, tree, url):
+    async def __get_release(generator_cache: ThreadQueue, app_id: dict, tree, url):
         if android_app_key not in app_id:
             return_value(generator_cache, app_id, [])
         package = app_id[android_app_key]
