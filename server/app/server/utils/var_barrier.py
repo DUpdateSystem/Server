@@ -7,12 +7,10 @@ class VarBarrier:
     event = Event()
 
     def register(self):
-        print("re")
         with self.thread_num.get_lock():
             self.thread_num.value += 1
 
     def unregister(self):
-        print("unre")
         with self.thread_num.get_lock():
             self.thread_num.value -= 1
 

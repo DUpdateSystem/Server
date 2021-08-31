@@ -40,24 +40,19 @@ class RequestPolling:
 
     async def __run_getter(self, queue: LightQueue):
         while not self.stop_event.is_set():
-            print("wait get")
             item = request_list.pop_request_list()
             if item is None:
                 return
             hub_uuid, auth, use_cache, app_id_list = item
-            print("get" + str(app_id_list))
             await asyncio.create_task(get_release(queue, hub_uuid, auth, app_id_list, use_cache))
 
     @staticmethod
     async def __callback(queue: LightQueue):
         while True:
-            print("ping")
             item = await queue.get()
             if item is EOFError:
                 break
-            print(len(item))
             hub_uuid, auth, app_id, use_cache, release_list = item
-            print("callback")
             request_list.callback_request(hub_uuid, auth, app_id, use_cache, release_list)
 
 

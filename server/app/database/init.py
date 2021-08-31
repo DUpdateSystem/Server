@@ -5,8 +5,20 @@ from .meta import local_cache_db, local_memory_db
 
 
 def init_database():
-    local_cache_db.connect()
+    connect_db()
     local_cache_db.create_tables([HubCache, ReleaseCache])
-    local_memory_db.close()
-    local_memory_db.connect()
     local_memory_db.create_tables([MemoryCache])
+
+
+def connect_db():
+    if local_cache_db.is_closed():
+        local_cache_db.connect()
+    if local_memory_db.is_closed():
+        local_memory_db.connect()
+
+
+def close_db():
+    if local_cache_db.is_connection_usable():
+        local_cache_db.close()
+    #if local_memory_db.is_connection_usable():
+        #local_memory_db.close()

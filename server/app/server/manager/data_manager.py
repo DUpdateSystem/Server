@@ -52,7 +52,7 @@ class DataManager:
 
         def callback(_release_list=None):
             nonlocal release_list
-            release_list += _release_list
+            release_list.append(_release_list)
             event.set()
 
         send_getter_request(hub_uuid, auth, app_id, callback=callback, use_cache=use_cache)
@@ -60,7 +60,7 @@ class DataManager:
             process_time = is_processing(hub_uuid, auth, app_id, use_cache)
             if process_time:
                 raise WaitingDataError(process_time)
-        return list(release_list)
+        return next(iter(release_list), None)
 
     def get_download_info_list(self, hub_uuid: str, auth: dict, app_id: list, asset_index: list) -> tuple or None:
         if hub_uuid not in hub_dict:

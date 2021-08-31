@@ -32,9 +32,13 @@ async def get_release(return_queue: LightQueue, hub_uuid: str, auth: dict or Non
 
 
 def _get_release_cache(queue: ThreadQueue, hub_uuid: str, auth: dict or None, app_id_list: list) -> Thread:
-    thread = Thread(target=asyncio.run, args=(__get_release_cache_async(queue, hub_uuid, auth, app_id_list),))
+    thread = Thread(target=__get_release_cache_container, args=(queue, hub_uuid, auth, app_id_list))
     thread.start()
     return thread
+
+
+def __get_release_cache_container(queue: ThreadQueue, hub_uuid: str, auth: dict or None, app_id_list: list):
+    asyncio.run(__get_release_cache_async(queue, hub_uuid, auth, app_id_list))
 
 
 async def __get_release_cache_async(queue: ThreadQueue, hub_uuid: str, auth: dict or None, app_id_list: list):
