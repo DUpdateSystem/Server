@@ -8,7 +8,7 @@ class CacheManager:
         self.__redis_client = None
 
     @staticmethod
-    def init_db():
+    def connect():
         connect_db()
 
     @staticmethod

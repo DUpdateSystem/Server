@@ -2,20 +2,22 @@ import asyncio
 from multiprocessing import Process, Event
 from threading import Thread
 
+from app.server.manager.cache_manager import cache_manager
 from app.server.utils.queue import LightQueue
 from app.server.utils.utils import set_new_asyncio_loop, call_fun_in_loop
-from .release_getter import get_release
-from app.server.manager.cache_manager import cache_manager
-from .request_list import request_list
+from .getter.cloud_config_getter import get_cloud_config_str
+from .getter.download_getter import get_download_info_list
+from .getter.release_getter import get_release
+from .queue.request_getter import request_list, CLOUD_CONFIG_REQUEST, RELEASE_REQUEST, DOWNLOAD_REQUEST
+from .queue.respond_sender import respond_release, respond_download, respond_cloud_config
 
 
 class RequestPolling:
     process: Process or None = None
-    stop_event = Event()
 
     def start(self) -> Process:
         if not self.process:
-            self.process = Process(target=self._run_getter)
+            self.process = Process(target=self._run_getter, daemon=True)
             self.process.start()
         return self.process
 
@@ -27,42 +29,50 @@ class RequestPolling:
         self.process.kill()
 
     def stop(self):
-        self.stop_event.set()
-        request_list.wait_event.set()
+        request_list.close()
 
-    def send_request(self, hub_uuid: str, auth: dict, app_id: dict, callback, use_cache: bool = True):
-        request_list.add_request(hub_uuid, auth, app_id, callback, use_cache)
+    @staticmethod
+    async def get_download_info(hub_uuid: str, auth: dict, app_id: list, asset_index: list):
+        download_info = await get_download_info_list(hub_uuid, auth, app_id, asset_index)
+        respond_download(hub_uuid, auth, app_id, asset_index, download_info)
 
-    def _start_queue_convert(self, loop) -> LightQueue:
+    @staticmethod
+    async def get_release(hub_uuid: str, auth: dict or None, app_id: dict,
+                          use_cache=True, cache_data=True):
+        release_list = await get_release(hub_uuid, auth, app_id, use_cache, cache_data)
+        respond_release(hub_uuid, auth, app_id, use_cache, release_list)
+
+    @staticmethod
+    async def get_cloud_config(dev_version: bool, migrate_master: bool):
+        cloud_config = get_cloud_config_str(dev_version, migrate_master)
+        respond_cloud_config(dev_version, migrate_master, cloud_config)
+
+    async def __get_request(self, queue: LightQueue):
+        cache_manager.connect()
+        async for key, args in queue:
+            if key == CLOUD_CONFIG_REQUEST:
+                asyncio.create_task(self.get_cloud_config(*args))
+            elif key == RELEASE_REQUEST:
+                asyncio.create_task(self.get_release(*args))
+            elif key == DOWNLOAD_REQUEST:
+                asyncio.create_task(self.get_download_info(*args))
+        cache_manager.disconnect()
+
+    def __start_queue_convert(self, loop) -> LightQueue:
         queue = LightQueue(loop=loop)
         Thread(target=self._queue_converter, args=(loop, queue)).start()
         return queue
 
-    def _queue_converter(self, loop, queue: LightQueue):
-        while not self.stop_event.is_set():
-            item = request_list.pop_request_list()
+    @staticmethod
+    def _queue_converter(loop, queue: LightQueue):
+        for item in request_list:
             call_fun_in_loop(queue.put(item), loop)
 
     def _run_getter(self):
         loop = set_new_asyncio_loop()
-        queue = LightQueue()
-        loop.create_task(self.__callback(queue))
-        request_queue = self._start_queue_convert(loop)
-        loop.run_until_complete(self.__run_getter(queue, request_queue))
+        request_queue = self.__start_queue_convert(loop)
+        loop.run_until_complete(self.__get_request(request_queue))
         loop.close()
-
-    async def __run_getter(self, queue: LightQueue, request_queue: LightQueue):
-        cache_manager.init_db()
-        while not self.stop_event.is_set():
-            async for hub_uuid, auth, use_cache, app_id_list in request_queue:
-                asyncio.create_task(get_release(queue, hub_uuid, auth, app_id_list, use_cache))
-        cache_manager.disconnect()
-
-    @staticmethod
-    async def __callback(queue: LightQueue):
-        while True:
-            async for hub_uuid, auth, app_id, use_cache, release_list in queue:
-                request_list.callback_request(hub_uuid, auth, app_id, use_cache, release_list)
 
 
 request_polling = RequestPolling()

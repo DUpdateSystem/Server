@@ -6,8 +6,25 @@ from app.server.utils.queue import LightQueue
 from app.status_checker.status import set_hub_available, get_hub_available
 
 
-async def get_release(return_queue: LightQueue, hub_uuid: str, auth: dict or None, app_id_list: list,
-                      use_cache=True, cache_data=True):
+async def get_release(hub_uuid: str, auth: dict or None, app_id: dict, use_cache=True, cache_data=True) -> dict or None:
+    from app.server.hubs.hub_list import hub_dict
+    hub = hub_dict[hub_uuid]
+    if use_cache:
+        release_list = await __get_release_cache_async_container(hub_uuid, auth, app_id)
+        if release_list is not None and not (len(release_list) == 1 and release_list[0] is None):
+            return release_list
+    observer_queue = LightQueue()
+    await __run_get_release_fun(observer_queue, hub, [app_id], auth)
+    item: dict = await observer_queue.get()
+    app_id = item["id"]
+    release_list = item["v"]
+    if cache_data and release_list is not None:
+        cache_manager.add_release_cache(hub_uuid, auth, app_id, release_list)
+    return release_list
+
+
+async def get_release_list(return_queue: LightQueue, hub_uuid: str, auth: dict or None, app_id_list: list,
+                           use_cache=True, cache_data=True):
     from app.server.hubs.hub_list import hub_dict
     hub = hub_dict[hub_uuid]
     observer_queue = LightQueue()
@@ -34,17 +51,16 @@ async def __get_release_cache_async(queue: LightQueue, hub_uuid: str, auth: dict
     await queue.close()
 
 
-async def __get_release_cache_async_container(queue: LightQueue, hub_uuid: str, auth: dict or None, app_id: dict):
+async def __get_release_cache_async_container(hub_uuid: str, auth: dict or None, app_id: dict) -> dict or None:
     try:
-        await __run_core(__get_release_cache(queue, hub_uuid, auth, app_id), 1, True)
+        return await __run_core(__get_release_cache(hub_uuid, auth, app_id), 1, True)
     except asyncio.TimeoutError:
         logging.info(f'get_release_cache: {app_id} timeout!')
 
 
-async def __get_release_cache(queue: LightQueue, hub_uuid: str, auth: dict or None, app_id: dict) -> dict or None:
+async def __get_release_cache(hub_uuid: str, auth: dict or None, app_id: dict) -> dict or None:
     try:
-        release_cache = cache_manager.get_release_cache(hub_uuid, auth, app_id)
-        await queue.put((app_id, release_cache))
+        return cache_manager.get_release_cache(hub_uuid, auth, app_id)
     except (KeyError, NameError):
         pass
 

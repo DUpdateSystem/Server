@@ -56,7 +56,7 @@ def __run():
 
 def __stop():
     stop_server()
-    request_polling.kill()
+    request_polling.stop()
 
 
 def run():

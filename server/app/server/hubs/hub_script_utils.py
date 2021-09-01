@@ -10,7 +10,7 @@ from requests import Response, Session, HTTPError
 from app.server.manager.cache_manager import cache_manager
 from app.server.manager.data.constant import logging
 from app.server.manager.data.constant import session as __session, proxies as __proxies
-from app.server.request_processor.release_getter import get_release
+from app.server.request_processor.getter.release_getter import get_release
 from app.server.utils.queue import LightQueue
 
 android_app_key = 'android_app_package'
