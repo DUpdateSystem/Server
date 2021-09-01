@@ -8,6 +8,7 @@ def init_database():
     connect_db()
     local_cache_db.create_tables([HubCache, ReleaseCache])
     local_memory_db.create_tables([MemoryCache])
+    close_db()
 
 
 def connect_db():
@@ -20,5 +21,5 @@ def connect_db():
 def close_db():
     if local_cache_db.is_connection_usable():
         local_cache_db.close()
-    #if local_memory_db.is_connection_usable():
-        #local_memory_db.close()
+    if local_memory_db.is_connection_usable():
+        local_memory_db.close()

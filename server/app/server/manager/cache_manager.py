@@ -8,29 +8,28 @@ class CacheManager:
         self.__redis_client = None
 
     @staticmethod
-    def add_release_cache(hub_uuid: str, auth: dict or None, app_id: dict, release: list):
+    def init_db():
         connect_db()
-        add_release_cache(hub_uuid, auth, app_id, release)
+
+    @staticmethod
+    def disconnect():
         close_db()
+
+    @staticmethod
+    def add_release_cache(hub_uuid: str, auth: dict or None, app_id: dict, release: list):
+        add_release_cache(hub_uuid, auth, app_id, release)
 
     @staticmethod
     def get_release_cache(hub_uuid: str, auth: dict or None, app_id: dict) -> list or None:
-        connect_db()
-        value = get_release_cache(hub_uuid, auth, app_id)
-        close_db()
-        return value
+        return get_release_cache(hub_uuid, auth, app_id)
 
     @staticmethod
     def add_tmp_cache(key, value: str):
-        connect_db()
         add_memory_cache(key, value)
-        close_db()
 
     @staticmethod
     def get_tmp_cache(key) -> str or None:
-        connect_db()
         value = get_memory_cache(key)
-        close_db()
         return value
 
 

@@ -44,11 +44,24 @@ class ThreadQueue(BaseQueue):
 
 
 class LightQueue:
-    def __init__(self):
-        self.__queue = Queue()
+    def __init__(self, maxsize=0, loop=None):
+        self.__queue = Queue(maxsize, loop=loop)
+
+    async def close(self):
+        await self.put(EOFError)
 
     async def put(self, value):
         await self.__queue.put(value)
 
     async def get(self):
         return await self.__queue.get()
+
+    async def __anext__(self):
+        v = await self.get()
+        if v is EOFError:
+            raise StopAsyncIteration
+        else:
+            return v
+
+    def __aiter__(self):
+        return self

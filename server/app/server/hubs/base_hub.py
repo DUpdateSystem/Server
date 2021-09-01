@@ -6,7 +6,7 @@ from requests import HTTPError
 from app.server.config import server_config
 from app.server.hubs.hub_script_utils import http_get, return_value, run_fun_list_without_error
 from app.server.manager.data.constant import logging
-from app.server.utils.queue import ThreadQueue
+from app.server.utils.queue import LightQueue
 
 
 class BaseHub(object, metaclass=ABCMeta):
@@ -18,15 +18,12 @@ class BaseHub(object, metaclass=ABCMeta):
     def get_uuid() -> str:
         pass
 
-    def init_account(self, account: dict) -> dict or None:
-        pass
-
-    async def get_release_list(self, generator_cache: ThreadQueue,
+    async def get_release_list(self, return_queue: LightQueue,
                                app_id_list: list, auth: dict or None = None):
-        fun_list = [self.__call_release_list_fun(generator_cache, app_id, auth) for app_id in app_id_list]
+        fun_list = [self.__call_release_list_fun(return_queue, app_id, auth) for app_id in app_id_list]
         await run_fun_list_without_error(fun_list)
 
-    async def __call_release_list_fun(self, generator_cache: ThreadQueue, app_id: dict, auth: dict or None):
+    async def __call_release_list_fun(self, return_queue: LightQueue, app_id: dict, auth: dict or None):
         """ 当软件源未实现 get_release_list 函数时，缺省调用 get_release 函数获取数据的协程函数
         """
         # 获取云端数据
@@ -51,7 +48,7 @@ class BaseHub(object, metaclass=ABCMeta):
             else:
                 log += " ERROR"
             logging.exception(log, exc_info=debug_mode)
-        return_value(generator_cache, app_id, release_list)
+        await return_value(return_queue, app_id, release_list)
 
     def get_release(self, app_id: dict, auth: dict or None = None) -> list or None:
         """获取更新版本信息

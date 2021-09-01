@@ -4,7 +4,7 @@ from xml.etree import ElementTree
 
 from bs4 import BeautifulSoup
 
-from app.server.utils.queue import ThreadQueue
+from app.server.utils.queue import LightQueue
 from ..base_hub import BaseHub
 from ..hub_script_utils import android_app_key, http_get, get_tmp_cache, add_tmp_cache, return_value, \
     run_fun_list_without_error
@@ -17,7 +17,7 @@ class XpModRepo(BaseHub):
     def get_uuid() -> str:
         return 'e02a95a2-af76-426c-9702-c4c39a01f891'
 
-    async def get_release_list(self, generator_cache: ThreadQueue,
+    async def get_release_list(self, return_queue: LightQueue,
                                app_id_list: list, auth: dict or None = None):
         xml_str = get_tmp_cache(cache_key)
         if not xml_str:
@@ -27,17 +27,17 @@ class XpModRepo(BaseHub):
                 add_tmp_cache(cache_key, xml_str)
         if xml_str:
             tree = ElementTree.fromstring(xml_str)
-            fun_list = [self.__get_release(generator_cache, app_id, tree) for app_id in app_id_list]
+            fun_list = [self.__get_release(return_queue, app_id, tree) for app_id in app_id_list]
             await run_fun_list_without_error(fun_list)
 
     @staticmethod
-    async def __get_release(generator_cache: ThreadQueue, app_id: dict, tree):
+    async def __get_release(return_queue: LightQueue, app_id: dict, tree):
         if android_app_key not in app_id:
-            return_value(generator_cache, app_id, [])
+            await return_value(return_queue, app_id, [])
         package = app_id[android_app_key]
         module = tree.find(f'.//module[@package="{package}"]')
         if not module:
-            return_value(generator_cache, app_id, [])
+            await return_value(return_queue, app_id, [])
         version_list = module.findall('version')
         data = []
         for version in version_list:
@@ -58,7 +58,7 @@ class XpModRepo(BaseHub):
                 }]
             }
             data.append(release_info)
-        return_value(generator_cache, app_id, data)
+        await return_value(return_queue, app_id, data)
 
     @property
     def available_test_url(self) -> str:

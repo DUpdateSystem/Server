@@ -6,7 +6,7 @@ from gpapi.googleplay import GooglePlayAPI as _GooglePlayAPI, \
     PURCHASE_URL, ssl_verify, googleplay_pb2, LoginError, RequestError
 
 from app.server.manager.data.constant import logging
-from app.server.utils.queue import ThreadQueue
+from app.server.utils.queue import LightQueue
 from ..base_hub import BaseHub
 from ..hub_script_utils import android_app_key, return_value_no_break, get_tmp_cache, add_tmp_cache
 
@@ -31,15 +31,15 @@ class GooglePlay(BaseHub):
             "ac2dmToken": api.authSubToken
         }
 
-    async def get_release_list(self, generator_cache: ThreadQueue,
+    async def get_release_list(self, return_queue: LightQueue,
                                app_id_list: list, auth: dict or None = None):
-        [await self.__get_release_list(generator_cache, lice, auth) for lice in
+        [await self.__get_release_list(return_queue, lice, auth) for lice in
          [app_id_list[i: i + 50] for i in range(0, len(app_id_list), 50)]]
 
-    async def __get_release_list(self, generator_cache: ThreadQueue,
+    async def __get_release_list(self, generator_cache: LightQueue,
                                  app_id_list: list, auth: dict or None = None):
-        [return_value_no_break(generator_cache, app_id, []) for app_id in app_id_list if
-         android_app_key not in app_id]
+        [await return_value_no_break(generator_cache, app_id, [])
+         for app_id in app_id_list if android_app_key not in app_id]
         package_list = ["com.google.android.webview"] + [app_id[android_app_key] for app_id in app_id_list if
                                                          android_app_key in app_id]
         package_list = set(package_list)
@@ -64,7 +64,7 @@ class GooglePlay(BaseHub):
         for package, details in details_map.items():
             app_id = {android_app_key: package}
             if details is None:
-                return_value_no_break(generator_cache, app_id, [])
+                await return_value_no_break(generator_cache, app_id, [])
             else:
                 # noinspection PyBroadException
                 try:
@@ -80,7 +80,7 @@ class GooglePlay(BaseHub):
                     release_list = [release, ]
                 except Exception:
                     release_list = None
-                return_value_no_break(generator_cache, app_id, release_list)
+                await return_value_no_break(generator_cache, app_id, release_list)
 
     def get_download_info(self, app_id: dict, asset_index: list, auth: dict or None = None) -> tuple or None:
         if android_app_key not in app_id:

@@ -1,6 +1,6 @@
 from xml.etree import ElementTree
 
-from app.server.utils.queue import ThreadQueue
+from app.server.utils.queue import LightQueue
 from ..base_hub import BaseHub
 from ..hub_script_utils import android_app_key, http_get, get_tmp_cache, add_tmp_cache, return_value, \
     run_fun_list_without_error
@@ -11,24 +11,24 @@ class FDroid(BaseHub):
     def get_uuid() -> str:
         return '6a6d590b-1809-41bf-8ce3-7e3f6c8da945'
 
-    async def get_release_list(self, generator_cache: ThreadQueue,
+    async def get_release_list(self, return_queue: LightQueue,
                                app_id_list: list, auth: dict or None = None):
         if auth and 'repo_url' in auth:
             repo_url = auth["repo_url"]
         else:
             repo_url = 'https://f-droid.org/repo'
         tree = _get_xml_tree(repo_url)
-        fun_list = [self.__get_release(generator_cache, app_id, tree, repo_url) for app_id in app_id_list]
+        fun_list = [self.__get_release(return_queue, app_id, tree, repo_url) for app_id in app_id_list]
         await run_fun_list_without_error(fun_list)
 
     @staticmethod
-    async def __get_release(generator_cache: ThreadQueue, app_id: dict, tree, url):
+    async def __get_release(return_queue: LightQueue, app_id: dict, tree, url):
         if android_app_key not in app_id:
-            return_value(generator_cache, app_id, [])
+            await return_value(return_queue, app_id, [])
         package = app_id[android_app_key]
         module = tree.find(f'.//application[@id="{package}"]')
         if not module:
-            return_value(generator_cache, app_id, [])
+            await return_value(return_queue, app_id, [])
         changelog_item = module.find('changelog')
         newest_changelog = None
         if changelog_item:
@@ -52,7 +52,7 @@ class FDroid(BaseHub):
                 }]
             }
             data.append(release_info)
-        return_value(generator_cache, app_id, data)
+        await return_value(return_queue, app_id, data)
 
     @property
     def available_test_url(self) -> str:

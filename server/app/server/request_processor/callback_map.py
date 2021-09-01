@@ -1,16 +1,13 @@
 import threading
 import time
-from multiprocessing import Event, Lock
+from multiprocessing import JoinableQueue
+from queue import Empty
 
 from app.server.config import server_config
 from app.server.manager.data.constant import logging
-from app.server.utils.utils import get_manager_dict
 from app.server.utils.var_barrier import VarBarrier
 
-args_map_lock = Lock()
-args_map = get_manager_dict()
-# 等待写入事件
-call_wait_event = Event()
+args_map_key_proxy = JoinableQueue()
 
 callback_map_lock = threading.Lock()
 callback_map = {}
@@ -22,15 +19,7 @@ timeout = server_config.network_timeout
 
 
 def call_callback(key, *args):
-    with args_map_lock:
-        args_map[key] = args
-        call_wait_event.set()
-
-        # 等待清理
-        clean_wait_barrier.only_wait()
-
-        call_wait_event.clear()
-        del args_map[key]
+    args_map_key_proxy.put((key, args))
 
 
 def add_callback(key, callback):
@@ -60,13 +49,15 @@ def check_callback_polling():
 
 def __check_callback_polling():
     while callback_map:
-        if call_wait_event.wait(15 / 3):
-            try:
-                for key, args in args_map.items():
-                    __call_callback(key, args)
-                clean_wait_barrier.wait()
-            except KeyError:
-                pass
+        try:
+            key, args = args_map_key_proxy.get(timeout / 3)
+            args_map_key_proxy.task_done()
+            clean_wait_barrier.wait()
+            __call_callback(key, args)
+        except Empty:
+            pass
+        except KeyError:
+            pass
         check_callback_timeout()
 
 

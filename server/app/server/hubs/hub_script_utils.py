@@ -10,8 +10,8 @@ from requests import Response, Session, HTTPError
 from app.server.manager.cache_manager import cache_manager
 from app.server.manager.data.constant import logging
 from app.server.manager.data.constant import session as __session, proxies as __proxies
-from app.server.utils.queue import ThreadQueue
 from app.server.request_processor.release_getter import get_release
+from app.server.utils.queue import LightQueue
 
 android_app_key = 'android_app_package'
 
@@ -127,7 +127,7 @@ def add_tmp_cache(key: str, value: str):
         cache_manager.add_tmp_cache(key, out.getvalue())
 
 
-def get_release_by_uuid(uuid, app_id: dict, auth: dict or None = None, use_cache=True) -> list:
+async def get_release_by_uuid(uuid, app_id: dict, auth: dict or None = None, use_cache=True) -> list:
     """获取对应 UUID 的软件源的 get_release 函数的输出
     Args:
         uuid: 软件源的 UUID
@@ -137,7 +137,9 @@ def get_release_by_uuid(uuid, app_id: dict, auth: dict or None = None, use_cache
     Returns:
         对应的下载地址
     """
-    return next(get_release(uuid, [app_id], auth, use_cache=use_cache))[1]
+    queue = LightQueue()
+    asyncio.create_task(get_release(queue, uuid, auth, [app_id], use_cache=use_cache))
+    return await queue.get()
 
 
 def get_url_from_release_fun(uuid, app_id: dict, asset_index, auth: dict or None = None, use_cache=True) -> str:
@@ -156,13 +158,13 @@ def get_url_from_release_fun(uuid, app_id: dict, asset_index, auth: dict or None
     return release["assets"][asset_index[1]]["download_url"]
 
 
-def return_value(generator_cache: ThreadQueue, app_id: dict, value):
-    generator_cache.put({"id": app_id, "v": value})
+async def return_value(generator_cache: LightQueue, app_id: dict, value):
+    await generator_cache.put({"id": app_id, "v": value})
     raise ReturnFun
 
 
-def return_value_no_break(generator_cache: ThreadQueue, app_id: dict, value):
-    return __run_return_value_fun0(lambda: return_value(generator_cache, app_id, value))
+async def return_value_no_break(generator_cache: LightQueue, app_id: dict, value):
+    return await __run_return_value_fun0(return_value(generator_cache, app_id, value))
 
 
 async def run_fun_list_without_error(fun_list):
@@ -179,9 +181,9 @@ async def __run_return_value_fun(aw):
         pass
 
 
-def __run_return_value_fun0(fun):
+async def __run_return_value_fun0(fun):
     try:
-        return fun()
+        return await fun
     except ReturnFun:
         pass
 

@@ -49,7 +49,7 @@ def call_def_in_loop_return_result(core, _loop=None):
     return result
 
 
-def call_def_in_loop(core, loop):
+def call_fun_in_loop(core, loop):
     try:
         loop.run_until_complete(core)
     except RuntimeError:

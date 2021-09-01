@@ -12,7 +12,7 @@ class GithubProxy(Github, BaseHub):
     def get_uuid() -> str:
         return '56fca689-47a7-496a-b290-8bd717c06960'
 
-    def get_release(self, app_id: dict, auth: dict or None = None) -> list:
+    async def get_release(self, app_id: dict, auth: dict or None = None) -> list:
         base_hub_uuid = Github.get_uuid()
         data = get_release_by_uuid(base_hub_uuid, app_id, auth)
         for release in data:

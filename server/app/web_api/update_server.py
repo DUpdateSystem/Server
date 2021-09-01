@@ -3,7 +3,6 @@ from uuid import UUID
 
 from flask import Blueprint, Response
 
-from app.server.manager.asset_manager import get_cloud_config_str
 from app.server.manager.data_manager import data_manager, WaitingDataError
 from .utils import path_to_dict, path_to_int_list, get_auth
 from ..server.manager.data.constant import logging
@@ -22,7 +21,7 @@ def get_cloud_config(api_version: str, config_version: str):
         dev_version = True
     else:
         return f"wrong config version: {config_version}", 400
-    cloud_config = get_cloud_config_str(dev_version, True)
+    cloud_config = data_manager.get_cloud_config_str(dev_version, True)
     if cloud_config:
         return cloud_config, 200
     else:
