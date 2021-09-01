@@ -13,7 +13,6 @@ update_server_page = Blueprint('update_server_page', __name__)
 @update_server_page.route(
     '/v<int:api_version>/rules/download/<string:config_version>')
 def get_cloud_config(api_version: str, config_version: str):
-    print("111")
     if api_version != 1:
         return 'v1 only', 400
     if config_version == "master":
@@ -31,7 +30,6 @@ def get_cloud_config(api_version: str, config_version: str):
 
 @update_server_page.route('/v<int:api_version>/app/<uuid:hub_uuid>/<path:app_id_path>/release')
 def get_app_release(api_version: str, hub_uuid: UUID, app_id_path: str):
-    print("111")
     if api_version != 1:
         return 'v1 only', 400
     logging.debug(f"get_app_release: {hub_uuid}, {app_id_path}")
@@ -44,7 +42,6 @@ def get_app_release(api_version: str, hub_uuid: UUID, app_id_path: str):
 
 @update_server_page.route('/v<int:api_version>/app/<uuid:hub_uuid>/<path:app_id_path>/releases')
 def get_app_release_list(api_version: str, hub_uuid: UUID, app_id_path: str):
-    print("111")
     if api_version != 1:
         return 'v1 only', 400
     logging.debug(f"get_app_release_list: {hub_uuid}, {app_id_path}")

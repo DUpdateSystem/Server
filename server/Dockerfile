@@ -16,4 +16,4 @@ COPY ./config.ini ./
 COPY ./uwsgi.ini ./
 VOLUME ["/data"]
 
-ENTRYPOINT [ "bash", "./boot.sh", "--normal"]
+ENTRYPOINT [ "bash", "./boot.sh" ]
