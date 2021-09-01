@@ -16,8 +16,10 @@ async def get_release(hub_uuid: str, auth: dict or None, app_id: dict, use_cache
     observer_queue = LightQueue()
     await __run_get_release_fun(observer_queue, hub, [app_id], auth)
     item: dict = await observer_queue.get()
-    app_id = item["id"]
-    release_list = item["v"]
+    try:
+        release_list = item["v"]
+    except TypeError:
+        return None
     if cache_data and release_list is not None:
         cache_manager.add_release_cache(hub_uuid, auth, app_id, release_list)
     return release_list
