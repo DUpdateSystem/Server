@@ -11,7 +11,7 @@ class DoubleSidedApi:
         return get_node_reliability_dict()
 
     async def on_hub_get_app_release_list(self, hub_uuid: str, auth: dict or None, app_id: dict):
-        return data_manager.get_release(hub_uuid, auth, app_id)
+        return data_manager.get_single_release(hub_uuid, auth, app_id)
 
     async def on_hub_get_app_download_list(self, hub_uuid: str, auth: dict or None, app_id: dict, asset_index: list):
         return data_manager.get_download_info_list(hub_uuid, auth, app_id, asset_index)

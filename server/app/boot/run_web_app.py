@@ -1,7 +1,7 @@
 from werkzeug.serving import WSGIRequestHandler
 
 from app.server.config import server_config
-from app.web_api.app import app
+from hello.web_api import app
 
 
 def run_api():

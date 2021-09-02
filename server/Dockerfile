@@ -8,12 +8,12 @@ FROM python:3.9-slim
 #RUN pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple
 
 COPY ./app/requirements.txt ./
-COPY ./oci_build/DockerfileRUN.sh ./
+COPY ../oci_build/DockerfileRUN.sh ./
 RUN ./DockerfileRUN.sh && rm ./DockerfileRUN.sh
-COPY ./scripts/boot.sh ./
+COPY ../scripts/boot.sh ./
 COPY ./app ./app
 COPY ./config.ini ./
-COPY ./uwsgi.ini ./
+COPY hello/uwsgi.ini ./
 VOLUME ["/data"]
 
 ENTRYPOINT [ "bash", "./boot.sh" ]

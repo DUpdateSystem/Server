@@ -5,7 +5,7 @@ from app.boot.run_cluster_api import run_cluster_api, stop_server
 from app.boot.run_core_server import run_core, request_polling
 from app.boot.run_debugger import debug
 from app.boot.run_web_app import run_api, app
-from app.database.init import init_database
+from database.init import init_database
 from app.server.config import server_config
 from app.server.manager.data.constant import logging
 

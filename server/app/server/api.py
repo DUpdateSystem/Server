@@ -10,7 +10,7 @@ def init_account(hub_uuid: str, account: dict) -> dict:
 def get_release_dict(hub_uuid: str, auth: dict or None, app_id: dict,
                      use_cache=True, cache_data=True) -> dict:
     try:
-        release_list = data_manager.get_release(hub_uuid, auth, app_id, use_cache=use_cache)
+        release_list = data_manager.get_single_release(hub_uuid, auth, app_id, use_cache=use_cache)
     except KeyError:
         return {"valid_hub": False}
     release_package = {}
