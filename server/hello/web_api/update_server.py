@@ -33,7 +33,7 @@ def get_cloud_config(api_version: str, config_version: str):
     socket.close()
 
     if cloud_config:
-        return cloud_config, 200
+        return json.loads(cloud_config), 200
     else:
         return '', 404
 

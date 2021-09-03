@@ -53,7 +53,7 @@ async def get_download_info(socket, hub_uuid: str, auth: dict, app_id: list, ass
 
 async def get_cloud_config(socket, dev_version: bool, migrate_master: bool):
     cloud_config = get_cloud_config_str(dev_version, migrate_master)
-    await socket.send_string(json.dumps(cloud_config))
+    await socket.send_string(cloud_config)
 
 
 async_worker_num = 10
