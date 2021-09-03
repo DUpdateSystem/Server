@@ -23,37 +23,39 @@ async def worker_routine(worker_url: str):
         request_str = await socket.recv_string()
         try:
             print(request_str)
-            await do_work(request_str, socket)
+            value = await do_work(request_str)
+            await socket.send_string(json.dumps(value))
         except Exception as e:
             logging.exception(e)
+            await socket.send_string(json.dumps(None))
 
 
-async def do_work(request_str: str, socket):
+async def do_work(request_str: str):
     request_key = request_str[0]
     if request_key == RELEASE_REQUEST:
         args = load_release_request(request_str)
-        asyncio.create_task(get_release(socket, *args))
+        return await get_release(*args)
     elif request_key == DOWNLOAD_REQUEST:
         args = load_download_request(request_str)
-        asyncio.create_task(get_download_info(socket, *args))
+        return await get_download_info(*args)
     elif request_key == CLOUD_CONFIG_REQUEST:
         args = load_cloud_config_request(request_str)
-        asyncio.create_task(get_cloud_config(socket, *args))
+        return await get_cloud_config(*args)
 
 
-async def get_release(socket, hub_uuid: str, auth: dict or None, app_id: dict, use_cache=True, cache_data=True):
+async def get_release(hub_uuid: str, auth: dict or None, app_id: dict, use_cache=True, cache_data=True):
     release_list = await get_single_release(hub_uuid, auth, app_id, use_cache, cache_data)
-    await socket.send_string(json.dumps(release_list))
+    return release_list
 
 
-async def get_download_info(socket, hub_uuid: str, auth: dict, app_id: list, asset_index: list):
+async def get_download_info(hub_uuid: str, auth: dict, app_id: list, asset_index: list):
     download_info = await get_download_info_list(hub_uuid, auth, app_id, asset_index)
-    await socket.send_string(json.dumps(download_info))
+    return download_info
 
 
-async def get_cloud_config(socket, dev_version: bool, migrate_master: bool):
+async def get_cloud_config(dev_version: bool, migrate_master: bool):
     cloud_config = get_cloud_config_str(dev_version, migrate_master)
-    await socket.send_string(cloud_config)
+    return cloud_config
 
 
 async_worker_num = 10
