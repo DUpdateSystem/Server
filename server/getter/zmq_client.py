@@ -1,5 +1,6 @@
 import asyncio
 import json
+import logging
 from threading import Thread
 
 import zmq
@@ -20,16 +21,24 @@ async def worker_routine(worker_url: str):
 
     while True:
         request_str = await socket.recv_string()
-        request_key = request_str[0]
-        if request_key == RELEASE_REQUEST:
-            args = load_release_request(request_str)
-            asyncio.create_task(get_release(socket, *args))
-        elif request_key == DOWNLOAD_REQUEST:
-            args = load_download_request(request_str)
-            asyncio.create_task(get_download_info(socket, *args))
-        elif request_key == CLOUD_CONFIG_REQUEST:
-            args = load_cloud_config_request(request_str)
-            asyncio.create_task(get_cloud_config(socket, *args))
+        try:
+            print(request_str)
+            await do_work(request_str, socket)
+        except Exception as e:
+            logging.exception(e)
+
+
+async def do_work(request_str: str, socket):
+    request_key = request_str[0]
+    if request_key == RELEASE_REQUEST:
+        args = load_release_request(request_str)
+        asyncio.create_task(get_release(socket, *args))
+    elif request_key == DOWNLOAD_REQUEST:
+        args = load_download_request(request_str)
+        asyncio.create_task(get_download_info(socket, *args))
+    elif request_key == CLOUD_CONFIG_REQUEST:
+        args = load_cloud_config_request(request_str)
+        asyncio.create_task(get_cloud_config(socket, *args))
 
 
 async def get_release(socket, hub_uuid: str, auth: dict or None, app_id: dict, use_cache=True, cache_data=True):
@@ -47,12 +56,12 @@ async def get_cloud_config(socket, dev_version: bool, migrate_master: bool):
     await socket.send_string(json.dumps(cloud_config))
 
 
-async_worker_num = 3
+async_worker_num = 10
 thread_worker_num = 3
 
 
 async def main():
-    worker_url = 'tcp://localhost:5560'
+    worker_url = 'tcp://upa-proxy:5560'
     await asyncio.gather(*[worker_routine(worker_url)] * async_worker_num)
 
 
