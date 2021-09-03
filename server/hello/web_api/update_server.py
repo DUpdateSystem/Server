@@ -11,7 +11,7 @@ from ..zmq_context import context
 
 update_server_page = Blueprint('update_server_page', __name__)
 
-proxy_url = 'tcp://localhost:5559'
+proxy_url = 'tcp://upa-proxy:5559'
 
 
 @update_server_page.route('/v<int:api_version>/rules/download/<string:config_version>')

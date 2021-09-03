@@ -1,4 +1,4 @@
-version: "3.9"
+version: "3.8"
 services:
   upa-hello:
     container_name: upa-hello
@@ -9,11 +9,18 @@ services:
       - "5255:5255"
     depends_on:
       - upa-proxy
+    networks:
+      - upanet
   upa-proxy:
     container_name: upa-proxy
     image: xiangzhedev/upgradeall-server
     restart: unless-stopped
     command: proxy
+    expose:
+      - "5559"
+      - "5560"
+    networks:
+      - upanet
   upa-getter:
     container_name: upa-getter
     image: xiangzhedev/upgradeall-server
@@ -21,6 +28,7 @@ services:
     command: getter
     networks:
       - dbnet
+      - upanet
     depends_on:
       - upa-db
       - upa-proxy
@@ -41,4 +49,4 @@ volumes:
     name: upa-dbdata
 networks:
   dbnet:
-    name: upa-db-network
+  upanet:
