@@ -1,5 +1,5 @@
 from database.model.hub_cache import HubCache
-from database.model.memory_cache import TempCache
+from database.model.temp_cache import TempCache
 from database.model.release_cache import ReleaseCache
 from .meta import local_cache_db
 

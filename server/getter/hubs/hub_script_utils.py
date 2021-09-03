@@ -8,10 +8,10 @@ from bs4 import BeautifulSoup
 from requests import Response, Session, HTTPError
 
 from database.cache_manager import cache_manager
-from app.server.manager.data.constant import logging
-from app.server.manager.data.constant import session as __session, proxies as __proxies
-from app.server.utils.queue import LightQueue
 from getter.net_getter.release_getter import get_single_release
+from utils.logging import logging
+from utils.queue import LightQueue
+from utils.requests import session
 
 android_app_key = 'android_app_package'
 
@@ -41,7 +41,7 @@ def http_get(url: str, throw_error=True, **kwargs) -> Response or None:
         包装网站响应的 Request 对象
     """
     try:
-        response = __session.get(url, **kwargs, proxies=__proxies, timeout=15)
+        response = session.get(url, **kwargs, timeout=15)
         response.raise_for_status()
         return response
     except Exception as e:
@@ -56,7 +56,7 @@ def get_session() -> Session:
     """获取默认 Session 对象
     Returns: Session
     """
-    return __session
+    return session
 
 
 def search_version_number_string(string: str or None) -> str or None:
@@ -137,9 +137,7 @@ async def get_release_by_uuid(uuid, app_id: dict, auth: dict or None = None, use
     Returns:
         对应的下载地址
     """
-    queue = LightQueue()
-    asyncio.create_task(get_single_release(queue, uuid, auth, [app_id], use_cache=use_cache))
-    return await queue.get()
+    return await get_single_release(uuid, auth, app_id, use_cache=use_cache)
 
 
 def get_url_from_release_fun(uuid, app_id: dict, asset_index, auth: dict or None = None, use_cache=True) -> str:

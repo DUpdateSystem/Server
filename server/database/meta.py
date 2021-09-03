@@ -1,9 +1,15 @@
+import re
+
 from peewee import Model
 from playhouse.pool import PooledMySQLDatabase
 
-cache_name = 'cache'
+from config import db_url, db_password
 
-local_cache_db = PooledMySQLDatabase(cache_name, host='localhost', user='upa',
+db_user, db_host, db_port = re.split('[@:]', db_url)
+db_url.split(':')
+db_name = 'upa-data'
+
+local_cache_db = PooledMySQLDatabase(db_name, host=db_host, port=int(db_port), user=db_user, password=db_password,
                                      max_connections=1024, stale_timeout=5, autoconnect=False)
 
 

@@ -1,8 +1,8 @@
-from app.migration.migration import migrate_dev
-from app.server.config import server_config
+from config import cloud_rule_hub_url
 from database.cache_manager import cache_manager
-from app.server.manager.data.constant import logging
-from app.server.utils.utils import get_response
+from utils.logging import logging
+from utils.requests import get_response
+from .cloud_config_migration.migration import migrate_dev
 
 
 def get_cloud_config_str(dev_version: bool, migrate_master: bool) -> str or None:
@@ -44,7 +44,7 @@ def __get_cloud_config_str(dev_version: bool, use_self_worker: bool = True) -> s
         rule_hub_url = "https://raw.githubusercontent.com/DUpdateSystem/UpgradeAll-rules/" \
                        "dev/rules/rules.json"
     else:
-        rule_hub_url = server_config.cloud_rule_hub_url
+        rule_hub_url = cloud_rule_hub_url
     back = rule_hub_url
     if use_self_worker:
         rule_hub_url = "https://re.flaw.workers.dev/" + rule_hub_url

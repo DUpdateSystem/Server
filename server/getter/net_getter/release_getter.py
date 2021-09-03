@@ -1,12 +1,12 @@
 import asyncio
 
 from database.cache_manager import cache_manager
-from app.server.manager.data.constant import logging
-from app.server.utils.queue import LightQueue
-from app.status_checker.status import set_hub_available, get_hub_available
+from utils.logging import logging
+from utils.queue import LightQueue
 
 
-async def get_single_release(hub_uuid: str, auth: dict or None, app_id: dict, use_cache=True, cache_data=True) -> dict or None:
+async def get_single_release(hub_uuid: str, auth: dict or None, app_id: dict,
+                             use_cache=True, cache_data=True) -> dict or None:
     from getter.hubs.hub_list import hub_dict
     hub = hub_dict[hub_uuid]
     if use_cache:
@@ -68,15 +68,12 @@ async def __get_release_cache(hub_uuid: str, auth: dict or None, app_id: dict) -
 
 
 async def __run_get_release_fun(queue: LightQueue, hub, app_id_list: list, auth: dict or None):
-    hub_uuid = hub.get_uuid()
     # noinspection PyBroadException
     try:
-        if get_hub_available(hub_uuid):
-            hub_core = hub.get_release_list(queue, app_id_list, auth)
-            await __run_core(hub_core, len(app_id_list))
-        set_hub_available(hub_uuid, True)
-    except Exception:
-        set_hub_available(hub_uuid, False)
+        hub_core = hub.get_release_list(queue, app_id_list, auth)
+        await __run_core(hub_core, len(app_id_list))
+    except Exception as e:
+        logging.exception(e)
     finally:
         await queue.close()
 

@@ -1,4 +1,5 @@
 # UpgradeAll Server
+/db_data/
 /server/data/
 cache.db
 

@@ -6,13 +6,13 @@ from database.utils import from_json, to_json
 
 class HubCache(BaseModel):
     class Meta(BaseMeta):
-        db_table = 'hub_cache'
+        db_table = 'cache_hub'
         indexes = (
             (('hub_uuid', 'auth'), True),
         )
 
-    pair_id = AutoField()
-    hub_uuid = UUIDField()
+    pair_id = AutoField(column_name='pair_id')
+    hub_uuid = UUIDField(column_name='hub_uuid')
     auth_str = CharField(null=True, default=None, column_name='auth')
 
     @property

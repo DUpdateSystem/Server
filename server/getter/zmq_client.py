@@ -57,11 +57,11 @@ async def main():
 
 
 def run_single():
-    cache_manager.init()
     cache_manager.connect()
     asyncio.run(main())
 
 
 def run():
+    cache_manager.init()
     for _ in range(thread_worker_num):
         Thread(target=run_single, ).start()

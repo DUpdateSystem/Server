@@ -4,7 +4,7 @@ import time
 
 from requests import request, HTTPError
 
-from app.server.manager.data.constant import logging
+from utils.logging import logging
 from ..base_hub import BaseHub
 from ..hub_script_utils import android_app_key, get_session, get_url_from_release_fun
 

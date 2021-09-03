@@ -7,13 +7,15 @@ FROM python:3.9-slim
 #RUN pip install -i https://pypi.tuna.tsinghua.edu.cn/simple pip -U
 #RUN pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple
 
-COPY ./app/requirements.txt ./
-COPY ../oci_build/DockerfileRUN.sh ./
+COPY ./server/requirements.txt ./
+COPY ./oci_build/DockerfileRUN.sh ./
 RUN ./DockerfileRUN.sh && rm ./DockerfileRUN.sh
-COPY ../scripts/boot.sh ./
-COPY ./app ./app
-COPY ./config.ini ./
-COPY hello/uwsgi.ini ./
-VOLUME ["/data"]
+COPY ./scripts/boot.sh ./
+COPY ./server/config.py ./
+COPY ./server/utils ./utils
+COPY ./server/database ./database
+COPY ./server/hello ./hello
+COPY ./server/proxy ./proxy
+COPY ./server/getter ./getter
 
 ENTRYPOINT [ "bash", "./boot.sh" ]

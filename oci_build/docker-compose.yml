@@ -1,0 +1,44 @@
+version: "3.9"
+services:
+  upa-hello:
+    container_name: upa-hello
+    image: xiangzhedev/upgradeall-server
+    restart: unless-stopped
+    command: hello
+    ports:
+      - "5255:5255"
+    depends_on:
+      - upa-proxy
+  upa-proxy:
+    container_name: upa-proxy
+    image: xiangzhedev/upgradeall-server
+    restart: unless-stopped
+    command: proxy
+  upa-getter:
+    container_name: upa-getter
+    image: xiangzhedev/upgradeall-server
+    restart: unless-stopped
+    command: getter
+    networks:
+      - dbnet
+    depends_on:
+      - upa-db
+      - upa-proxy
+  upa-db:
+    container_name: upa-db
+    image: mariadb
+    restart: unless-stopped
+    env_file:
+      - db.env
+    expose:
+      - "3306"
+    volumes:
+      - dbdata:/var/lib/mysql
+    networks:
+      - dbnet
+volumes:
+  dbdata:
+    name: upa-dbdata
+networks:
+  dbnet:
+    name: upa-db-network

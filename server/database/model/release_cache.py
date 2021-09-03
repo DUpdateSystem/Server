@@ -5,12 +5,12 @@ from peewee import *
 from database.meta import BaseModel, BaseMeta
 from database.utils import from_json, to_json
 from .hub_cache import HubCache
-from .peewee_field import LongTextField
+from ..field.text_field import LongTextField
 
 
 class ReleaseCache(BaseModel):
     class Meta(BaseMeta):
-        db_table = 'release_cache'
+        db_table = 'cache_release'
         indexes = (
             (('hub_pair_id', 'app_id'), True),
         )

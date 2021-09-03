@@ -3,10 +3,10 @@ from abc import ABCMeta, abstractmethod
 
 from requests import HTTPError
 
-from app.server.config import server_config
+from config import debug_mode
 from getter.hubs.hub_script_utils import http_get, return_value, run_fun_list_without_error
-from app.server.manager.data.constant import logging
-from app.server.utils.queue import LightQueue
+from utils.logging import logging
+from utils.queue import LightQueue
 
 
 class BaseHub(object, metaclass=ABCMeta):
@@ -41,7 +41,6 @@ class BaseHub(object, metaclass=ABCMeta):
         except asyncio.TimeoutError:
             logging.warning(f'app_id: {app_id} timeout!')
         except Exception:
-            debug_mode = server_config.debug_mode
             log = f"app_id: {app_id}"
             if debug_mode:
                 log += " \nERROR: "

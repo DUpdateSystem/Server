@@ -3,13 +3,13 @@ from time import time
 from peewee import DoesNotExist
 
 from database.model.hub_cache import HubCache
-from database.model.memory_cache import TempCache
+from database.model.temp_cache import TempCache
 from database.model.release_cache import ReleaseCache
+from utils.logging import logging
 from .utils import to_json
-from app.server.config import server_config
-from app.server.manager.data.constant import logging
+from config import auto_refresh_hour
 
-data_expire_sec = server_config.auto_refresh_time * 3600
+data_expire_sec = auto_refresh_hour * 3600
 
 if 6 * 3600 >= data_expire_sec >= 3 * 3600:
     memory_cache_expire_sec = int(data_expire_sec / 12)

@@ -4,7 +4,7 @@ from xml.etree import ElementTree
 
 from bs4 import BeautifulSoup
 
-from app.server.utils.queue import LightQueue
+from utils.queue import LightQueue
 from ..base_hub import BaseHub
 from ..hub_script_utils import android_app_key, http_get, get_tmp_cache, add_tmp_cache, return_value, \
     run_fun_list_without_error

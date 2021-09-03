@@ -1,4 +1,8 @@
+import logging
+
 import zmq
+
+from .url import front_url, end_url
 
 
 def main():
@@ -8,11 +12,11 @@ def main():
 
     # Socket facing clients
     frontend = context.socket(zmq.ROUTER)
-    frontend.bind("tcp://*:5559")
+    frontend.bind(front_url)
 
     # Socket facing services
     backend = context.socket(zmq.DEALER)
-    backend.bind("tcp://*:5560")
+    backend.bind(end_url)
 
     zmq.proxy(frontend, backend)
 
@@ -22,9 +26,9 @@ def main():
     context.term()
 
 
-if __name__ == "__main__":
+def run():
     try:
-        print("proxy start")
+        logging.info(f"proxy start, front: {front_url}, end: {end_url}")
         main()
     except KeyboardInterrupt:
-        print("proxy stop")
+        logging.info("proxy stop")
