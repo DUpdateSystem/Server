@@ -2,12 +2,12 @@ from time import time
 
 from peewee import DoesNotExist
 
-from database.model.hub_cache import HubCache
-from database.model.temp_cache import TempCache
-from database.model.release_cache import ReleaseCache
-from utils.logging import logging
-from .utils import to_json
 from config import auto_refresh_hour
+from utils.logging import logging
+from .model.hub_cache import HubCache
+from .model.release_cache import ReleaseCache
+from .model.temp_cache import TempCache
+from .utils import to_json
 
 data_expire_sec = auto_refresh_hour * 3600
 
@@ -60,7 +60,7 @@ def get_memory_cache(key: str) -> str or None:
         return None
 
 
-def add_memory_cache(key: str, value: str):
+def add_memory_cache(key: str, value: bytes):
     try:
         cache: TempCache = TempCache.get((TempCache.key == key))
         cache.value = value

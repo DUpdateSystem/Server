@@ -2,7 +2,8 @@ from time import time
 
 from peewee import *
 
-from database.meta import BaseModel, BaseMeta
+from ..field.blob import LongBlogField
+from ..meta import BaseModel, BaseMeta
 
 
 class TempCache(BaseModel):
@@ -10,7 +11,7 @@ class TempCache(BaseModel):
         db_table = 'cache_temp'
 
     key = CharField(primary_key=True, column_name='key')
-    value = CharField(column_name='value')
+    value = LongBlogField(column_name='value')
     timestamp = IntegerField(null=False)
 
     def __init__(self, *args, **kwargs):

@@ -1,7 +1,7 @@
 from peewee import *
 
-from database.meta import BaseModel, BaseMeta
-from database.utils import from_json, to_json
+from ..meta import BaseModel, BaseMeta
+from ..utils import from_json, to_json
 
 
 class HubCache(BaseModel):

@@ -2,10 +2,10 @@ from time import time
 
 from peewee import *
 
-from database.meta import BaseModel, BaseMeta
-from database.utils import from_json, to_json
 from .hub_cache import HubCache
-from ..field.text_field import LongTextField
+from ..field.text import LongTextField
+from ..meta import BaseModel, BaseMeta
+from ..utils import from_json, to_json
 
 
 class ReleaseCache(BaseModel):
