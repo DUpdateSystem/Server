@@ -1,3 +1,5 @@
+import tarfile
+import tempfile
 from xml.etree import ElementTree
 
 from utils.queue import LightQueue
@@ -62,11 +64,23 @@ class FDroid(BaseHub):
 def _get_xml_tree(url: str = 'https://f-droid.org/repo'):
     xml_string = None
     try:
-        xml_string = get_tmp_cache(url)
+        xml_raw = get_tmp_cache(url)
     except KeyError:
-        pass
-    if not xml_string:
-        xml_string = http_get(f'{url}/index.xml', stream=True).text
-        if xml_string:
-            add_tmp_cache(url, xml_string)
+        xml_raw = None
+    if not xml_raw:
+        xml_raw = http_get(f'{url}/index.xml', stream=True).text
+        if xml_raw:
+            add_tmp_cache(url, xml_raw)
+        xml_string = _unzip_xml(xml_raw)
     return ElementTree.fromstring(xml_string)
+
+
+def _unzip_xml(raw):
+    with tempfile.TemporaryFile(mode='w+b') as f:
+        f.write(raw)
+        f.flush()
+        f.seek(0)
+        # noinspection PyTypeChecker
+        with tarfile.open(fileobj=f, mode='r:xz') as tar:
+            with tar.extractfile("1.txt") as file:
+                return file.read()

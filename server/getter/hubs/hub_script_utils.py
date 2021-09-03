@@ -1,7 +1,6 @@
 import asyncio
 import re
 import tarfile
-import tempfile
 from io import BytesIO
 
 from bs4 import BeautifulSoup
@@ -94,17 +93,9 @@ def get_tmp_cache(key: str) -> str or None:
         缓存的字符串
     """
     try:
-        raw = cache_manager.get_tmp_cache(key)
+        return cache_manager.get_tmp_cache(key)
     except KeyError:
         return None
-    with tempfile.TemporaryFile(mode='w+b') as f:
-        f.write(raw)
-        f.flush()
-        f.seek(0)
-        # noinspection PyTypeChecker
-        with tarfile.open(fileobj=f, mode='r:xz') as tar:
-            with tar.extractfile("1.txt") as file:
-                return file.read()
 
 
 def add_tmp_cache(key: str, value: str):
