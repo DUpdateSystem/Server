@@ -15,6 +15,8 @@ _device_codename = "walleye"
 
 _auth_cache_key = "google_play_def_token"
 
+_test_package = "com.google.android.webview"
+
 
 class GooglePlay(BaseHub):
     @staticmethod
@@ -39,8 +41,8 @@ class GooglePlay(BaseHub):
                 yield app_id, release_list
 
     def __get_release_list(self, app_id_list: list, auth: dict or None = None):
-        package_list = ["com.google.android.webview"] + [app_id[android_app_key] for app_id in app_id_list if
-                                                         android_app_key in app_id]
+        # 这里有一处字典转换
+        package_list = [_test_package] + [app_id[android_app_key] for app_id in app_id_list]
         package_list = set(package_list)
         package_list = list(package_list)
         # noinspection PyBroadException
@@ -54,16 +56,19 @@ class GooglePlay(BaseHub):
         for i, l_details in enumerate(bulk_details):
             package = package_list[i]
             details_map[package] = l_details
-        if details_map["com.google.android.webview"] is None:
+        if details_map[_test_package] is None:
             api = self.__get_def_google_play()
             bulk_details = api.bulkDetails(package_list)
             for i, l_details in enumerate(bulk_details):
                 package = package_list[i]
                 details_map[package] = l_details
         for package, details in details_map.items():
+            # 这里有一处字典重组
+            # 注意与上面的列表一一对应
             app_id = {android_app_key: package}
             if details is None:
-                yield app_id, []
+                if app_id in app_id_list:
+                    yield app_id, []
             else:
                 # noinspection PyBroadException
                 try:
@@ -79,7 +84,8 @@ class GooglePlay(BaseHub):
                     release_list = [release, ]
                 except Exception:
                     release_list = None
-                yield app_id, release_list
+                if app_id in app_id_list:
+                    yield app_id, release_list
 
     def get_download_info(self, app_id: dict, asset_index: list, auth: dict or None = None) -> tuple or None:
         if android_app_key not in app_id:
