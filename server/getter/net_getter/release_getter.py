@@ -1,11 +1,13 @@
-
 from database.cache_manager import cache_manager
 from utils.logging import logging
 
 
 def get_single_release(hub_uuid: str, auth: dict or None, app_id: dict,
                        use_cache=True, cache_data=True) -> list or None:
-    return next(get_release_list(hub_uuid, auth, [app_id], use_cache=use_cache, cache_data=cache_data))[4]
+    try:
+        return next(get_release_list(hub_uuid, auth, [app_id], use_cache=use_cache, cache_data=cache_data))[4]
+    except Exception as e:
+        logging.exception(e)
 
 
 def get_release_list(hub_uuid: str, auth: dict or None, app_id_list: list,
