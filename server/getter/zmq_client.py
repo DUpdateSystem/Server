@@ -1,6 +1,5 @@
 import asyncio
 import json
-import logging
 from threading import Thread
 
 import zmq
@@ -12,6 +11,7 @@ from getter.net_getter.download_getter import get_download_info_list
 from getter.net_getter.release_getter import get_single_release
 from proxy.format.header_key import RELEASE_REQUEST, DOWNLOAD_REQUEST, CLOUD_CONFIG_REQUEST
 from proxy.format.zmq_request_format import load_release_request, load_download_request, load_cloud_config_request
+from utils.logging import logging
 
 
 async def worker_routine(worker_url: str):

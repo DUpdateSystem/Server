@@ -1,10 +1,10 @@
 import gzip
-import logging
 import tempfile
 from xml.etree import ElementTree
 
 from bs4 import BeautifulSoup
 
+from utils.logging import logging
 from ..base_hub import BaseHub
 from ..hub_script_utils import android_app_key, http_get, get_tmp_cache, add_tmp_cache
 

@@ -1,8 +1,8 @@
 import asyncio
-import logging
 
 from config import debug_mode
 from getter.hubs.hub_list import hub_dict
+from utils.logging import logging
 
 
 async def get_download_info_list(hub_uuid: str, auth: dict, app_id: list, asset_index: list) -> tuple or None:

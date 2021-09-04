@@ -21,13 +21,13 @@ def get_release_cache(hub_uuid: str, auth: dict or None, app_id: dict) -> list o
     timestamp = time() - data_expire_sec
     release_cache_list: list[ReleaseCache] = (
         ReleaseCache.select(ReleaseCache).join(HubCache, on=(ReleaseCache.hub_info == HubCache.pair_id))
-            # on 子句可以删除，因 peewee 自动推算
-            # 参考: https://docs.peewee-orm.com/en/latest/peewee/relationships.html#performing-simple-joins
-            .where((ReleaseCache.app_id_str == to_json(app_id))
-                   & (HubCache.hub_uuid == hub_uuid)
-                   & (HubCache.auth_str == to_json(auth))
-                   # 检查数据是否过期
-                   & (ReleaseCache.timestamp >= timestamp))
+        # on 子句可以删除，因 peewee 自动推算
+        # 参考: https://docs.peewee-orm.com/en/latest/peewee/relationships.html#performing-simple-joins
+        .where((ReleaseCache.app_id_str == to_json(app_id))
+               & (HubCache.hub_uuid == hub_uuid)
+               & (HubCache.auth_str == to_json(auth))
+               # 检查数据是否过期
+               & (ReleaseCache.timestamp >= timestamp))
     )
     try:
         return release_cache_list[0].release
