@@ -16,7 +16,7 @@ class XpModRepo(BaseHub):
     def get_uuid() -> str:
         return 'e02a95a2-af76-426c-9702-c4c39a01f891'
 
-    async def get_release_list(self, app_id_list: list, auth: dict or None = None):
+    def get_release_list(self, app_id_list: list, auth: dict or None = None):
         xml_str = get_tmp_cache(cache_key)
         if not xml_str:
             raw_str = http_get("https://dl-xda.xposed.info/repo/full.xml.gz", stream=True).raw.data
