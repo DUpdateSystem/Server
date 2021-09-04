@@ -9,8 +9,6 @@ from requests import Response, Session, HTTPError
 from config import debug_mode
 from database.cache_manager import cache_manager
 from getter.net_getter.release_getter import get_single_release
-from utils.logging import logging
-from utils.queue import LightQueue
 from utils.requests import session
 
 android_app_key = 'android_app_package'
@@ -146,42 +144,6 @@ def get_url_from_release_fun(uuid, app_id: dict, asset_index, auth: dict or None
     release_list = get_release_by_uuid(uuid, app_id, auth, use_cache)
     release: dict = release_list[asset_index[0]]
     return release["assets"][asset_index[1]]["download_url"]
-
-
-async def return_value(generator_cache: LightQueue, app_id: dict, value):
-    await generator_cache.put({"id": app_id, "v": value})
-    raise ReturnFun
-
-
-async def return_value_no_break(generator_cache: LightQueue, app_id: dict, value):
-    return await __run_return_value_fun0(return_value(generator_cache, app_id, value))
-
-
-async def run_fun_list_without_error(fun_list):
-    fun_list = [__run_return_value_fun(fun) for fun in fun_list]
-    await asyncio.gather(*fun_list)
-
-
-async def __run_return_value_fun(aw):
-    try:
-        return await asyncio.wait_for(aw, 10)
-    except asyncio.TimeoutError:
-        logging.debug(f'aw: {aw} timeout!')
-    except ReturnFun:
-        pass
-
-
-async def __run_return_value_fun0(fun):
-    try:
-        return await fun
-    except ReturnFun:
-        pass
-
-
-class ReturnFun(Exception):
-    """使调用 return_value 函数的函数即时停止
-    """
-    pass
 
 
 def get_new_asyncio_loop():
