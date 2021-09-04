@@ -14,7 +14,6 @@ class CacheManager:
     @staticmethod
     def connect():
         connect_db()
-        del_memory_cache("test")
 
     @staticmethod
     def disconnect():
