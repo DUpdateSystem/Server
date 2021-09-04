@@ -7,7 +7,7 @@ from utils.logging import logging
 from .model.hub_cache import HubCache
 from .model.release_cache import ReleaseCache
 from .model.temp_cache import TempCache
-from .utils import to_json
+from .utils.json import to_json
 
 data_expire_sec = auto_refresh_hour * 3600
 
@@ -39,20 +39,20 @@ def get_release_cache(hub_uuid: str, auth: dict or None, app_id: dict) -> list o
 def add_release_cache(hub_uuid: str, auth: dict or None, app_id: dict, release: list):
     try:
         hub_info = HubCache.get((HubCache.hub_uuid == hub_uuid) & (HubCache.auth_str == to_json(auth)))
-        release_cache_list = (ReleaseCache.select().where((ReleaseCache.hub_info == hub_info)
-                                                          & (ReleaseCache.app_id_str == to_json(app_id))))
+    except DoesNotExist:
+        hub_info = HubCache.create(hub_uuid=hub_uuid, auth=auth)
+    try:
+        release_cache_list = (ReleaseCache.get((ReleaseCache.hub_info == hub_info)
+                                               & (ReleaseCache.app_id_str == to_json(app_id))))
         if release_cache_list:
             release_cache = release_cache_list[0]
             release_cache.release = release
             release_cache.save()
-            return
     except DoesNotExist:
-        hub_info = HubCache(hub_uuid=hub_uuid, auth=auth)
-        hub_info.save()
-    ReleaseCache(hub_info=hub_info, app_id=app_id, release=release).save()
+        ReleaseCache.create(hub_info=hub_info, app_id=app_id, release=release)
 
 
-def get_memory_cache(key: str) -> str or None:
+def get_memory_cache(key: str) -> bytes or None:
     timestamp = time() - memory_cache_expire_sec
     try:
         return TempCache.get((TempCache.key == key) & (TempCache.timestamp >= timestamp)).value
@@ -65,5 +65,6 @@ def add_memory_cache(key: str, value: bytes):
         cache: TempCache = TempCache.get((TempCache.key == key))
         cache.value = value
         cache.update_timestamp()
+        cache.save()
     except DoesNotExist:
-        TempCache(key=key, value=value).save()
+        TempCache.create(key=key, value=value)

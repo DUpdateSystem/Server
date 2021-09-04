@@ -1,4 +1,6 @@
+
 from database.cache_manager import cache_manager
+from utils.logging import logging
 
 
 def get_single_release(hub_uuid: str, auth: dict or None, app_id: dict,
@@ -18,10 +20,10 @@ def get_release_list(hub_uuid: str, auth: dict or None, app_id_list: list,
                 app_id_list.remove(app_id)
     if app_id_list:
         for app_id, release_list in hub.get_release_list(app_id_list, auth):
-            yield hub_uuid, auth, app_id, use_cache, release_list
             if cache_data:
                 if release_list is not None:
                     cache_manager.add_release_cache(hub_uuid, auth, app_id, release_list)
+            yield hub_uuid, auth, app_id, use_cache, release_list
 
 
 def __get_release_cache(hub_uuid: str, auth: dict or None, app_id: dict) -> dict or None:

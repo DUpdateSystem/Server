@@ -1,13 +1,13 @@
 import asyncio
+import logging
 import re
-import tarfile
-from io import BytesIO
 
 from bs4 import BeautifulSoup
 from requests import Response, Session, HTTPError
 
 from config import debug_mode
 from database.cache_manager import cache_manager
+from database.utils.zip import zip_raw, unzip_raw
 from getter.net_getter.release_getter import get_single_release
 from utils.requests import session
 
@@ -83,13 +83,13 @@ def search_url_string(string: str or None) -> str or None:
     return re.search(pattern, string).lastgroup
 
 
-def get_tmp_cache(key: str) -> str or None:
+def get_tmp_cache(key: str) -> bytes or None:
     """获取临时缓存
     Args:
         key: 缓存键值
 
     Returns:
-        缓存的字符串
+        缓存的 bytes
     """
     try:
         return cache_manager.get_tmp_cache(key)
@@ -97,7 +97,7 @@ def get_tmp_cache(key: str) -> str or None:
         return None
 
 
-def add_tmp_cache(key: str, value: str):
+def add_tmp_cache(key: str, value: bytes):
     """添加临时缓存
     Args:
         key: 缓存键值
@@ -106,15 +106,7 @@ def add_tmp_cache(key: str, value: str):
         None
     """
     if value:
-        out = BytesIO()
-        with tarfile.open(mode="w:xz", fileobj=out) as tar:
-            data = value.encode('utf-8')
-            file = BytesIO(data)
-            info = tarfile.TarInfo(name="1.txt")
-            info.size = len(data)
-            tar.addfile(tarinfo=info, fileobj=file)
-
-        cache_manager.add_tmp_cache(key, out.getvalue())
+        cache_manager.add_tmp_cache(key, value)
 
 
 def get_release_by_uuid(uuid, app_id: dict, auth: dict or None = None, use_cache=True) -> list:

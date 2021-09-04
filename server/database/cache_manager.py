@@ -1,3 +1,4 @@
+from utils.logging import logging
 from .cache_api import get_release_cache, add_release_cache, get_memory_cache, add_memory_cache
 from .init import connect_db, close_db, init_database
 
@@ -32,7 +33,7 @@ class CacheManager:
         add_memory_cache(key, value)
 
     @staticmethod
-    def get_tmp_cache(key) -> str or None:
+    def get_tmp_cache(key) -> bytes or None:
         value = get_memory_cache(key)
         return value
 
