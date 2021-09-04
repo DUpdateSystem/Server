@@ -2,7 +2,7 @@ from xml.etree import ElementTree
 
 from utils.logging import logging
 from ..base_hub import BaseHub
-from ..hub_script_utils import android_app_key, http_get, get_tmp_cache, add_tmp_cache
+from ..hub_script_utils import android_app_key, http_get, get_tmp_cache, add_tmp_cache, del_tmp_cache
 
 
 class FDroid(BaseHub):
@@ -63,11 +63,19 @@ class FDroid(BaseHub):
 
 def _get_xml_tree(url: str = 'https://f-droid.org/repo'):
     try:
+        __get_xml_tree(url)
+    except ElementTree.ParseError:
+        del_tmp_cache(url)
+        return __get_xml_tree(url)
+
+
+def __get_xml_tree(url: str):
+    try:
         xml_string = get_tmp_cache(url)
     except KeyError:
         xml_string = None
-    if not xml_string:
-        xml_raw = http_get(f'{url}/index.xml', stream=True).text
-        if xml_raw:
-            add_tmp_cache(url, xml_raw)
+    if xml_string is None:
+        xml_string = http_get(f'{url}/index.xml', stream=True).text
+        if xml_string:
+            add_tmp_cache(url, xml_string)
     return ElementTree.fromstring(xml_string)

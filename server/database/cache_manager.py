@@ -1,5 +1,4 @@
-from utils.logging import logging
-from .cache_api import get_release_cache, add_release_cache, get_memory_cache, add_memory_cache
+from .cache_api import get_release_cache, add_release_cache, get_memory_cache, add_memory_cache, del_memory_cache
 from .init import connect_db, close_db, init_database
 
 
@@ -15,6 +14,7 @@ class CacheManager:
     @staticmethod
     def connect():
         connect_db()
+        del_memory_cache("test")
 
     @staticmethod
     def disconnect():
@@ -36,6 +36,10 @@ class CacheManager:
     def get_tmp_cache(key) -> bytes or None:
         value = get_memory_cache(key)
         return value
+
+    @staticmethod
+    def del_tmp_cache(key):
+        del_memory_cache(key)
 
 
 cache_manager = CacheManager()

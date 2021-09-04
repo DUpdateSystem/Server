@@ -1,5 +1,4 @@
 import asyncio
-import logging
 import re
 
 from bs4 import BeautifulSoup
@@ -7,7 +6,6 @@ from requests import Response, Session, HTTPError
 
 from config import debug_mode
 from database.cache_manager import cache_manager
-from database.utils.zip import zip_raw, unzip_raw
 from getter.net_getter.release_getter import get_single_release
 from utils.requests import session
 
@@ -107,6 +105,14 @@ def add_tmp_cache(key: str, value: bytes):
     """
     if value:
         cache_manager.add_tmp_cache(key, value)
+
+
+def del_tmp_cache(key: str):
+    """删除临时缓存
+    Args:
+        key: 缓存键值
+    """
+    cache_manager.del_tmp_cache(key)
 
 
 def get_release_by_uuid(uuid, app_id: dict, auth: dict or None = None, use_cache=True) -> list:
