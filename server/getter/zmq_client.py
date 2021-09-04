@@ -44,7 +44,7 @@ async def do_work(request_str: str):
 
 
 async def get_release(hub_uuid: str, auth: dict or None, app_id: dict, use_cache=True, cache_data=True):
-    release_list = await get_single_release(hub_uuid, auth, app_id, use_cache, cache_data)
+    release_list = get_single_release(hub_uuid, auth, app_id, use_cache, cache_data)
     return release_list
 
 

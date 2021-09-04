@@ -1,12 +1,6 @@
-import asyncio
 from abc import ABCMeta, abstractmethod
 
-from requests import HTTPError
-
-from config import debug_mode
-from getter.hubs.hub_script_utils import http_get, return_value, run_fun_list_without_error
-from utils.logging import logging
-from utils.queue import LightQueue
+from getter.hubs.hub_script_utils import http_get
 
 
 class BaseHub(object, metaclass=ABCMeta):
@@ -18,36 +12,9 @@ class BaseHub(object, metaclass=ABCMeta):
     def get_uuid() -> str:
         pass
 
-    async def get_release_list(self, return_queue: LightQueue,
-                               app_id_list: list, auth: dict or None = None):
-        fun_list = [self.__call_release_list_fun(return_queue, app_id, auth) for app_id in app_id_list]
-        await run_fun_list_without_error(fun_list)
-
-    async def __call_release_list_fun(self, return_queue: LightQueue, app_id: dict, auth: dict or None):
-        """ 当软件源未实现 get_release_list 函数时，缺省调用 get_release 函数获取数据的协程函数
-        """
-        # 获取云端数据
-        release_list = None
-        # noinspection PyBroadException
-        try:
-            release_list = self.get_release(app_id, auth)
-            # 缓存数据，包括 404 None 数据
-        except HTTPError as e:
-            status_code = e.response.status_code
-            logging.warning(f"""app_id: {app_id}
-            HTTP CODE {status_code} ERROR: {e}""")
-            if status_code == 404:
-                release_list = []
-        except asyncio.TimeoutError:
-            logging.warning(f'app_id: {app_id} timeout!')
-        except Exception:
-            log = f"app_id: {app_id}"
-            if debug_mode:
-                log += " \nERROR: "
-            else:
-                log += " ERROR"
-            logging.exception(log, exc_info=debug_mode)
-        await return_value(return_queue, app_id, release_list)
+    def get_release_list(self, app_id_list: list, auth: dict or None = None):
+        for app_id in app_id_list:
+            yield app_id, self.get_release(app_id, auth)
 
     def get_release(self, app_id: dict, auth: dict or None = None) -> list or None:
         """获取更新版本信息
@@ -70,10 +37,6 @@ class BaseHub(object, metaclass=ABCMeta):
             }]
         """
         pass
-
-    async def _get_download_info(self, app_id: dict, asset_index: list,
-                                 auth: dict or None = None) -> dict or tuple or None:
-        return self.get_download_info(app_id, asset_index, auth)
 
     def get_download_info(self, app_id: dict, asset_index: list, auth: dict or None = None) -> dict or tuple or None:
         """即时获取下载地址

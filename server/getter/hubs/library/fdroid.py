@@ -1,11 +1,10 @@
+import logging
 import tarfile
 import tempfile
 from xml.etree import ElementTree
 
-from utils.queue import LightQueue
 from ..base_hub import BaseHub
-from ..hub_script_utils import android_app_key, http_get, get_tmp_cache, add_tmp_cache, return_value, \
-    run_fun_list_without_error
+from ..hub_script_utils import android_app_key, http_get, get_tmp_cache, add_tmp_cache
 
 
 class FDroid(BaseHub):
@@ -13,30 +12,33 @@ class FDroid(BaseHub):
     def get_uuid() -> str:
         return '6a6d590b-1809-41bf-8ce3-7e3f6c8da945'
 
-    async def get_release_list(self, return_queue: LightQueue,
-                               app_id_list: list, auth: dict or None = None):
+    def get_release_list(self, app_id_list: list, auth: dict or None = None):
         if auth and 'repo_url' in auth:
             repo_url = auth["repo_url"]
         else:
             repo_url = 'https://f-droid.org/repo'
-        tree = _get_xml_tree(repo_url)
-        fun_list = [self.__get_release(return_queue, app_id, tree, repo_url) for app_id in app_id_list]
-        await run_fun_list_without_error(fun_list)
+        try:
+            tree = _get_xml_tree(repo_url)
+        except Exception as e:
+            logging.error(e)
+            raise RuntimeError
+        for app_id in app_id_list:
+            yield app_id, self.__get_release(app_id, tree, repo_url)
 
     @staticmethod
-    async def __get_release(return_queue: LightQueue, app_id: dict, tree, url):
+    def __get_release(app_id: dict, tree, url):
         if android_app_key not in app_id:
-            await return_value(return_queue, app_id, [])
+            return []
         package = app_id[android_app_key]
         module = tree.find(f'.//application[@id="{package}"]')
         if not module:
-            await return_value(return_queue, app_id, [])
+            return []
         changelog_item = module.find('changelog')
         newest_changelog = None
         if changelog_item:
             newest_changelog = changelog_item.text
         packages = module.findall('package')
-        data = []
+        release_list = []
         for i in range(len(packages)):
             version = packages[i]
             file_name = version.find('apkname').text
@@ -53,8 +55,8 @@ class FDroid(BaseHub):
                     "download_url": download_url
                 }]
             }
-            data.append(release_info)
-        await return_value(return_queue, app_id, data)
+            release_list.append(release_info)
+        return release_list
 
     @property
     def available_test_url(self) -> str:

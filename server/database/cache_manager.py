@@ -28,7 +28,7 @@ class CacheManager:
         return get_release_cache(hub_uuid, auth, app_id)
 
     @staticmethod
-    def add_tmp_cache(key, value: str):
+    def add_tmp_cache(key, value: bytes):
         add_memory_cache(key, value)
 
     @staticmethod

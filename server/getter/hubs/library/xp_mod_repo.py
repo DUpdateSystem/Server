@@ -1,13 +1,12 @@
 import gzip
+import logging
 import tempfile
 from xml.etree import ElementTree
 
 from bs4 import BeautifulSoup
 
-from utils.queue import LightQueue
 from ..base_hub import BaseHub
-from ..hub_script_utils import android_app_key, http_get, get_tmp_cache, add_tmp_cache, return_value, \
-    run_fun_list_without_error
+from ..hub_script_utils import android_app_key, http_get, get_tmp_cache, add_tmp_cache
 
 cache_key = "xposed_full_module_xml"
 
@@ -17,8 +16,7 @@ class XpModRepo(BaseHub):
     def get_uuid() -> str:
         return 'e02a95a2-af76-426c-9702-c4c39a01f891'
 
-    async def get_release_list(self, return_queue: LightQueue,
-                               app_id_list: list, auth: dict or None = None):
+    async def get_release_list(self, app_id_list: list, auth: dict or None = None):
         xml_str = get_tmp_cache(cache_key)
         if not xml_str:
             raw_str = http_get("https://dl-xda.xposed.info/repo/full.xml.gz", stream=True).raw.data
@@ -26,20 +24,24 @@ class XpModRepo(BaseHub):
             if xml_str:
                 add_tmp_cache(cache_key, xml_str)
         if xml_str:
-            tree = ElementTree.fromstring(xml_str)
-            fun_list = [self.__get_release(return_queue, app_id, tree) for app_id in app_id_list]
-            await run_fun_list_without_error(fun_list)
+            try:
+                tree = ElementTree.fromstring(xml_str)
+            except Exception as e:
+                logging.error(e)
+                raise RuntimeError
+            for app_id in app_id_list:
+                yield app_id, self.__get_release(app_id, tree)
 
     @staticmethod
-    async def __get_release(return_queue: LightQueue, app_id: dict, tree):
+    def __get_release(app_id: dict, tree):
         if android_app_key not in app_id:
-            await return_value(return_queue, app_id, [])
+            return []
         package = app_id[android_app_key]
         module = tree.find(f'.//module[@package="{package}"]')
         if not module:
-            await return_value(return_queue, app_id, [])
+            return []
         version_list = module.findall('version')
-        data = []
+        release_list = []
         for version in version_list:
             download_url = version.find('download').text
             file_name = download_url[download_url.rfind('/') + 1:]
@@ -57,8 +59,8 @@ class XpModRepo(BaseHub):
                     "download_url": download_url
                 }]
             }
-            data.append(release_info)
-        await return_value(return_queue, app_id, data)
+            release_list.append(release_info)
+        return release_list
 
     @property
     def available_test_url(self) -> str:

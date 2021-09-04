@@ -6,6 +6,7 @@ from io import BytesIO
 from bs4 import BeautifulSoup
 from requests import Response, Session, HTTPError
 
+from config import debug_mode
 from database.cache_manager import cache_manager
 from getter.net_getter.release_getter import get_single_release
 from utils.logging import logging
@@ -118,7 +119,7 @@ def add_tmp_cache(key: str, value: str):
         cache_manager.add_tmp_cache(key, out.getvalue())
 
 
-async def get_release_by_uuid(uuid, app_id: dict, auth: dict or None = None, use_cache=True) -> list:
+def get_release_by_uuid(uuid, app_id: dict, auth: dict or None = None, use_cache=True) -> list:
     """获取对应 UUID 的软件源的 get_release 函数的输出
     Args:
         uuid: 软件源的 UUID
@@ -128,7 +129,7 @@ async def get_release_by_uuid(uuid, app_id: dict, auth: dict or None = None, use
     Returns:
         对应的下载地址
     """
-    return await get_single_release(uuid, auth, app_id, use_cache=use_cache)
+    return get_single_release(uuid, auth, app_id, use_cache=use_cache)
 
 
 def get_url_from_release_fun(uuid, app_id: dict, asset_index, auth: dict or None = None, use_cache=True) -> str:
@@ -181,3 +182,26 @@ class ReturnFun(Exception):
     """使调用 return_value 函数的函数即时停止
     """
     pass
+
+
+def get_new_asyncio_loop():
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
+    if debug_mode:
+        loop.set_debug(True)
+    return loop
+
+
+def call_def_in_loop_return_result(core, _loop=None):
+    if _loop:
+        loop = _loop
+    else:
+        loop = get_new_asyncio_loop()
+    try:
+        result = loop.run_until_complete(core)
+    except RuntimeError:
+        future = asyncio.run_coroutine_threadsafe(core, loop)
+        result = future.result()
+    if not _loop:
+        loop.close()
+    return result
