@@ -42,12 +42,10 @@ def add_release_cache(hub_uuid: str, auth: dict or None, app_id: dict, release: 
     except DoesNotExist:
         hub_info = HubCache.create(hub_uuid=hub_uuid, auth=auth)
     try:
-        release_cache_list = (ReleaseCache.get((ReleaseCache.hub_info == hub_info)
-                                               & (ReleaseCache.app_id_str == to_json(app_id))))
-        if release_cache_list:
-            release_cache = release_cache_list[0]
-            release_cache.release = release
-            release_cache.save()
+        release_cache = (ReleaseCache.get((ReleaseCache.hub_info == hub_info)
+                                          & (ReleaseCache.app_id_str == to_json(app_id))))
+        release_cache.release = release
+        release_cache.save()
     except DoesNotExist:
         ReleaseCache.create(hub_info=hub_info, app_id=app_id, release=release)
 
