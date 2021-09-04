@@ -1,6 +1,5 @@
 from xml.etree import ElementTree
 
-from database.utils.zip import unzip_raw
 from utils.logging import logging
 from ..base_hub import BaseHub
 from ..hub_script_utils import android_app_key, http_get, get_tmp_cache, add_tmp_cache
@@ -64,12 +63,11 @@ class FDroid(BaseHub):
 
 def _get_xml_tree(url: str = 'https://f-droid.org/repo'):
     try:
-        xml_raw = get_tmp_cache(url)
+        xml_string = get_tmp_cache(url)
     except KeyError:
-        xml_raw = None
-    if not xml_raw:
+        xml_string = None
+    if not xml_string:
         xml_raw = http_get(f'{url}/index.xml', stream=True).text
         if xml_raw:
             add_tmp_cache(url, xml_raw)
-    xml_string = unzip_raw(xml_raw, "1.txt")
     return ElementTree.fromstring(xml_string)
