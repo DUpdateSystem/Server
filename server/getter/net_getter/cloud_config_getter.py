@@ -22,21 +22,24 @@ def _get_cloud_config_str(dev_version: bool) -> str or None:
     else:
         cache_key = "cloud_config"
     try:
-        cache_str = cache_manager.get_tmp_cache(cache_key)
+        cache_raw = cache_manager.get_tmp_cache(cache_key)
     except KeyError:
-        cache_str = None
-    if cache_str:
+        cache_raw = None
+    if cache_raw:
         logging.info("Cloud Config: 命中缓存")
-        return cache_str
+        try:
+            return cache_raw.decode()
+        except UnicodeDecodeError:
+            logging.info("Cloud Config: 缓存错误（清除）")
+            cache_manager.del_tmp_cache(cache_key)
+    logging.info("Cloud Config: 未缓存")
+    cloud_config_str = __get_cloud_config_str(dev_version, True)
+    if cloud_config_str:
+        logging.info("Cloud Config: 配置获取成功")
+        cache_manager.add_tmp_cache(cache_key, cloud_config_str.encode())
+        return cloud_config_str
     else:
-        logging.info("Cloud Config: 未缓存")
-        cloud_config_str = __get_cloud_config_str(dev_version, True)
-        if cloud_config_str:
-            logging.info("Cloud Config: 配置获取成功")
-            cache_manager.add_tmp_cache(cache_key, cloud_config_str)
-            return cloud_config_str
-        else:
-            logging.info(f"Cloud Config: 配置获取失败（dev: {dev_version}）")
+        logging.info(f"Cloud Config: 配置获取失败（dev: {dev_version}）")
 
 
 def __get_cloud_config_str(dev_version: bool, use_self_worker: bool = True) -> str or None:
