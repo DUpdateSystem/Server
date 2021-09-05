@@ -2,7 +2,7 @@ beautifulsoup4==4.9.3
 colorlog==5.0.1
 pyzmq==22.2.1
 Flask==2.0.1
-aiohttp==3.7.4.post0
+#aiohttp==3.7.4.post0
 uWSGI==2.0.19.1
 peewee==3.14.4
 PyMySQL==1.0.2
@@ -11,6 +11,3 @@ schedule==1.1.0
 requests==2.26.0
 requests[socks]
 setuptools-rust
-
-grpcio==1.39.0
-protobuf==3.17.3
