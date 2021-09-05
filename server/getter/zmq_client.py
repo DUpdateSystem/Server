@@ -11,6 +11,7 @@ from getter.net_getter.download_getter import get_download_info_list
 from getter.net_getter.release_getter import get_single_release
 from proxy.format.header_key import RELEASE_REQUEST, DOWNLOAD_REQUEST, CLOUD_CONFIG_REQUEST
 from proxy.format.zmq_request_format import load_release_request, load_download_request, load_cloud_config_request
+from utils.asyncio import run_with_time_limit
 from utils.logging import logging
 
 
@@ -22,8 +23,7 @@ async def worker_routine(worker_url: str):
     while True:
         request_str = await socket.recv_string()
         try:
-            print(request_str)
-            value = await do_work(request_str)
+            value = await run_with_time_limit(do_work(request_str), 45)
             await socket.send_string(json.dumps(value))
         except Exception as e:
             logging.exception(e)
