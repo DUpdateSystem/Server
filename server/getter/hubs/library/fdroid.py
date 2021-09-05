@@ -71,11 +71,11 @@ def _get_xml_tree(url: str = 'https://f-droid.org/repo'):
 
 def __get_xml_tree(url: str):
     try:
-        xml_string = get_tmp_cache(url)
+        xml_string = get_tmp_cache(url).decode()
     except KeyError:
         xml_string = None
     if xml_string is None:
         xml_string = http_get(f'{url}/index.xml', stream=True).text
         if xml_string:
-            add_tmp_cache(url, xml_string)
+            add_tmp_cache(url, xml_string.encode())
     return ElementTree.fromstring(xml_string)
