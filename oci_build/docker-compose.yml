@@ -7,6 +7,12 @@ services:
     labels:
       "io.containers.autoupdate": "image"
     command: hello
+    deploy:
+      resources:
+        limits:
+          cpus: "0.40"
+        reservations:
+          cpus: "0.20"
     ports:
       - "5255:5255"
     depends_on:
@@ -35,6 +41,12 @@ services:
     networks:
       - dbnet
       - upanet
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'
+        reservations:
+          cpus: '0.10'
     depends_on:
       - upa-db
       - upa-proxy
