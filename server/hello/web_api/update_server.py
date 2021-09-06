@@ -68,7 +68,6 @@ def __get_app_release_list(hub_uuid: UUID, app_id_path: str):
     socket = context.socket(zmq.REQ)
     socket.connect(proxy_url)
     mq_request = dump_release_request(str(hub_uuid), auth, app_id, True)
-    print(mq_request)
     socket.send_string(mq_request)
     release_list_str = socket.recv()
     socket.close()
