@@ -1,6 +1,5 @@
 import asyncio
 
-from config import debug_mode
 from getter.hubs.hub_list import hub_dict
 from utils.logging import logging
 
@@ -20,15 +19,15 @@ async def get_download_info_list(hub_uuid: str, auth: dict, app_id: list, asset_
         else:
             return download_info
     except Exception as e:
-        logging.error(f"""app_id: {app_id} \nERROR: """, exc_info=debug_mode)
-        return e
+        logging.exception(e)
+        return None
 
 
 async def __run_download_core(hub, auth: dict, app_id: list, asset_index: list):
     aw = None
     try:
         # noinspection PyProtectedMember
-        aw = hub._get_download_info(app_id, asset_index, auth)
+        aw = hub.get_download_info(app_id, asset_index, auth)
         download_info = await asyncio.wait_for(aw, timeout=20)
         return download_info
     except asyncio.TimeoutError:
