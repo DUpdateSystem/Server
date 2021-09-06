@@ -63,7 +63,7 @@ class FDroid(BaseHub):
 
 def _get_xml_tree(url: str = 'https://f-droid.org/repo'):
     try:
-        __get_xml_tree(url)
+        return __get_xml_tree(url)
     except ElementTree.ParseError:
         del_tmp_cache(url)
         return __get_xml_tree(url)
@@ -72,7 +72,7 @@ def _get_xml_tree(url: str = 'https://f-droid.org/repo'):
 def __get_xml_tree(url: str):
     try:
         xml_string = get_tmp_cache(url).decode()
-    except KeyError:
+    except AttributeError or KeyError:
         xml_string = None
     if xml_string is None:
         xml_string = http_get(f'{url}/index.xml', stream=True).text

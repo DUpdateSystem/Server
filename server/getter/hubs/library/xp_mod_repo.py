@@ -17,7 +17,10 @@ class XpModRepo(BaseHub):
         return 'e02a95a2-af76-426c-9702-c4c39a01f891'
 
     def get_release_list(self, app_id_list: list, auth: dict or None = None):
-        xml_str = get_tmp_cache(cache_key).decode()
+        try:
+            xml_str = get_tmp_cache(cache_key).decode()
+        except AttributeError:
+            xml_str = None
         if not xml_str:
             raw_str = http_get("https://dl-xda.xposed.info/repo/full.xml.gz", stream=True).raw.data
             xml_str = _raw_to_xml_string(raw_str)

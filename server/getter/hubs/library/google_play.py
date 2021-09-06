@@ -169,7 +169,10 @@ class GooglePlay(BaseHub):
         return api
 
     def __get_cache_auth(self) -> tuple or None:
-        auth = get_tmp_cache(_auth_cache_key).decode()
+        try:
+            auth = get_tmp_cache(_auth_cache_key).decode()
+        except AttributeError:
+            auth = None
         if auth:
             auth_json = json.loads(auth)
             return self.__get_auth(auth_json)
