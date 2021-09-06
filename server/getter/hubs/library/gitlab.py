@@ -1,6 +1,7 @@
 import json
 
 from bs4 import BeautifulSoup
+from requests import HTTPError
 
 from ..base_hub import BaseHub
 from ..hub_script_utils import http_get
@@ -16,7 +17,12 @@ class Gitlab(BaseHub):
     def get_release(self, app_id: dict, auth: dict or None = None) -> list:
         owner_name = app_id['owner']
         repo_name = app_id['repo']
-        response = _get_response(owner_name, repo_name)
+        response = None
+        try:
+            response = _get_response(owner_name, repo_name)
+        except HTTPError as e:
+            if e.response.status_code == 404:
+                return []
         data = []
         # 分版本号获取信息
         for release in response:
