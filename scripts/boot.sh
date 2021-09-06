@@ -7,7 +7,7 @@ if [ "$1" == "hello" ]; then
 	echo -e "${BLUE}Run hello webapi.(uwsgi)${NC}"
 	exec uwsgi ./hello/uwsgi.ini
 elif [ "$1" == "hello-python" ]; then
-	echo -e "${BLUE}Run hello webapi.(uwsgi)${NC}"
+	echo -e "${BLUE}Run hello webapi.(raw python3)${NC}"
 	exec python3 -m hello
 elif [ "$1" == "proxy" ]; then
 	echo -e "${BLUE}Run 0mq proxy.${NC}"
