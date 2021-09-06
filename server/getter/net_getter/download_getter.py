@@ -27,8 +27,12 @@ async def __run_download_core(hub, auth: dict, app_id: list, asset_index: list):
     aw = None
     try:
         # noinspection PyProtectedMember
-        aw = hub.get_download_info(app_id, asset_index, auth)
+        aw = _run_core(hub.get_download_info, app_id, asset_index, auth)
         download_info = await asyncio.wait_for(aw, timeout=20)
         return download_info
     except asyncio.TimeoutError:
         logging.info(f'aw: {aw} timeout!')
+
+
+async def _run_core(core, *args):
+    return core(*args)
