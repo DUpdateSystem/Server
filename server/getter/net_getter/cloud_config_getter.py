@@ -23,7 +23,7 @@ def _get_cloud_config_str(dev_version: bool) -> str or None:
         cache_key = "cloud_config"
     try:
         cache_string = cache_manager.get_tmp_cache(cache_key).decode()
-    except KeyError or AttributeError:
+    except AttributeError or KeyError:
         cache_string = None
     except UnicodeDecodeError:
         logging.info("Cloud Config: 缓存错误（清除）")
