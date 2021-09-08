@@ -1,7 +1,7 @@
 import json
 import time
 
-from requests.exceptions import ConnectionError
+from requests.exceptions import ConnectionError, HTTPError
 
 from ..base_hub import BaseHub
 from ..hub_script_utils import http_get, search_version_number_string
@@ -17,7 +17,12 @@ class Github(BaseHub):
     def get_release(self, app_id: dict, auth: dict or None = None) -> list:
         owner_name = app_id['owner']
         repo_name = app_id['repo']
-        response = _get_response(owner_name, repo_name)
+        response = None
+        try:
+            response = _get_response(owner_name, repo_name)
+        except HTTPError as e:
+            if e.response.status_code == 404:
+                return []
         response.sort(key=_extract_time, reverse=True)
         data = []
         # 分版本号获取信息
