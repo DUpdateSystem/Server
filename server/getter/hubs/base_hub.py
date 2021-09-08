@@ -50,7 +50,7 @@ class BaseHub(object, metaclass=ABCMeta):
             Examples:
                 [url]
                 or
-                [{"name": [name]. "url": url, "header": "headers", [headers], "cookies": [cookies]}, ...]
+                [{"name": [name]. "url": [url], "header": [header dict], "cookies": [cookies]}, ...]
                 可包含多个下载目标（为了同时下载/安装可能的依赖软件，例如：obb 文件）
                 request_header_dict 结构示例: {
                         "<请求头>": "<请求头参数>"
