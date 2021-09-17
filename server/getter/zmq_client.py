@@ -58,8 +58,8 @@ async def get_cloud_config(dev_version: bool, migrate_master: bool):
     return cloud_config
 
 
-async_worker_num = 10
-thread_worker_num = 3
+async_worker_num = 32
+thread_worker_num = 1  # 暂时使用单线程查询，后期优化考虑线程池
 
 
 async def main():
