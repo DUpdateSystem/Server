@@ -18,22 +18,7 @@ def main():
     backend = context.socket(zmq.DEALER)
     backend.bind(end_url)
 
-    # Initialize poll set
-    poller = zmq.Poller()
-    poller.register(frontend, zmq.POLLIN)
-    poller.register(backend, zmq.POLLIN)
-
-    # Switch messages between sockets
-    while True:
-        socks = dict(poller.poll())
-
-        if socks.get(frontend) == zmq.POLLIN:
-            message = frontend.recv_multipart()
-            backend.send_multipart(message)
-
-        if socks.get(backend) == zmq.POLLIN:
-            message = backend.recv_multipart()
-            frontend.send_muwltipart(message)
+    zmq.proxy(frontend, backend)
 
     # We never get here...
     frontend.close()

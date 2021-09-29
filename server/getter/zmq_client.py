@@ -24,10 +24,11 @@ async def worker_routine(worker_url: str):
         request_str = await socket.recv_string()
         try:
             value = await run_with_time_limit(do_work(request_str), 45)
-            await socket.send_string(json.dumps(value))
+            response = json.dumps(value)
         except Exception as e:
             logging.exception(e)
-            await socket.send_string(json.dumps(None))
+            response = json.dumps(None)
+        await socket.send_string(response)
 
 
 async def do_work(request_str: str):
