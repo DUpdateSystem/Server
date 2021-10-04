@@ -1,6 +1,6 @@
 import asyncio
 import json
-from threading import Thread
+from threading import Thread, Lock
 
 import zmq
 import zmq.asyncio
@@ -21,7 +21,9 @@ async def worker_routine(worker_url: str):
     socket.connect(worker_url)
 
     while True:
+        up_worker_num()
         request_str = await socket.recv_string()
+        down_worker_num()
         try:
             value = await run_with_time_limit(do_work(request_str), 45)
             response = json.dumps(value)
@@ -59,21 +61,48 @@ async def get_cloud_config(dev_version: bool, migrate_master: bool):
     return cloud_config
 
 
-async_worker_num = 32
-thread_worker_num = 1  # 暂时使用单线程查询，后期优化考虑线程池
+async_worker_num = 15
+thread_worker_num = 3  # 暂时使用单线程查询，后期优化考虑线程池
+
+worker_num = 0
+worker_count_lock = Lock()
 
 
-async def main():
-    worker_url = 'tcp://upa-proxy:5560'
+def up_worker_num():
+    with worker_count_lock:
+        global worker_num
+        worker_num += 1
+
+
+def down_worker_num():
+    with worker_count_lock:
+        global worker_num
+        worker_num -= 1
+
+
+def overload_throw(worker_url: str):
+    context = zmq.Context()
+    socket = context.socket(zmq.REP)
+    socket.connect(worker_url)
+    while True:
+        if worker_num <= 0:
+            requests = socket.recv_string()
+            logging.info(f"getter overload_throw: {requests}")
+            socket.send_string(json.dumps(None))
+
+
+async def main(worker_url: str):
     await asyncio.gather(*[worker_routine(worker_url)] * async_worker_num)
 
 
-def run_single():
+def run_single(worker_url: str):
     cache_manager.connect()
-    asyncio.run(main())
+    asyncio.run(main(worker_url))
 
 
 def run():
+    worker_url = 'tcp://upa-proxy:5560'
     cache_manager.init()
     for _ in range(thread_worker_num):
-        Thread(target=run_single, ).start()
+        Thread(target=run_single, args=(worker_url,)).start()
+    Thread(target=overload_throw, args=(worker_url,)).start()
