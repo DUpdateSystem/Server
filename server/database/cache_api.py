@@ -1,3 +1,4 @@
+from threading import Lock
 from time import time
 
 from peewee import DoesNotExist
@@ -16,8 +17,15 @@ if 6 * 3600 >= data_expire_sec >= 3 * 3600:
 else:
     memory_cache_expire_sec = 30 * 60
 
+db_lock = Lock()
+
 
 def get_release_cache(hub_uuid: str, auth: dict or None, app_id: dict) -> list or None:
+    with db_lock:
+        return __get_release_cache(hub_uuid, auth, app_id)
+
+
+def __get_release_cache(hub_uuid: str, auth: dict or None, app_id: dict) -> list or None:
     timestamp = time() - data_expire_sec
     release_cache_list: list[ReleaseCache] = (
         ReleaseCache.select(ReleaseCache).join(HubCache, on=(ReleaseCache.hub_info == HubCache.pair_id))
@@ -37,6 +45,11 @@ def get_release_cache(hub_uuid: str, auth: dict or None, app_id: dict) -> list o
 
 
 def add_release_cache(hub_uuid: str, auth: dict or None, app_id: dict, release: list):
+    with db_lock:
+        return __add_release_cache(hub_uuid, auth, app_id, release)
+
+
+def __add_release_cache(hub_uuid: str, auth: dict or None, app_id: dict, release: list):
     try:
         hub_info = HubCache.get((HubCache.hub_uuid == hub_uuid) & (HubCache.auth_str == to_json(auth)))
     except DoesNotExist:
@@ -51,6 +64,11 @@ def add_release_cache(hub_uuid: str, auth: dict or None, app_id: dict, release: 
 
 
 def get_memory_cache(key: str) -> bytes or None:
+    with db_lock:
+        return __get_memory_cache(key)
+
+
+def __get_memory_cache(key: str) -> bytes or None:
     timestamp = time() - memory_cache_expire_sec
     try:
         return TempCache.get((TempCache.key == key) & (TempCache.timestamp >= timestamp)).value
@@ -59,6 +77,11 @@ def get_memory_cache(key: str) -> bytes or None:
 
 
 def add_memory_cache(key: str, value: bytes):
+    with db_lock:
+        return __add_memory_cache(key, value)
+
+
+def __add_memory_cache(key: str, value: bytes):
     try:
         cache: TempCache = TempCache.get((TempCache.key == key))
         cache.value = value
@@ -69,6 +92,11 @@ def add_memory_cache(key: str, value: bytes):
 
 
 def del_memory_cache(key: str):
+    with db_lock:
+        return __del_memory_cache(key)
+
+
+def __del_memory_cache(key: str):
     try:
         TempCache.get((TempCache.key == key)).delete_instance()
     except DoesNotExist:
