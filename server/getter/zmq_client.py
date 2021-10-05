@@ -33,6 +33,8 @@ async def worker_routine(worker_url: str):
             response = json.dumps(None)
         await socket.send_string(response)
 
+    # cache_manager.disconnect()
+
 
 async def do_work(request_str: str):
     request_key = request_str[0]
@@ -62,8 +64,8 @@ async def get_cloud_config(dev_version: bool, migrate_master: bool):
     return cloud_config
 
 
-async_worker_num = 15
-thread_worker_num = 3  # 暂时使用单线程查询，后期优化考虑线程池
+async_worker_num = 10  # 并行协程数
+thread_worker_num = 3  # 并行线程数
 
 worker_num = 0
 worker_count_lock = Lock()
@@ -93,7 +95,10 @@ def overload_throw(worker_url: str):
 
 
 async def main(worker_url: str):
-    await asyncio.gather(*[worker_routine(worker_url)] * async_worker_num)
+    async_worker_list = []
+    for _ in range(async_worker_num):
+        async_worker_list.append(worker_routine(worker_url))
+    await asyncio.gather(*async_worker_list)
 
 
 def run_single(worker_url: str):

@@ -1,6 +1,6 @@
 from database.model.hub_cache import HubCache
-from database.model.temp_cache import TempCache
 from database.model.release_cache import ReleaseCache
+from database.model.temp_cache import TempCache
 from .meta import local_cache_db
 
 
@@ -11,8 +11,7 @@ def init_database():
 
 
 def connect_db():
-    if local_cache_db.is_closed():
-        local_cache_db.connect()
+    local_cache_db.connect(reuse_if_open=True)
 
 
 def close_db():
