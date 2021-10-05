@@ -19,6 +19,7 @@ async def worker_routine(worker_url: str):
     context = zmq.asyncio.Context()
     socket: zmq.asyncio.Socket = context.socket(zmq.REP)
     socket.connect(worker_url)
+    cache_manager.connect()
 
     while True:
         up_worker_num()
@@ -96,7 +97,6 @@ async def main(worker_url: str):
 
 
 def run_single(worker_url: str):
-    cache_manager.connect()
     asyncio.run(main(worker_url))
 
 
