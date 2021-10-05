@@ -25,6 +25,7 @@ async def worker_routine(worker_url: str):
         up_worker_num()
         request_str = await socket.recv_string()
         down_worker_num()
+        overload_throw_proxy(worker_url)
         try:
             value = await run_with_time_limit(do_work(request_str), 45)
             response = json.dumps(value)
@@ -83,15 +84,30 @@ def down_worker_num():
         worker_num -= 1
 
 
+def get_worker_num():
+    with worker_count_lock:
+        return worker_num
+
+
+overload_throw_lock = Lock()
+
+
+def overload_throw_proxy(worker_url: str):
+    with overload_throw_lock:
+        if get_worker_num() <= 0:
+            overload_throw(worker_url)
+
+
 def overload_throw(worker_url: str):
     context = zmq.Context()
     socket = context.socket(zmq.REP)
     socket.connect(worker_url)
-    while True:
-        if worker_num <= 0:
-            requests = socket.recv_string()
-            logging.info(f"getter overload_throw: {requests}")
-            socket.send_string(json.dumps(None))
+    logging.info(f"getter overload_throw: enable")
+    while get_worker_num() <= 0:
+        requests = socket.recv_string()
+        logging.info(f"getter overload_throw: {requests}")
+        socket.send_string(json.dumps(None))
+    logging.info(f"getter overload_throw: disable")
 
 
 async def main(worker_url: str):
@@ -110,4 +126,3 @@ def run():
     cache_manager.init()
     for _ in range(thread_worker_num):
         Thread(target=run_single, args=(worker_url,)).start()
-    Thread(target=overload_throw, args=(worker_url,)).start()
