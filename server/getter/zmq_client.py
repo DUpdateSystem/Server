@@ -107,6 +107,8 @@ def overload_throw(worker_url: str):
         requests = socket.recv_string()
         logging.info(f"getter overload_throw: {requests}")
         socket.send_string(json.dumps(None))
+    socket.close()
+    context.term()
     logging.info(f"getter overload_throw: disable")
 
 
