@@ -2,7 +2,7 @@ import json
 from random import randrange
 
 import requests
-from google_play_scraper import app
+from google_play_scraper import app, exceptions
 from gpapi.googleplay import GooglePlayAPI as _GooglePlayAPI, \
     PURCHASE_URL, ssl_verify, googleplay_pb2, LoginError, RequestError
 
@@ -37,7 +37,10 @@ class GooglePlay(BaseHub):
         package = app_id[android_app_key]
         lang = 'zh_CN'
         country = 'us'
-        result = app(package, lang=lang, country=country)
+        try:
+            result = app(package, lang=lang, country=country)
+        except exceptions.NotFoundError:
+            return []
         release = {
             'version_number': result['version'],
             'assets': [{

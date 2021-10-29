@@ -75,9 +75,10 @@ def __get_app_release_list(hub_uuid: UUID, app_id_path: str):
         release_list = json.loads(release_list_str)
     except KeyError:
         return f'no hub: {hub_uuid}', 400
+    # noinspection PySimplifyBooleanCheck
     if release_list:
         return release_list, 200
-    elif release_list is not None and not release_list:
+    elif release_list == []:
         return '', 410
     else:
         return '', 406
