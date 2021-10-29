@@ -2,6 +2,7 @@ import json
 from random import randrange
 
 import requests
+from google_play_scraper import app
 from gpapi.googleplay import GooglePlayAPI as _GooglePlayAPI, \
     PURCHASE_URL, ssl_verify, googleplay_pb2, LoginError, RequestError
 
@@ -32,7 +33,24 @@ class GooglePlay(BaseHub):
             "ac2dmToken": api.authSubToken
         }
 
-    def get_release_list(self, app_id_list: list, auth: dict or None = None):
+    def get_release(self, app_id: dict, auth: dict or None = None) -> list or None:
+        package = app_id[android_app_key]
+        lang = 'zh_CN'
+        country = 'us'
+        result = app(package, lang=lang, country=country)
+        release = {
+            'version_number': result['version'],
+            'assets': [{
+                'file_name': package + '.apk'
+            }]
+        }
+        try:
+            release['change_log'] = result['recentChangesHTML']
+        except KeyError:
+            pass
+        return [release, ]
+
+    def _get_release_list(self, app_id_list: list, auth: dict or None = None):
         for app_id in [app_id for app_id in app_id_list if android_app_key not in app_id]:
             yield app_id, []
             app_id_list.remove(app_id)
@@ -100,10 +118,10 @@ class GooglePlay(BaseHub):
             # noinspection PyBroadException
             try:
                 api = self.__get_def_google_play()
-                download = api.download(doc_id, expansion_files=True)
+                download = self.__auto_download(doc_id, api)
             except Exception:
                 api = self.__get_def_google_play(True)
-                download = api.download(doc_id, expansion_files=True)
+                download = self.__auto_download(doc_id, api)
         main_apk_file = download['file']
         download_list.append({"name": f'{doc_id}.apk',
                               "url": main_apk_file['url'],
@@ -124,6 +142,15 @@ class GooglePlay(BaseHub):
                                   "headers": obb_file['headers'],
                                   "cookies": obb_file['cookies']})
         return download_list
+
+    @staticmethod
+    def __auto_download(doc_id, api):
+        detail = api.details(doc_id)
+        if detail['offer'][0]['checkoutFlowRequired']:
+            method = api.delivery
+        else:
+            method = api.download
+        return method(doc_id, expansion_files=True)
 
     def __get_google_api(self, auth: dict):
         if auth:

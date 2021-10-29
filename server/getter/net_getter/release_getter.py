@@ -1,5 +1,6 @@
 from database.cache_manager import cache_manager
 from utils.logging import logging
+from config import debug_mode
 
 
 def get_single_release(hub_uuid: str, auth: dict or None, app_id: dict,
@@ -14,7 +15,7 @@ def get_release_list(hub_uuid: str, auth: dict or None, app_id_list: list,
                      use_cache=True, cache_data=True) -> list or None:
     from getter.hubs.hub_list import hub_dict
     hub = hub_dict[hub_uuid]
-    if use_cache:
+    if use_cache and not debug_mode:
         for app_id in app_id_list:
             cache = __get_release_cache(hub_uuid, auth, app_id)
             if cache is not None:
