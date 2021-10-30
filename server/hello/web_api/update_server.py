@@ -56,7 +56,7 @@ def get_app_release_list(api_version: str, hub_uuid: UUID, app_id_path: str):
         return 'v1 only', 400
     logging.debug(f"get_app_release_list: {hub_uuid}, {app_id_path}")
     value, status = __get_app_release_list(hub_uuid, app_id_path)
-    if status:
+    if status == 200:
         return Response(json.dumps(value), mimetype='application/json')
     else:
         return value, status
