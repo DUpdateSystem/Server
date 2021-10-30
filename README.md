@@ -15,14 +15,8 @@ UpgradeAll 服务端代码仓库
 - [安装](#安装)
 - [使用说明](#使用说明)
    - [运行这个项目](#运行这个项目)
-      - [Podman](#podmandocker)
-      - [已安装 Docker 的 Linux 环境](#已安装-docker-的-linux-环境)
-      - [手动安装并运行](#手动安装并运行适用于-termux)
-   - [示例](#示例)
-      - [Podman](#podmandocker-1)
-      - [Shell script](#shell-script)
-      - [手动运行](#手动运行)
-   - [命令参数](#命令参数)
+      - [Docker Compose](#docker-compose)
+      - [手动安装并运行](#shell-script)
 - [相关仓库](#相关仓库)
 - [维护者](#维护者)
 - [如何贡献](#如何贡献)
@@ -55,45 +49,10 @@ $ cd server
 
 ### 运行这个项目
 
-#### Podman/Docker
+#### Docker Compose
 ```sh
-$ podman pull docker.io/xiangzhedev/upgradeall-server
-# 更新镜像
-$ podman run --rm -p 5255:5255 xiangzhedev/upgradeall-server
-# 单次运行
-$ podman run --rm -v $PWD/app:/app -p 5255:5255 xiangzhedev/upgradeall-server
-# 测试运行（在该项目的根目录下运行）
-$ podman run --rm -p 5255:5255 xiangzhedev/upgradeall-server --help
-# 查看参数帮助
-$ podman run -dit --restart unless-stopped --name=update-server -d -p 5255:5255 xiangzhedev/upgradeall-server
-# 服务部署
-$ podman stop update-server && podman container rm update-server
-# 停止服务
-```
-
-#### 已安装 Docker 的 Linux 环境
-```sh
-$ ./startup.sh --help
-# 查看使用帮助
-# 使用 debug 模式运行时，将直接挂载 app 文件夹到相关目录下，因此，在修改本项目代码时，请尽管测试你的代码。
-```
-
-#### 手动安装并运行（适用于 Termux）
-> 因为我**没有 Windows 开发环境**，所以我只以 Linux 作为示例，命令可能不完全相同
-```sh
-$ pip3 install -r app/requirements.txt
-# 安装 Python 依赖
-$ python3 -m app --help
-# 查看命令帮助
-```
-
-### 示例
-#### Podman/Docker
-```sh
-$ podman run -dit --restart unless-stopped --name=update-server -d -p 5255:5255 xiangzhedev/upgradeall-server
-# 服务部署
-$ podman run --rm xiangzhedev/upgradeall-server --debug 6a6d590b-1809-41bf-8ce3-7e3f6c8da945 --test_options android_app_package com.nextcloud.client
-# 测试软件源
+# 在项目根目录下
+$ docker-compose -f oci_build/docker-compose.yml
 ```
 
 #### Shell script
@@ -106,28 +65,26 @@ $ ./startup.sh --debug 6a6d590b-1809-41bf-8ce3-7e3f6c8da945 --test_options andro
 # 测试软件源
 ```
 #### 手动运行
+##### 数据库
+1. 按照 oci_build/db.env 设置 mariadb 初始环境（主要是用户/密码），然后运行它
+2. 使用 Docker/Podman 运行数据库
 ```sh
-$ python3 -m app
-# 部署服务端
-$ python3 -m app --debug 6a6d590b-1809-41bf-8ce3-7e3f6c8da945 --test_options android_app_package com.nextcloud.client
-# 测试软件源
+# 在项目根目录下
+$ docker run --rm --name=upa-db --env-file oci_build/db.env -v $PWD/db_data/:/var/lib/mysql -p 3306:3306 mariadb
 ```
-### 命令参数
-```text
-usage: DUpdateSystem Server [-h] [--normal] [--debug] [--init_account] [--test_options [TEST_OPTIONS ...]] [hub_uuid]
-
-DUpdateSystem 服务端
-
-positional arguments:
-  hub_uuid              测试的软件源脚本的 UUID
-
-optional arguments:
-  -h, --help            show this help message and exit
-  --normal              以 config.ini 配置正常运行服务端
-  --debug               运行软件源脚本测试
-  --init_account        测试的软件源脚本的帐号初始化函数
-  --test_options [TEST_OPTIONS ...]
-                        测试软件源脚本的运行选项，以 key value 为组，例如：android_app_package net.xzos.upgradeall
+###### 服务端
+1. 安装 Python 依赖
+```sh
+# 在项目根目录下
+pip install -r server/requirements.txt
+```
+2. 部署
+```sh
+# 在项目根目录下
+$ ../scripts/boot.sh proxy  # 启动中间件
+$ ../scripts/boot.sh getter # 启动后端
+$ ../scripts/boot.sh hello  # 启动 API 前端
+$ curl -w "%{http_code}\n" localhost:5255/about # 测试服务端
 ```
 
 ## 相关仓库
