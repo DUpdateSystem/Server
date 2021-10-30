@@ -16,7 +16,7 @@ UpgradeAll 服务端代码仓库
 - [使用说明](#使用说明)
    - [运行这个项目](#运行这个项目)
       - [Docker Compose](#docker-compose)
-      - [手动安装并运行](#shell-script)
+      - [手动安装并运行](#手动运行)
 - [相关仓库](#相关仓库)
 - [维护者](#维护者)
 - [如何贡献](#如何贡献)
@@ -55,16 +55,8 @@ $ cd server
 $ docker-compose -f oci_build/docker-compose.yml
 ```
 
-#### Shell script
-> 不推荐使用
-该脚本只用于调试，脚本会自动本地编译新的 Docker 镜像并挂载代码文件夹以便调试
-```sh
-$ ./startup.sh
-# 部署服务端
-$ ./startup.sh --debug 6a6d590b-1809-41bf-8ce3-7e3f6c8da945 --test_options android_app_package com.nextcloud.client
-# 测试软件源
-```
 #### 手动运行
+该方法只用于开发调试
 ##### 数据库
 1. 按照 oci_build/db.env 设置 mariadb 初始环境（主要是用户/密码），然后运行它
 2. 使用 Docker/Podman 运行数据库
