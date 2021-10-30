@@ -5,6 +5,7 @@ from threading import Thread, Lock
 import zmq
 import zmq.asyncio
 
+from config import timeout_getter
 from database.cache_manager import cache_manager
 from getter.net_getter.cloud_config_getter import get_cloud_config_str
 from getter.net_getter.download_getter import get_download_info_list
@@ -27,7 +28,7 @@ async def worker_routine(worker_url: str):
         down_worker_num()
         overload_throw_proxy(worker_url)
         try:
-            value = await run_with_time_limit(do_work(request_str), 45)
+            value = await run_with_time_limit(do_work(request_str), timeout_getter)
             response = json.dumps(value)
         except Exception as e:
             logging.exception(e)

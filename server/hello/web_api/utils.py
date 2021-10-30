@@ -1,6 +1,6 @@
 import json
 
-from flask import request
+from quart import request
 
 
 def path_to_dict(path: str) -> dict[str, str]:

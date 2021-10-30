@@ -4,8 +4,8 @@ BLUE='\033[0;31m'
 NC='\033[0m' # No Color
 
 if [ "$1" == "hello" ]; then
-	echo -e "${BLUE}Run hello webapi.(uwsgi)${NC}"
-	exec uwsgi ./hello/uwsgi.ini
+	echo -e "${BLUE}Run hello webapi.(deploy)${NC}"
+	exec hypercorn --config hello/hypercorn.toml hello.run:app
 elif [ "$1" == "hello-python" ]; then
 	echo -e "${BLUE}Run hello webapi.(raw python3)${NC}"
 	exec python3 -m hello

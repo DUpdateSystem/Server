@@ -1,3 +1,3 @@
-import zmq
+import zmq.asyncio
 
-context = zmq.Context()
+context = zmq.asyncio.Context()
