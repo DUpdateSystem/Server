@@ -20,7 +20,6 @@ async def worker_routine(worker_url: str):
     context = zmq.asyncio.Context()
     socket: zmq.asyncio.Socket = context.socket(zmq.REP)
     socket.connect(worker_url)
-    cache_manager.connect()
 
     while True:
         up_worker_num()
@@ -34,8 +33,6 @@ async def worker_routine(worker_url: str):
             logging.exception(e)
             response = json.dumps(None)
         await socket.send_string(response)
-
-    # cache_manager.disconnect()
 
 
 async def do_work(request_str: str):
@@ -66,7 +63,7 @@ async def get_cloud_config(dev_version: bool, migrate_master: bool):
     return cloud_config
 
 
-async_worker_num = 10  # 并行协程数
+async_worker_num = 12  # 并行协程数
 thread_worker_num = 3  # 并行线程数
 
 worker_num = 0

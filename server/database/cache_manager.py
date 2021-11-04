@@ -1,5 +1,6 @@
 from .cache_api import get_release_cache, add_release_cache, get_memory_cache, add_memory_cache, del_memory_cache
 from .init import connect_db, close_db, init_database
+from .utils.db_wapper import db_fun
 
 
 class CacheManager:
@@ -20,23 +21,28 @@ class CacheManager:
         close_db()
 
     @staticmethod
+    @db_fun
     def add_release_cache(hub_uuid: str, auth: dict or None, app_id: dict, release: list):
         add_release_cache(hub_uuid, auth, app_id, release)
 
     @staticmethod
+    @db_fun
     def get_release_cache(hub_uuid: str, auth: dict or None, app_id: dict) -> list or None:
         return get_release_cache(hub_uuid, auth, app_id)
 
     @staticmethod
+    @db_fun
     def add_tmp_cache(key, value: bytes):
         add_memory_cache(key, value)
 
     @staticmethod
+    @db_fun
     def get_tmp_cache(key) -> bytes or None:
         value = get_memory_cache(key)
         return value
 
     @staticmethod
+    @db_fun
     def del_tmp_cache(key):
         del_memory_cache(key)
 
