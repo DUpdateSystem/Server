@@ -30,10 +30,6 @@ UpgradeAll 服务端代码仓库
 ## 安装
 
 这个项目使用 [Python 3](https://www.python.org/)。请确保你本地安装了它们。
-> **TIPS**：gRPC proto 编译命令（在 server 目录下执行）：
-``` bash
-python -m grpc_tools.protoc -I./ --python_out=. --grpc_python_out=. ./app/grpc_template/route.proto
-```
 
 
 ## 使用说明
@@ -52,7 +48,7 @@ $ cd server
 #### Docker Compose
 ```sh
 # 在项目根目录下
-$ docker-compose -f oci_build/docker-compose.yml
+$ docker-compose -f oci_build/docker-compose.yml up
 ```
 
 #### 手动运行
