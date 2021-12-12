@@ -1,4 +1,5 @@
 from database.cache_manager import cache_manager
+from getter.net_getter.hub_checker import check_hub_available
 from utils.logging import logging
 from config import debug_mode
 
@@ -6,6 +7,8 @@ from config import debug_mode
 def get_single_release(hub_uuid: str, auth: dict or None, app_id: dict,
                        use_cache=True, cache_data=True) -> list or None:
     try:
+        if not check_hub_available(hub_uuid):
+            return None
         return next(get_release_list(hub_uuid, auth, [app_id], use_cache=use_cache, cache_data=cache_data))[4]
     except Exception as e:
         logging.exception(e)

@@ -1,6 +1,7 @@
 import asyncio
 
 from getter.hubs.hub_list import hub_dict
+from getter.net_getter.hub_checker import check_hub_available
 from utils.logging import logging
 
 
@@ -13,6 +14,8 @@ async def get_download_info_list(hub_uuid: str, auth: dict, app_id: list, asset_
         logging.warning(f"NO HUB: {hub_uuid}")
         raise KeyError
     try:
+        if not check_hub_available(hub_uuid):
+            return None
         download_info = await __run_download_core(hub, auth, app_id, asset_index)
         if type(download_info) is str:
             return [{"url": download_info}]
