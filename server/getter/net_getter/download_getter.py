@@ -14,7 +14,7 @@ async def get_download_info_list(hub_uuid: str, auth: dict, app_id: list, asset_
         logging.warning(f"NO HUB: {hub_uuid}")
         raise KeyError
     try:
-        if not check_hub_available(hub_uuid):
+        if not check_hub_available(hub):
             return None
         download_info = await __run_download_core(hub, auth, app_id, asset_index)
         if type(download_info) is str:

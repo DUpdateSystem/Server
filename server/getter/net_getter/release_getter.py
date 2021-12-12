@@ -7,8 +7,6 @@ from config import debug_mode
 def get_single_release(hub_uuid: str, auth: dict or None, app_id: dict,
                        use_cache=True, cache_data=True) -> list or None:
     try:
-        if not check_hub_available(hub_uuid):
-            return None
         return next(get_release_list(hub_uuid, auth, [app_id], use_cache=use_cache, cache_data=cache_data))[4]
     except Exception as e:
         logging.exception(e)
@@ -25,6 +23,8 @@ def get_release_list(hub_uuid: str, auth: dict or None, app_id_list: list,
                 yield hub_uuid, auth, app_id, use_cache, cache
                 app_id_list.remove(app_id)
     if app_id_list:
+        if not check_hub_available(hub):
+            return None
         for app_id, release_list in hub.get_release_list(app_id_list, auth):
             if cache_data:
                 if release_list is not None:

@@ -64,7 +64,11 @@ class BaseHub(object, metaclass=ABCMeta):
         Returns: bool
          软件源的源站是否可以连接
         """
-        return http_get(self.available_test_url, False).ok
+        # noinspection PyBroadException
+        try:
+            return http_get(self.available_test_url, False).ok
+        except Exception:
+            return False
 
     @property
     def available_test_url(self) -> str:
