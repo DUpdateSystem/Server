@@ -2,15 +2,16 @@ import json
 from random import randrange
 
 import requests
-from google_play_scraper import app, exceptions
+from google_play_scraper import exceptions
+from .google_play_patch.app import app
 from gpapi.googleplay import GooglePlayAPI as _GooglePlayAPI, \
     PURCHASE_URL, ssl_verify, googleplay_pb2, LoginError, RequestError
 
 from utils.logging import logging
-from ..base_hub import BaseHub
-from ..hub_script_utils import android_app_key, get_tmp_cache, add_tmp_cache
+from getter.hubs.base_hub import BaseHub
+from getter.hubs.hub_script_utils import android_app_key, get_tmp_cache, add_tmp_cache
 
-_locale = "zh_CN"
+_locale = "en_US"
 _timezone = "UTC"
 _device_codename = "walleye"
 
@@ -39,6 +40,7 @@ class GooglePlay(BaseHub):
         country = 'us'
         try:
             result = app(package, lang=lang, country=country)
+            print(result)
         except exceptions.NotFoundError:
             return []
         release = {
