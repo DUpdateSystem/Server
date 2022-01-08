@@ -14,7 +14,7 @@ jobs:
 
     - name: Build Docker image
       run: |
-          docker build . --file oci_build/Dockerfile --tag johnsonran/upgradeall-server:latest
+          docker build . --file oci_build/Dockerfile --tag xiangzhedev/upgradeall-server:latest
 
     - name: Login DockerHub
       uses: docker/login-action@v1
@@ -24,4 +24,4 @@ jobs:
 
     - name: Push to DockerHub
       run: |
-          docker push johnsonran/upgradeall-server:latest
+          docker push xiangzhedev/upgradeall-server:latest
