@@ -7,7 +7,7 @@ from utils.logging import logging
 from .model.hub_cache import HubCache
 from .model.release_cache import ReleaseCache
 from .model.temp_cache import TempCache
-from .utils.json import to_json
+from utils.json import to_json
 
 data_expire_sec = auto_refresh_hour * 3600
 

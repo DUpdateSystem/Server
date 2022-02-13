@@ -5,7 +5,7 @@ from peewee import *
 from .hub_cache import HubCache
 from ..field.text import LongTextField
 from ..meta import BaseModel, BaseMeta
-from ..utils.json import from_json, to_json
+from utils.json import from_json, to_json
 
 
 class ReleaseCache(BaseModel):
