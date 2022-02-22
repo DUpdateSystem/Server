@@ -11,7 +11,8 @@ from getter.net_getter.cloud_config_getter import get_cloud_config_str
 from getter.net_getter.download_getter import get_download_info_list
 from getter.net_getter.release_getter import get_single_release
 from proxy.format.header_key import RELEASE_REQUEST, DOWNLOAD_REQUEST, CLOUD_CONFIG_REQUEST
-from proxy.format.zmq_request_format import load_release_request, load_download_request, load_cloud_config_request
+from proxy.format.zmq_request_format import load_release_request, load_download_request, load_cloud_config_request, \
+    check_time
 from utils.asyncio import run_with_time_limit
 from utils.logging import logging
 
@@ -36,6 +37,8 @@ async def worker_routine(worker_url: str):
 
 
 async def do_work(request_str: str):
+    if not check_time(request_str):
+        return
     request_key = request_str[0]
     if request_key == RELEASE_REQUEST:
         args = load_release_request(request_str)

@@ -22,7 +22,7 @@ class CoolApk(BaseHub):
             return []
         url = _mk_detail_url(package)
         request_json = _request(url).json()
-        print(request_json)  # 数据测试代码
+        # print(request_json)  # 数据测试代码
         if 'status' in request_json and request_json['status'] < 0:
             return []
         data = []

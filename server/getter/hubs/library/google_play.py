@@ -39,7 +39,7 @@ class GooglePlay(BaseHub):
         country = 'us'
         try:
             result = app(package, lang=lang, country=country)
-            print(result)
+            # print(result)
         except exceptions.NotFoundError:
             return []
         release = {
