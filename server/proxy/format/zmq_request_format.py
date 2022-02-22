@@ -48,7 +48,7 @@ def dump_cloud_config_request(dev_version: bool, migrate_master: bool):
 
 
 def load_cloud_config_request(request: str) -> tuple[bool, bool]:
-    body_json = json.loads(request[start_index:])
+    body_json = get_body_json(request)
     return body_json['dev'], body_json['migrate']
 
 
