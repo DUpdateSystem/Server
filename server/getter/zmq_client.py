@@ -5,7 +5,7 @@ from threading import Thread, Lock
 import zmq
 import zmq.asyncio
 
-from config import timeout_getter
+from config import timeout_getter, async_worker_num, thread_worker_num
 from database.cache_manager import cache_manager
 from getter.net_getter.cloud_config_getter import get_cloud_config_str
 from getter.net_getter.download_getter import get_download_info_list
@@ -23,10 +23,7 @@ async def worker_routine(worker_url: str):
     socket.connect(worker_url)
 
     while True:
-        up_worker_num()
         request_str = await socket.recv_string()
-        down_worker_num()
-        overload_throw_proxy(worker_url)
         try:
             value = await run_with_time_limit(do_work(request_str), timeout_getter)
             response = json.dumps(value)
@@ -65,9 +62,6 @@ async def get_cloud_config(dev_version: bool, migrate_master: bool):
     cloud_config = get_cloud_config_str(dev_version, migrate_master)
     return cloud_config
 
-
-async_worker_num = 12  # 并行协程数
-thread_worker_num = 3  # 并行线程数
 
 worker_num = 0
 worker_count_lock = Lock()
