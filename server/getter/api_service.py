@@ -2,10 +2,9 @@ import asyncio
 import json
 from threading import Thread, Lock
 
-import zmq
-import zmq.asyncio
+import pynng
 
-from config import timeout_getter, async_worker_num, thread_worker_num
+from config import timeout_getter
 from database.cache_manager import cache_manager
 from getter.net_getter.cloud_config_getter import get_cloud_config_str
 from getter.net_getter.download_getter import get_download_info_list
@@ -18,19 +17,18 @@ from utils.logging import logging
 
 
 async def worker_routine(worker_url: str):
-    context = zmq.asyncio.Context()
-    socket: zmq.asyncio.Socket = context.socket(zmq.REP)
-    socket.connect(worker_url)
-
-    while True:
-        request_str = await socket.recv_string()
-        try:
-            value = await run_with_time_limit(do_work(request_str), timeout_getter)
-            response = json.dumps(value)
-        except Exception as e:
-            logging.exception(e)
-            response = json.dumps(None)
-        await socket.send_string(response)
+    with pynng.Rep0() as socket:
+        socket.listen(worker_url)
+        while True:
+            request = await socket.arecv_msg()
+            request_str = request.bytes.decode()
+            try:
+                value = await run_with_time_limit(do_work(request_str), timeout_getter)
+                response = json.dumps(value)
+            except Exception as e:
+                logging.exception(e)
+                response = json.dumps(None)
+            await socket.send_string(response)
 
 
 async def do_work(request_str: str):
@@ -107,19 +105,18 @@ def overload_throw(worker_url: str):
     logging.info(f"getter overload_throw: disable")
 
 
-async def main(worker_url: str):
+async def async_run(worker_url_list: str):
     async_worker_list = []
-    for _ in range(async_worker_num):
+    for worker_url in worker_url_list:
         async_worker_list.append(worker_routine(worker_url))
     await asyncio.gather(*async_worker_list)
 
 
-def run_single(worker_url: str):
-    asyncio.run(main(worker_url))
+def _run(worker_url: str):
+    asyncio.run(async_run(worker_url))
 
 
-def run():
-    worker_url = 'tcp://upa-proxy:5560'
+def run(worker_url_list):
     cache_manager.init()
-    for _ in range(thread_worker_num):
-        Thread(target=run_single, args=(worker_url,)).start()
+    for worker_async_url_list in worker_url_list:
+        Thread(target=_run, args=(worker_async_url_list,)).start()
