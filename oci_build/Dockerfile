@@ -16,6 +16,7 @@ COPY ./server/utils ./utils
 COPY ./server/database ./database
 COPY ./server/hello ./hello
 COPY ./server/proxy ./proxy
+COPY ./server/discovery ./discovery
 COPY ./server/getter ./getter
 
 ENTRYPOINT [ "bash", "./boot.sh" ]
