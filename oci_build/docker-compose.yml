@@ -11,6 +11,8 @@ services:
       - "5255:5255"
     depends_on:
       - upa-proxy
+    volumes:
+      - tmpdata:/tmp
     networks:
       - upanet
   upa-proxy:
@@ -23,6 +25,8 @@ services:
     expose:
       - "5559"
       - "5560"
+    volumes:
+      - tmpdata:/tmp
     networks:
       - upanet
   upa-getter:
@@ -32,6 +36,8 @@ services:
     labels:
       "io.containers.autoupdate": "image"
     command: getter
+    volumes:
+      - tmpdata:/tmp
     networks:
       - dbnet
       - upanet
@@ -55,6 +61,8 @@ services:
 volumes:
   dbdata:
     name: upa-dbdata
+  tmpdata:
+    name: upa-tmp
 networks:
   dbnet:
   upanet:
