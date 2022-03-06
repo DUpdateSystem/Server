@@ -31,14 +31,14 @@ async def bind_node_service(listen_address):
             await _msg_handle(content, sock)
 
 
-def _register_service(address: str):
-    with __map_lock:
+async def _register_service(address: str):
+    async with __map_lock:
         logging.info(f"register_service: {address}")
         _service_address_map[address] = time.time()
 
 
-def _get_service_address_list() -> list[str]:
-    with __map_lock:
+async def _get_service_address_list() -> list[str]:
+    async with __map_lock:
         return __get_service_address_list()
 
 
@@ -55,10 +55,17 @@ def __get_service_address_list() -> list[str]:
 
 
 async def _msg_handle(msg: str, sock):
-    key, body = msg.split(' ', maxsplit=1)
+    args = msg.split(' ', maxsplit=1)
+    key = None
+    body = None
+    if len(args) >= 1:
+        key = args[0]
+    if len(args) >= 2:
+        body = args[1]
     if GET_SERVICE_ADDRESS == key:
-        date = ' '.join(_get_service_address_list())
-        await sock.asend_msg(date.encode())
+        service_address_list = await _get_service_address_list()
+        date = ' '.join(service_address_list)
+        await sock.asend(date.encode())
     elif REGISTER_SERVICE_ADDRESS == key:
         _service_address_map[body] = time.time()
 

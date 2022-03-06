@@ -1,4 +1,5 @@
 import asyncio
+import logging
 
 from config import worker_url, discovery_url, thread_worker_num, async_worker_num
 from discovery.client_utils import keep_register_service_address_list
@@ -15,10 +16,20 @@ def get_work_url_list(worker_url_template):
     ] for thread_worker_url in thread_worker_url_list]
 
 
-def main():
+def _main():
     worker_url_list = get_work_url_list(worker_url)
-    run(worker_url_list)
+    t_list = run(worker_url_list)
     asyncio.run(register_address(worker_url_list))
+    for t in t_list:
+        t.join()
+
+
+def main():
+    try:
+        _main()
+    except Exception as e:
+        logging.error(e)
+        pass
 
 
 async def register_address(worker_url_list):

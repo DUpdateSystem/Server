@@ -4,7 +4,7 @@ import time
 
 import pynng
 
-from config import node_activity_time
+from config import node_activity_time, discovery_url
 from ..client_utils import get_service_address_list
 
 
@@ -26,34 +26,42 @@ class Node:
         self.socket.close()
 
 
-pool_list: list[Node] = []
-discovery_address = None
+node_list: list[Node] = []
+discovery_address = discovery_url
 lock = asyncio.Lock()
 
 
-def get_node() -> Node:
-    with lock:
-        return _get_node()
+async def get_node() -> Node:
+    async with lock:
+        return await _get_node()
 
 
-def _get_node() -> Node:
+async def _get_node() -> Node:
     node = _get_cache_node()
     if not node:
-        node = _get_new_node()
+        await _renew_node_list()
+        node = await _get_new_node()
     return node
 
 
 def _get_cache_node() -> Node or None:
-    node = random.choice(pool_list)
+    if not node_list:
+        return None
+    node = random.choice(node_list)
     if node.self_check():
         return node
     else:
-        return None
+        return _get_cache_node()
 
 
-def _get_new_node() -> Node:
-    server_list = get_service_address_list(discovery_address)
+async def _get_new_node() -> Node:
+    server_list = await get_service_address_list(discovery_address)
     server_address = random.choice(server_list)
     node = Node(server_address)
-    pool_list.append(node)
+    node_list.append(node)
     return node
+
+
+async def _renew_node_list():
+    while len(node_list) <= 3:
+        await _get_new_node()

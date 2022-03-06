@@ -28,7 +28,7 @@ async def worker_routine(worker_url: str):
             except Exception as e:
                 logging.exception(e)
                 response = json.dumps(None)
-            await socket.send_string(response)
+            await socket.asend(response.encode())
 
 
 async def do_work(request_str: str):
@@ -116,7 +116,11 @@ def _run(worker_url: str):
     asyncio.run(async_run(worker_url))
 
 
-def run(worker_url_list):
+def run(worker_url_list) -> list[Thread]:
     cache_manager.init()
+    t_list = []
     for worker_async_url_list in worker_url_list:
-        Thread(target=_run, args=(worker_async_url_list,)).start()
+        t = Thread(target=_run, args=(worker_async_url_list,))
+        t.start()
+        t_list.append(t)
+    return t_list
