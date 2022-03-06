@@ -28,7 +28,7 @@ async def keep_register_service_address(address, self_address):
 
 
 async def _register_service_address(sock, self_address):
-    await sock.asend(REGISTER_SERVICE_ADDRESS + ' ' + self_address.encode())
+    await sock.asend(f"{REGISTER_SERVICE_ADDRESS} {self_address}".encode())
 
 
 async def get_service_address_list(address) -> list[str]:

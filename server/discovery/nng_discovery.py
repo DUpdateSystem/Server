@@ -4,11 +4,11 @@ import time
 
 import pynng
 
-from config import node_activity_time
+from config import node_activity_time, discovery_url
 from utils.logging import logging
 from .constant import GET_SERVICE_ADDRESS, REGISTER_SERVICE_ADDRESS
 
-node_listen_address = "127.0.0.1:5256"
+node_listen_address = discovery_url
 
 _service_address_map = {}
 __map_lock = asyncio.Lock()
@@ -18,7 +18,7 @@ def __get_listen_address():
     global node_listen_address
     try:
         node_listen_address = sys.argv[1]
-    except KeyError:
+    except IndexError:
         pass
 
 
@@ -28,7 +28,7 @@ async def bind_node_service(listen_address):
         while True:
             msg = await sock.arecv_msg()
             content = msg.bytes.decode()
-            _msg_handle(content, sock)
+            await _msg_handle(content, sock)
 
 
 def _register_service(address: str):
@@ -54,11 +54,11 @@ def __get_service_address_list() -> list[str]:
     return service_address_list
 
 
-def _msg_handle(msg: str, sock):
+async def _msg_handle(msg: str, sock):
     key, body = msg.split(' ', maxsplit=1)
     if GET_SERVICE_ADDRESS == key:
         date = ' '.join(_get_service_address_list())
-        await sock.asend(date.encode())
+        await sock.asend_msg(date.encode())
     elif REGISTER_SERVICE_ADDRESS == key:
         _service_address_map[body] = time.time()
 

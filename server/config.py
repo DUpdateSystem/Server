@@ -17,5 +17,5 @@ async_worker_num = 16  # 并行协程数
 thread_worker_num = multiprocessing.cpu_count() * 2  # 并行线程数
 
 # service url
-worker_url = 'ipc:///tmp/worker{i}.ipc'
-discovery_url = 'ipc:///tmp/worker{i}_{i}.ipc'
+worker_url = 'ipc:///tmp/worker{i}_{i}.ipc'
+discovery_url = 'ipc:///tmp/worker{i}.ipc'

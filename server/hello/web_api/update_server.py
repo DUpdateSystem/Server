@@ -2,14 +2,13 @@ import asyncio
 import json
 from uuid import UUID
 
-import zmq
 from quart import Blueprint, Response
 
 from config import timeout_api
+from discovery.worker_pool.caller import get_msg
 from proxy.format.zmq_request_format import dump_release_request, dump_download_request, dump_cloud_config_request
 from utils.logging import logging
 from .utils import path_to_dict, path_to_int_list, get_auth
-from ..zmq_context import context
 
 update_server_page = Blueprint('update_server_page', __name__)
 
@@ -36,12 +35,10 @@ async def get_cloud_config(api_version: str, config_version: str):
     else:
         return f"wrong config version: {config_version}", 400
 
-    socket = context.socket(zmq.REQ)
-    socket.connect(proxy_url)
     mq_request = dump_cloud_config_request(dev_version, True)
-    await socket.send_string(mq_request)
     try:
-        cloud_config = await wait_zmq_once_recv(socket)
+        msg = await get_msg(mq_request.encode())
+        cloud_config = msg.bytes.decode()
     except asyncio.TimeoutError:
         return '', 408
 
@@ -78,12 +75,10 @@ async def get_app_release_list(api_version: str, hub_uuid: UUID, app_id_path: st
 async def __get_app_release_list(hub_uuid: UUID, app_id_path: str):
     auth = get_auth()
     app_id = path_to_dict(app_id_path)
-    socket = context.socket(zmq.REQ)
-    socket.connect(proxy_url)
     mq_request = dump_release_request(str(hub_uuid), auth, app_id, True)
-    await socket.send_string(mq_request)
     try:
-        release_list_str = await wait_zmq_once_recv(socket)
+        msg = await get_msg(mq_request.encode())
+        release_list_str = msg.bytes.decode()
     except asyncio.TimeoutError:
         return '', 408
 
@@ -112,12 +107,10 @@ async def get_extra_download_info_list(api_version: str, hub_uuid: UUID, app_id_
     logging.debug(f"get_extra_download_info_list: {hub_uuid}, {app_id_path}, {asset_index_path}")
     auth = get_auth()
     app_id = path_to_dict(app_id_path)
-    socket = context.socket(zmq.REQ)
-    socket.connect(proxy_url)
     mq_request = dump_download_request(str(hub_uuid), auth, app_id, asset_index)
-    await socket.send_string(mq_request)
     try:
-        download_info_list_str = await wait_zmq_once_recv(socket)
+        msg = await get_msg(mq_request.encode())
+        download_info_list_str = msg.bytes.decode()
     except asyncio.TimeoutError:
         return '', 408
     try:
