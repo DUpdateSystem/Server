@@ -8,6 +8,7 @@ PyMySQL==1.0.2
 html5lib==1.1
 schedule==1.1.0
 requests==2.27.1
+async_lru==1.0.2
 requests[socks]
 setuptools-rust
 
