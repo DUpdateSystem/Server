@@ -23,7 +23,6 @@ async def worker_routine(worker_url: str):
         while True:
             msg_id, request = await get_req_with_id(socket)
             request_str = request.decode()
-            print(request_str)
             try:
                 value = await run_with_time_limit(do_work(request_str), timeout_getter)
                 response = json.dumps(value)
