@@ -1,6 +1,8 @@
-from bs4 import BeautifulSoup
-from utils.json import from_json, to_json
+import logging
 
+from bs4 import BeautifulSoup
+
+from utils.json import from_json, to_json
 from ..base_hub import BaseHub
 from ..hub_script_utils import android_app_key, http_get, get_tmp_cache, add_tmp_cache
 
@@ -15,7 +17,8 @@ class LsposedRepo(BaseHub):
     def get_release_list(self, app_id_list: list, auth: dict or None = None):
         try:
             json_data = from_json(get_tmp_cache(cache_key))
-        except AttributeError:
+        except Exception as e:
+            logging.info(e)
             json_data = None
         if not json_data:
             json_data = http_get("https://modules.lsposed.org/modules.json").json()
