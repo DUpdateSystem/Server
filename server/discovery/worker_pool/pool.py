@@ -44,14 +44,16 @@ async def _get_node() -> Node or None:
     node = _get_cache_node()
     if not node:
         await _renew_node_list()
-        node = _get_cache_node()
+        node = _get_cache_node(False)
     return node
 
 
-def _get_cache_node() -> Node or None:
+def _get_cache_node(self_check=True) -> Node or None:
     if not node_list:
         return None
     node = random.choice(node_list)
+    if not self_check:
+        return node
     if node.self_check():
         return node
     else:
