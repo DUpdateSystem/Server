@@ -63,11 +63,7 @@ async def _get_new_node() -> Node or None:
     server_list = await get_service_address_list(discovery_address)
     server_address = random.choice(server_list)
     node = Node()
-    try:
-        node.init_socket(server_address)
-    except Exception as e:
-        logging.error(e)
-        return
+    node.init_socket(server_address)
     node_list.append(node)
     return node
 
