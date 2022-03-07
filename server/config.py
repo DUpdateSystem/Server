@@ -1,4 +1,5 @@
 import multiprocessing
+from pathlib import Path
 
 debug_mode = False
 auto_refresh_hour = 6
@@ -17,5 +18,8 @@ async_worker_num = 16  # 并行协程数
 thread_worker_num = multiprocessing.cpu_count() * 2  # 并行线程数
 
 # service url
-worker_url = 'ipc:///tmp/worker{i}_{i}.ipc'
-discovery_url = 'ipc:///tmp/worker{i}.ipc'
+ipc_dir = Path('/tmp/upa')
+ipc_dir.mkdir(parents=True, exist_ok=True)
+
+worker_url = f'ipc:///{ipc_dir}/worker%d_%d.ipc'
+discovery_url = f'ipc:///tmp/upa/discovery.ipc'
