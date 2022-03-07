@@ -1,5 +1,4 @@
 import asyncio
-import logging
 import random
 import time
 
@@ -56,6 +55,7 @@ def _get_cache_node() -> Node or None:
     if node.self_check():
         return node
     else:
+        node_list.remove(node)
         return None
 
 
@@ -64,10 +64,10 @@ async def _get_new_node() -> Node or None:
     server_address = random.choice(server_list)
     node = Node()
     node.init_socket(server_address)
-    node_list.append(node)
     return node
 
 
 async def _renew_node_list():
     while len(node_list) <= 3:
-        await _get_new_node()
+        node = await _get_new_node()
+        node_list.append(node)
