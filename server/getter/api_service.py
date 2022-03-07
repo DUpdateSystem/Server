@@ -14,21 +14,23 @@ from proxy.format.zmq_request_format import load_release_request, load_download_
     check_time
 from utils.asyncio import run_with_time_limit
 from utils.logging import logging
+from discovery.muti_reqrep import get_req_with_id, send_rep_with_id
 
 
 async def worker_routine(worker_url: str):
     with pynng.Rep0() as socket:
         socket.listen(worker_url)
         while True:
-            request = await socket.arecv_msg()
-            request_str = request.bytes.decode()
+            msg_id, request = await get_req_with_id(socket)
+            request_str = request.decode()
+            print(request_str)
             try:
                 value = await run_with_time_limit(do_work(request_str), timeout_getter)
                 response = json.dumps(value)
             except Exception as e:
                 logging.exception(e)
                 response = json.dumps(None)
-            await socket.asend(response.encode())
+            await send_rep_with_id(socket, msg_id, response.encode())
 
 
 async def do_work(request_str: str):
