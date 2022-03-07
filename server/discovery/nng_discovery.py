@@ -7,6 +7,7 @@ import pynng
 from config import node_activity_time, discovery_url
 from utils.logging import logging
 from .constant import GET_SERVICE_ADDRESS, REGISTER_SERVICE_ADDRESS
+from .muti_reqrep import get_req_with_id, send_rep_with_id
 
 node_listen_address = discovery_url
 
@@ -26,9 +27,12 @@ async def bind_node_service(listen_address):
     with pynng.Rep0() as sock:
         sock.listen(listen_address)
         while True:
-            msg = await sock.arecv_msg()
-            content = msg.bytes.decode()
-            await _msg_handle(content, sock)
+            msg_id, request = await get_req_with_id(sock)
+            content = request.decode()
+            logging.info("discovery req " + content)
+            data = await _msg_handle(content)
+            if data:
+                await send_rep_with_id(sock, msg_id, data)
 
 
 async def _register_service(address: str):
@@ -54,7 +58,7 @@ def __get_service_address_list() -> list[str]:
     return service_address_list
 
 
-async def _msg_handle(msg: str, sock):
+async def _msg_handle(msg: str) -> bytes or None:
     args = msg.split(' ', maxsplit=1)
     key = None
     body = None
@@ -65,7 +69,7 @@ async def _msg_handle(msg: str, sock):
     if GET_SERVICE_ADDRESS == key:
         service_address_list = await _get_service_address_list()
         date = ' '.join(service_address_list)
-        await sock.asend(date.encode())
+        return date.encode()
     elif REGISTER_SERVICE_ADDRESS == key:
         _service_address_map[body] = time.time()
 

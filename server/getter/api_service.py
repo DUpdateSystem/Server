@@ -6,6 +6,7 @@ import pynng
 
 from config import timeout_getter
 from database.cache_manager import cache_manager
+from discovery.muti_reqrep import get_req_with_id, send_rep_with_id
 from getter.net_getter.cloud_config_getter import get_cloud_config_str
 from getter.net_getter.download_getter import get_download_info_list
 from getter.net_getter.release_getter import get_single_release
@@ -14,7 +15,6 @@ from proxy.format.zmq_request_format import load_release_request, load_download_
     check_time
 from utils.asyncio import run_with_time_limit
 from utils.logging import logging
-from discovery.muti_reqrep import get_req_with_id, send_rep_with_id
 
 
 async def worker_routine(worker_url: str):
@@ -23,6 +23,7 @@ async def worker_routine(worker_url: str):
         while True:
             msg_id, request = await get_req_with_id(socket)
             request_str = request.decode()
+            logging.info("getter req " + request_str)
             try:
                 value = await run_with_time_limit(do_work(request_str), timeout_getter)
                 response = json.dumps(value)
