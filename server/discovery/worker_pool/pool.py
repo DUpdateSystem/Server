@@ -30,46 +30,44 @@ class Node:
         self.socket.close()
 
 
-node_list: list[Node] = []
-discovery_address = discovery_url
-lock = asyncio.Lock()
+class Pool:
+    discovery_address = discovery_url
 
+    def __init__(self):
+        self.node_list: list[Node] = []
+        self.lock = asyncio.Lock()
 
-async def get_node() -> Node or None:
-    async with lock:
-        return await _get_node()
+    async def get_node(self) -> Node or None:
+        async with self.lock:
+            return await self._get_node()
 
-
-async def _get_node() -> Node or None:
-    node = _get_cache_node()
-    if not node:
-        await _renew_node_list()
-        node = _get_cache_node(False)
-    return node
-
-
-def _get_cache_node(self_check=True) -> Node or None:
-    if not node_list:
-        return None
-    node = random.choice(node_list)
-    if not self_check:
+    async def _get_node(self) -> Node or None:
+        node = self._get_cache_node()
+        if not node:
+            await self._renew_node_list()
+            node = self._get_cache_node(False)
         return node
-    if node.self_check():
+
+    def _get_cache_node(self, self_check=True) -> Node or None:
+        if not self.node_list:
+            return None
+        node = random.choice(self.node_list)
+        if not self_check:
+            return node
+        if node.self_check():
+            return node
+        else:
+            self.node_list.remove(node)
+            return None
+
+    async def _get_new_node(self) -> Node or None:
+        server_list = await get_service_address_list(self.discovery_address)
+        server_address = random.choice(server_list)
+        node = Node()
+        node.init_socket(server_address)
         return node
-    else:
-        node_list.remove(node)
-        return None
 
-
-async def _get_new_node() -> Node or None:
-    server_list = await get_service_address_list(discovery_address)
-    server_address = random.choice(server_list)
-    node = Node()
-    node.init_socket(server_address)
-    return node
-
-
-async def _renew_node_list():
-    while len(node_list) <= 3:
-        node = await _get_new_node()
-        node_list.append(node)
+    async def _renew_node_list(self):
+        while len(self.node_list) <= 3:
+            node = await self._get_new_node()
+            self.node_list.append(node)
