@@ -56,7 +56,7 @@ def _get_cache_node() -> Node or None:
     if node.self_check():
         return node
     else:
-        return _get_cache_node()
+        return None
 
 
 async def _get_new_node() -> Node or None:
