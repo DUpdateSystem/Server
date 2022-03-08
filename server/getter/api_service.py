@@ -18,19 +18,28 @@ from utils.logging import logging
 
 
 async def worker_routine(worker_url: str):
+    while True:
+        try:
+            await _worker_routine(worker_url)
+        except Exception as e:
+            logging.exception(e)
+
+
+async def _worker_routine(worker_url: str):
     with pynng.Rep0() as socket:
         socket.listen(worker_url)
         while True:
-            msg_id, request = await get_req_with_id(socket)
-            request_str = request.decode()
-            logging.info("getter req " + request_str)
             try:
+                msg_id, request = await get_req_with_id(socket)
+                request_str = request.decode()
+                logging.info("getter req " + request_str)
                 value = await run_with_time_limit(do_work(request_str), timeout_getter)
                 response = json.dumps(value)
             except Exception as e:
                 logging.exception(e)
                 response = json.dumps(None)
-            await send_rep_with_id(socket, msg_id, response.encode())
+            finally:
+                await send_rep_with_id(socket, msg_id, response.encode())
 
 
 async def do_work(request_str: str):

@@ -1,4 +1,5 @@
 import asyncio
+import logging
 import random
 import time
 
@@ -20,6 +21,13 @@ class Node:
         self.time = time.time()
 
     def self_check(self) -> bool:
+        try:
+            return self._self_check()
+        except Exception as e:
+            logging.error(e)
+            return False
+
+    def _self_check(self) -> bool:
         if time.time() - self.time > node_activity_time:
             self.disconnect()
             return False
