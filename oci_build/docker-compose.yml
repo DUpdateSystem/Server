@@ -6,11 +6,16 @@ services:
     restart: unless-stopped
     labels:
       "io.containers.autoupdate": "image"
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "512m"
     command: hello
     ports:
       - "5255:5255"
     depends_on:
       - upa-proxy
+      - upa-getter
     volumes:
       - tmpdata:/tmp/upa
     networks:
@@ -21,6 +26,10 @@ services:
     restart: unless-stopped
     labels:
       "io.containers.autoupdate": "image"
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "512m"
     command: discovery
     expose:
       - "5559"
@@ -35,6 +44,10 @@ services:
     restart: unless-stopped
     labels:
       "io.containers.autoupdate": "image"
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "512m"
     command: getter
     volumes:
       - tmpdata:/tmp/upa
