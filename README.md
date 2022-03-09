@@ -71,16 +71,19 @@ $ docker run --rm --name=upa-db --env-file oci_build/db.env -v $PWD/db_data/:/va
 
 ```sh
 # 在项目根目录下
+python3 -m venv venv
+source venv/bin/activate
 pip install -r server/requirements.txt
+deactivate
 ```
 
 2. 部署
 
 ```sh
 # 在项目根目录下
-$ ../scripts/boot.sh discovery # 启动服务发现
-$ ../scripts/boot.sh getter    # 启动后端
-$ ../scripts/boot.sh hello     # 启动 API 前端
+$ ../scripts/boot_dev.sh discovery # 启动服务发现
+$ ../scripts/boot_dev.sh getter    # 启动后端
+$ ../scripts/boot_dev.sh hello     # 启动 API 前端
 $ curl -w "%{http_code}\n" localhost:5255/about # 测试服务端
 ```
 
