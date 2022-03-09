@@ -13,29 +13,31 @@ class Node:
     def __init__(self):
         self.socket = None
         self.time = None
+        self.address = None
 
     def init_socket(self, address: str):
+        self.address = address
+        self.reconnect()
+
+    def reconnect(self) -> bool:
+        self.disconnect()
         sock = pynng.Req0()
-        sock.dial(address)
+        sock.dial(self.address)
         self.socket = sock
         self.time = time.time()
+        return True
 
     def self_check(self) -> bool:
-        try:
-            return self._self_check()
-        except Exception as e:
-            logging.error(e)
-            return False
-
-    def _self_check(self) -> bool:
         if time.time() - self.time > node_activity_time:
-            self.disconnect()
-            return False
+            return self.reconnect()
         else:
             return True
 
     def disconnect(self):
-        self.socket.close()
+        try:
+            self.socket.close()
+        except Exception as e:
+            logging.error(e)
 
 
 class Pool:
@@ -44,6 +46,10 @@ class Pool:
     def __init__(self):
         self.node_list: list[Node] = []
         self.lock = asyncio.Lock()
+
+    def remove_node(self, node):
+        async with self.lock:
+            self.node_list.remove(node)
 
     async def get_node(self) -> Node or None:
         async with self.lock:
