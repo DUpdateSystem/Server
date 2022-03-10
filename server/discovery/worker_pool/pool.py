@@ -47,7 +47,7 @@ class Pool:
         self.node_list: list[Node] = []
         self.lock = asyncio.Lock()
 
-    def remove_node(self, node):
+    async def remove_node(self, node):
         async with self.lock:
             self.node_list.remove(node)
 
