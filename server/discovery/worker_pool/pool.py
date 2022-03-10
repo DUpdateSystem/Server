@@ -35,7 +35,8 @@ class Node:
 
     def disconnect(self):
         try:
-            self.socket.close()
+            if self.socket:
+                self.socket.close()
         except Exception as e:
             logging.error(e)
 
