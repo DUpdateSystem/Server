@@ -15,7 +15,7 @@ async def send_req(msg: bytes) -> bytes or None:
         try:
             value = await _send_req(node, msg, True)
             if value is None:
-                pool.remove_node(node)
+                await pool.remove_node(node)
         except Exception as e:
             logging.error(e)
             pool.remove_node(node)
