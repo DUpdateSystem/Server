@@ -12,18 +12,11 @@ async def send_req(msg: bytes) -> bytes or None:
         return await _send_req(node, msg)
     except Exception as e:
         logging.error(e)
-        try:
-            value = await _send_req(node, msg, True)
-            print(value)
-            if value is None:
-                await pool.remove_node(node)
-        except Exception as e:
-            logging.error(e)
-            await pool.remove_node(node)
+        await pool.remove_node(node)
 
 
-async def _send_req(node, msg, reconnect=False) -> bytes or None:
-    if reconnect and not node.reconnect():
+async def _send_req(node, msg) -> bytes or None:
+    if not node.self_check():
         return None
     return await __send_req(node, msg)
 
