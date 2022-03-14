@@ -56,10 +56,10 @@ class Pool:
     async def _get_node(self) -> Node or None:
         node = None
         while not node:
-            node = self._get_cache_node()
+            node = await self.__get_node()
         return node
 
-    def _get_cache_node(self) -> Node or None:
+    async def __get_node(self) -> Node or None:
         if not self.node_list:
             await self._renew_node_list()
         node = random.choice(self.node_list)
