@@ -28,7 +28,7 @@ class Node:
         return True
 
     def self_check(self) -> bool:
-        return time.time() - self.time <= node_activity_time
+        return time.time() - self.time <= node_activity_time * 2
 
     def disconnect(self):
         try:
@@ -71,7 +71,7 @@ class Pool:
 
     async def _renew_node_list(self) -> Node or None:
         server_list = await get_service_address_list(self.discovery_address)
-        random_server_list = random.choices(server_list, k=int(len(server_list) / 3))
+        random_server_list = random.choices(server_list, k=3)
         for server_address in random_server_list:
             node = Node()
             node.init_socket(server_address)
