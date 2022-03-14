@@ -28,7 +28,7 @@ class Node:
         return True
 
     def self_check(self) -> bool:
-        return time.time() - self.time > node_activity_time
+        return time.time() - self.time <= node_activity_time
 
     def disconnect(self):
         try:
