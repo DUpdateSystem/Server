@@ -16,8 +16,6 @@ async def send_req(msg: bytes) -> bytes or None:
 
 
 async def _send_req(node, msg) -> bytes or None:
-    if not node.self_check():
-        return None
     return await __send_req(node, msg)
 
 
