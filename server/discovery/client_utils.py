@@ -23,12 +23,10 @@ async def keep_register_service_address_list(address, self_address_list):
             await asyncio.sleep(node_activity_time / 2)
 
 
-async def keep_register_service_address(address, self_address):
+async def register_service_address(address, self_address):
     with pynng.Req0() as sock:
         sock.dial(address)
-        while True:
-            await _register_service_address(sock, self_address)
-            await asyncio.sleep(node_activity_time / 2)
+        await _register_service_address(sock, self_address)
 
 
 async def _register_service_address(sock, self_address):

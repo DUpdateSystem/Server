@@ -4,8 +4,9 @@ from threading import Thread, Lock
 
 import pynng
 
-from config import timeout_getter
+from config import timeout_getter, node_activity_time, discovery_url
 from database.cache_manager import cache_manager
+from discovery.client_utils import register_service_address
 from discovery.muti_reqrep import get_req_with_id, send_rep_with_id
 from getter.net_getter.cloud_config_getter import get_cloud_config_str
 from getter.net_getter.download_getter import get_download_info_list
@@ -25,12 +26,21 @@ async def worker_routine(worker_url: str):
             logging.exception(e)
 
 
+async def get_req_with_id_with_auto_register(socket: pynng.Rep0, worker_url):
+    while True:
+        await register_service_address(discovery_url, worker_url)
+        value = await run_with_time_limit(get_req_with_id(socket), node_activity_time, enable_log=False)
+        if value:
+            msg_id, request = value
+            return msg_id, request
+
+
 async def _worker_routine(worker_url: str):
     with pynng.Rep0() as socket:
         socket.listen(worker_url)
         while True:
             try:
-                msg_id, request = await get_req_with_id(socket)
+                msg_id, request = await get_req_with_id_with_auto_register(socket, worker_url)
                 request_str = request.decode()
                 logging.info("getter req " + request_str)
                 value = await run_with_time_limit(do_work(request_str), timeout_getter)
