@@ -47,7 +47,7 @@ class Pool:
 
     async def remove_node(self, node):
         async with self.lock:
-            self.node_list.remove(node)
+            await self._remove_node(node)
 
     async def get_node(self) -> Node or None:
         async with self.lock:
@@ -66,8 +66,12 @@ class Pool:
         if node.self_check():
             return node
         else:
-            self.node_list.remove(node)
+            await self._remove_node(node)
             return None
+
+    async def _remove_node(self, node):
+        node.socket.close()
+        self.node_list.remove(node)
 
     async def _renew_node_list(self) -> Node or None:
         server_list = await get_service_address_list(self.discovery_address)
