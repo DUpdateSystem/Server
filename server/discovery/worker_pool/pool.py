@@ -1,11 +1,11 @@
 import asyncio
-import logging
 import random
 import time
 
 import pynng
 
 from config import node_activity_time, discovery_url
+from utils.logging import logging
 from ..client_utils import get_service_address_list
 
 

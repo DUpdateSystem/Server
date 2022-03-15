@@ -1,9 +1,9 @@
 import asyncio
-import logging
 
 from config import worker_url, discovery_url, thread_worker_num, async_worker_num
 from discovery.client_utils import keep_register_service_address_list
 from utils.config import get_url_list
+from utils.logging import logging
 from .api_service import run
 
 

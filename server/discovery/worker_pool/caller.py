@@ -1,5 +1,4 @@
-import logging
-
+from utils.logging import logging
 from .pool import Pool
 from ..muti_reqrep import send_req_with_id, get_rep_by_id
 

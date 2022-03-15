@@ -1,7 +1,6 @@
-import logging
-
 import zmq
 
+from utils.logging import logging
 from .url import front_url, end_url
 
 
