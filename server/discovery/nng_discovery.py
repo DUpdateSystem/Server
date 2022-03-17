@@ -68,7 +68,7 @@ async def _msg_handle(msg: str) -> bytes or None:
             list_size = int(body)
         service_address_list = await _get_service_address_list()
         if list_size:
-            service_address_list = random.choices(service_address_list, k=list_size)
+            service_address_list = random.choices(service_address_list, k=min(list_size, len(service_address_list)))
         date = ' '.join(service_address_list)
         return date.encode()
     elif REGISTER_SERVICE_ADDRESS == key:
