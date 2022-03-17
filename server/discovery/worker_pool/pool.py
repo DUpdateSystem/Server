@@ -70,9 +70,8 @@ class Pool:
         self.node_list.remove(node)
 
     async def _renew_node_list(self) -> Node or None:
-        server_list = await get_service_address_list(self.discovery_address)
-        random_server_list = random.choices(server_list, k=5)
-        for server_address in random_server_list:
+        server_list = await get_service_address_list(self.discovery_address, list_size=5)
+        for server_address in server_list:
             node = Node()
             node.init_socket(server_address)
             self.node_list.append(node)

@@ -30,16 +30,21 @@ async def register_service_address(address, self_address):
 
 
 async def _register_service_address(sock, self_address):
-    data = f"{REGISTER_SERVICE_ADDRESS} {self_address}".encode()
+    data = f"{REGISTER_SERVICE_ADDRESS}{self_address}".encode()
     await send_req_with_id(sock, data)
 
 
 # noinspection PyUnusedLocal
 # @alru_cache(maxsize=1)
-async def get_service_address_list(address, ttl_hash=get_ttl_hash()) -> list[str]:
+async def get_service_address_list(address, list_size=0, ttl_hash=get_ttl_hash()) -> list[str]:
     with pynng.Req0() as sock:
         sock.dial(address)
-        msg_id = await send_req_with_id(sock, GET_SERVICE_ADDRESS.encode())
+        if list_size:
+            list_size_str = list_size
+        else:
+            list_size_str = ''
+        msg = f"{GET_SERVICE_ADDRESS}{list_size_str}"
+        msg_id = await send_req_with_id(sock, msg.encode())
         msg = await get_rep_by_id(sock, msg_id)
         service_address_list = msg.decode().split(' ')
         if not service_address_list:

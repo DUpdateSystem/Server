@@ -1,4 +1,5 @@
 import asyncio
+import random
 import sys
 import time
 
@@ -59,15 +60,15 @@ def __get_service_address_list() -> list[str]:
 
 
 async def _msg_handle(msg: str) -> bytes or None:
-    args = msg.split(' ', maxsplit=1)
-    key = None
-    body = None
-    if len(args) >= 1:
-        key = args[0]
-    if len(args) >= 2:
-        body = args[1]
+    key = msg[:3]
+    body = msg[3:]
     if GET_SERVICE_ADDRESS == key:
+        list_size = 0
+        if body:
+            list_size = int(body)
         service_address_list = await _get_service_address_list()
+        if list_size:
+            service_address_list = random.choices(service_address_list, k=list_size)
         date = ' '.join(service_address_list)
         return date.encode()
     elif REGISTER_SERVICE_ADDRESS == key:
