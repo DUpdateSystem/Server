@@ -63,11 +63,7 @@ class Pool:
         if not self.node_list:
             await self._renew_node_list()
         node = random.choice(self.node_list)
-        if node.self_check():
-            return node
-        else:
-            await self._remove_node(node)
-            return None
+        return node
 
     async def _remove_node(self, node):
         node.socket.close()
@@ -75,7 +71,7 @@ class Pool:
 
     async def _renew_node_list(self) -> Node or None:
         server_list = await get_service_address_list(self.discovery_address)
-        random_server_list = random.choices(server_list, k=3)
+        random_server_list = random.choices(server_list, k=5)
         for server_address in random_server_list:
             node = Node()
             node.init_socket(server_address)
