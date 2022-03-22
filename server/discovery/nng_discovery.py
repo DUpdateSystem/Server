@@ -8,7 +8,7 @@ import pynng
 from config import node_activity_time, discovery_url
 from utils.logging import logging
 from .constant import GET_SERVICE_ADDRESS, REGISTER_SERVICE_ADDRESS
-from .muti_reqrep import get_req_with_id, send_rep_with_id
+from .muti_reqrep import a_get_req_with_id, send_rep_with_id
 
 node_listen_address = discovery_url
 
@@ -28,7 +28,7 @@ async def bind_node_service(listen_address):
     with pynng.Rep0() as sock:
         sock.listen(listen_address)
         while True:
-            msg_id, request = await get_req_with_id(sock)
+            msg_id, request = await a_get_req_with_id(sock)
             content = request.decode()
             logging.info("discovery req " + content)
             data = await _msg_handle(content)

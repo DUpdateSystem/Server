@@ -8,11 +8,19 @@ async def send_rep_with_id(socket: Rep0, msg_id, rep_msg: bytes) -> str:
     return msg_id
 
 
-async def get_req_with_id(socket: Rep0) -> [str, bytes]:
-    req = await socket.arecv_msg()
-    req_bytes = req.bytes
+def _get_req_with_id(req_bytes) -> [str, bytes]:
     msg_id = req_bytes[:16]
-    return msg_id, req.bytes[16:]
+    return msg_id, req_bytes[16:]
+
+
+def get_req_with_id(socket: Rep0) -> [str, bytes]:
+    req = socket.recv_msg(block=False)
+    return _get_req_with_id(req.bytes)
+
+
+async def a_get_req_with_id(socket: Rep0) -> [str, bytes]:
+    req = await socket.arecv_msg()
+    return _get_req_with_id(req.bytes)
 
 
 async def send_req_with_id(socket: Req0, msg: bytes) -> bytes:

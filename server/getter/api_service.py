@@ -5,7 +5,7 @@ from threading import Thread, Lock
 
 import pynng
 
-from config import timeout_getter, node_activity_time, discovery_url
+from config import timeout_getter, timeout_api, node_activity_time, discovery_url
 from database.cache_manager import cache_manager
 from discovery.client_utils import register_service_address
 from discovery.muti_reqrep import get_req_with_id, send_rep_with_id
@@ -28,16 +28,23 @@ async def worker_routine(worker_url: str):
 
 
 async def get_req_with_id_with_auto_register(socket: pynng.Rep0, worker_url):
-    time_s = time.time()
+    time_s = 0
     while True:
         if time.time() - time_s > node_activity_time:
             await run_with_time_limit(register_service_address(discovery_url, worker_url), node_activity_time / 2,
                                       enable_log=False)
             time_s = time.time()
-        value = await run_with_time_limit(get_req_with_id(socket), node_activity_time, enable_log=False)
+        value = await get_req(socket)
         if value:
             msg_id, request = value
             return msg_id, request
+
+
+async def get_req(sock):
+    try:
+        return get_req_with_id(sock)
+    except pynng.TryAgain:
+        await asyncio.sleep(timeout_api / 20)
 
 
 async def _worker_routine(worker_url: str):
