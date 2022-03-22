@@ -1,5 +1,6 @@
 import asyncio
 import json
+import time
 from threading import Thread, Lock
 
 import pynng
@@ -27,8 +28,12 @@ async def worker_routine(worker_url: str):
 
 
 async def get_req_with_id_with_auto_register(socket: pynng.Rep0, worker_url):
+    time_s = time.time()
     while True:
-        await register_service_address(discovery_url, worker_url)
+        if time.time() - time_s > node_activity_time:
+            await run_with_time_limit(register_service_address(discovery_url, worker_url), node_activity_time / 2,
+                                      enable_log=False)
+            time_s = time.time()
         value = await run_with_time_limit(get_req_with_id(socket), node_activity_time, enable_log=False)
         if value:
             msg_id, request = value
