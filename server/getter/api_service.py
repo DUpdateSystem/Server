@@ -20,47 +20,46 @@ from utils.logging import logging
 
 
 async def worker_routine(worker_url: str):
-    event = asyncio.Event()
+    lock = asyncio.Lock()
     while True:
         try:
             await asyncio.gather(
-                _worker_routine(worker_url, event),
-                register_worker(worker_url, event),
+                _worker_routine(worker_url, lock),
+                register_worker(worker_url, lock),
             )
         except Exception as e:
             logging.exception(e)
 
 
-async def register_worker(worker_url, event: asyncio.Event):
+async def register_worker(worker_url, lock: asyncio.Lock):
     time_s = 0
     while True:
         if time.time() - time_s > node_activity_time:
-            await event.wait()
-            await register_service_address(discovery_url, worker_url)
-            time_s = time.time()
+            async with lock:
+                await register_service_address(discovery_url, worker_url)
+                time_s = time.time()
         await asyncio.sleep(node_activity_time / 20)
 
 
-async def _worker_routine(worker_url: str, event: asyncio.Event):
+async def _worker_routine(worker_url: str, lock: asyncio.Lock):
     while True:
         try:
-            await __worker_routine(worker_url, event)
+            await __worker_routine(worker_url, lock)
         except Exception as e:
             logging.exception(e)
 
 
-async def __worker_routine(worker_url: str, event: asyncio.Event):
+async def __worker_routine(worker_url: str, lock: asyncio.Lock):
     with pynng.Rep0() as socket:
         socket.listen(worker_url)
         while True:
             try:
-                event.set()
                 msg_id, request = await a_get_req_with_id(socket)
-                event.clear()
-                request_str = request.decode()
-                logging.info("getter req " + request_str)
-                value = await run_with_time_limit(do_work(request_str), timeout_getter)
-                response = json.dumps(value)
+                async with lock:
+                    request_str = request.decode()
+                    logging.info("getter req " + request_str)
+                    value = await run_with_time_limit(do_work(request_str), timeout_getter)
+                    response = json.dumps(value)
             except Exception as e:
                 logging.exception(e)
                 response = json.dumps(None)
