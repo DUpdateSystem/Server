@@ -5,10 +5,10 @@ from threading import Thread, Lock
 
 import pynng
 
-from config import timeout_getter, timeout_api, node_activity_time, discovery_url
+from config import timeout_getter, node_activity_time, discovery_url
 from database.cache_manager import cache_manager
 from discovery.client_utils import register_service_address
-from discovery.muti_reqrep import get_req_with_id, send_rep_with_id
+from discovery.muti_reqrep import a_get_req_with_id, send_rep_with_id
 from getter.net_getter.cloud_config_getter import get_cloud_config_str
 from getter.net_getter.download_getter import get_download_info_list
 from getter.net_getter.release_getter import get_single_release
@@ -20,39 +20,43 @@ from utils.logging import logging
 
 
 async def worker_routine(worker_url: str):
+    event = asyncio.Event()
     while True:
         try:
-            await _worker_routine(worker_url)
+            await asyncio.gather(
+                _worker_routine(worker_url, event),
+                register_worker(worker_url, event),
+            )
         except Exception as e:
             logging.exception(e)
 
 
-async def get_req_with_id_with_auto_register(socket: pynng.Rep0, worker_url):
+async def register_worker(worker_url, event: asyncio.Event):
     time_s = 0
     while True:
         if time.time() - time_s > node_activity_time:
-            await run_with_time_limit(register_service_address(discovery_url, worker_url), node_activity_time / 2,
-                                      enable_log=False)
+            await event.wait()
+            await register_service_address(discovery_url, worker_url)
             time_s = time.time()
-        value = await get_req(socket)
-        if value:
-            msg_id, request = value
-            return msg_id, request
+        await asyncio.sleep(node_activity_time / 20)
 
 
-async def get_req(sock):
-    try:
-        return get_req_with_id(sock)
-    except pynng.TryAgain:
-        await asyncio.sleep(timeout_api / 20)
+async def _worker_routine(worker_url: str, event: asyncio.Event):
+    while True:
+        try:
+            await __worker_routine(worker_url, event)
+        except Exception as e:
+            logging.exception(e)
 
 
-async def _worker_routine(worker_url: str):
+async def __worker_routine(worker_url: str, event: asyncio.Event):
     with pynng.Rep0() as socket:
         socket.listen(worker_url)
         while True:
             try:
-                msg_id, request = await get_req_with_id_with_auto_register(socket, worker_url)
+                event.set()
+                msg_id, request = await a_get_req_with_id(socket)
+                event.clear()
                 request_str = request.decode()
                 logging.info("getter req " + request_str)
                 value = await run_with_time_limit(do_work(request_str), timeout_getter)
