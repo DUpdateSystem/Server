@@ -6,8 +6,8 @@ from google_play_scraper import exceptions, app
 from gpapi.googleplay import GooglePlayAPI as _GooglePlayAPI, \
     PURCHASE_URL, ssl_verify, googleplay_pb2, LoginError, RequestError
 
-from getter.hubs.base_hub import BaseHub
-from getter.hubs.hub_script_utils import android_app_key, get_tmp_cache, add_tmp_cache
+from ..base_hub import BaseHub
+from ..hub_script_utils import android_app_key, get_tmp_cache, add_tmp_cache
 from utils.logging import logging
 
 _locale = "en_US"

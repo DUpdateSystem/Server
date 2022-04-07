@@ -5,18 +5,15 @@ from threading import Thread, Lock
 
 import pynng
 
-from config import timeout_getter, node_activity_time, discovery_url
+from config import node_activity_time, discovery_url
 from database.cache_manager import cache_manager
 from discovery.client_utils import register_service_address
 from discovery.muti_reqrep import a_get_req_with_id, send_rep_with_id
-from getter.net_getter.cloud_config_getter import get_cloud_config_str
-from getter.net_getter.download_getter import get_download_info_list
-from getter.net_getter.release_getter import get_single_release
 from proxy.format.header_key import RELEASE_REQUEST, DOWNLOAD_REQUEST, CLOUD_CONFIG_REQUEST
 from proxy.format.zmq_request_format import load_release_request, load_download_request, load_cloud_config_request, \
     check_time
-from utils.asyncio import run_with_time_limit
 from utils.logging import logging
+from .api import get_cloud_config_str, get_single_release, get_download_info_list
 
 
 async def worker_routine(worker_url: str):
@@ -83,7 +80,7 @@ async def do_work(request_str: str):
 
 
 async def get_release(hub_uuid: str, auth: dict or None, app_id: dict, use_cache=True, cache_data=True):
-    release_list = get_single_release(hub_uuid, auth, app_id, use_cache, cache_data)
+    release_list = get_single_release(hub_uuid, auth, app_id, use_cache)
     return release_list
 
 

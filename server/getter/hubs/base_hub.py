@@ -1,6 +1,6 @@
 from abc import ABCMeta, abstractmethod
 
-from getter.hubs.hub_script_utils import http_get
+from .hub_script_utils import http_get
 
 
 class BaseHub(object, metaclass=ABCMeta):

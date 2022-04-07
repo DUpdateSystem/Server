@@ -1,6 +1,6 @@
 from multiprocessing import Process
 
-from getter.request_processor.polling import request_polling
+from getter import request_polling
 
 
 def run_core() -> Process:

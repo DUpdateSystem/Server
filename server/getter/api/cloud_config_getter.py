@@ -1,5 +1,4 @@
 from config import cloud_rule_hub_url
-from database.cache_manager import cache_manager
 from utils.logging import logging
 from utils.requests import get_response
 from .cloud_config_migration.migration import migrate_dev
@@ -17,29 +16,12 @@ def get_cloud_config_str(dev_version: bool, migrate_master: bool) -> str or None
 
 
 def _get_cloud_config_str(dev_version: bool) -> str or None:
-    if dev_version:
-        cache_key = "cloud_config_dev"
-    else:
-        cache_key = "cloud_config"
-    try:
-        cache_string = cache_manager.get_tmp_cache(cache_key).decode()
-    except AttributeError or KeyError:
-        cache_string = None
-    except UnicodeDecodeError:
-        logging.info("Cloud Config: 缓存错误（清除）")
-        cache_manager.del_tmp_cache(cache_key)
-        cache_string = None
-    if cache_string:
-        logging.info("Cloud Config: 命中缓存")
-        return cache_string
-    logging.info("Cloud Config: 未缓存")
     cloud_config_str = __get_cloud_config_str(dev_version, True)
     if cloud_config_str:
         logging.info("Cloud Config: 配置获取成功")
-        cache_manager.add_tmp_cache(cache_key, cloud_config_str.encode())
-        return cloud_config_str
     else:
         logging.info(f"Cloud Config: 配置获取失败（dev: {dev_version}）")
+    return cloud_config_str
 
 
 def __get_cloud_config_str(dev_version: bool, use_self_worker: bool = True) -> str or None:

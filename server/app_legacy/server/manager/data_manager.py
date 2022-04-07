@@ -3,8 +3,8 @@ import json
 import schedule
 
 from app.server.config import server_config as _server_config
-from getter.hubs import hub_dict
-from getter.request_processor.api import get_cloud_config, get_release_list, get_download
+from getter import hub_dict
+from getter import get_cloud_config, get_release_list, get_download
 from app.server.utils.queue import ThreadQueue
 from app.server.utils.utils import test_reliability
 from database.cache_manager import cache_manager

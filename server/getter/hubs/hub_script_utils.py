@@ -6,7 +6,6 @@ from requests import Response, Session, HTTPError
 
 from config import debug_mode
 from database.cache_manager import cache_manager
-from getter.net_getter.release_getter import get_single_release
 from utils.requests import session
 
 android_app_key = 'android_app_package'
@@ -125,6 +124,7 @@ def get_release_by_uuid(uuid, app_id: dict, auth: dict or None = None, use_cache
     Returns:
         对应的下载地址
     """
+    from getter.service.api import get_single_release
     return get_single_release(uuid, auth, app_id, use_cache=use_cache)
 
 
