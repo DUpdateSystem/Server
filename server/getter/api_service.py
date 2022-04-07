@@ -58,7 +58,7 @@ async def __worker_routine(worker_url: str, lock: asyncio.Lock):
                 async with lock:
                     request_str = request.decode()
                     logging.info("getter req " + request_str)
-                    value = await run_with_time_limit(do_work(request_str), timeout_getter)
+                    value = await do_work(request_str)
                     response = json.dumps(value)
             except Exception as e:
                 logging.exception(e)
