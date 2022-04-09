@@ -3,11 +3,11 @@ from time import time
 from peewee import *
 
 from ..field.blob import LongBlogField
-from ..meta import BaseModel, BaseMeta
+from ..meta import BaseMemoryModel, BaseMemoryMeta
 
 
-class TempCache(BaseModel):
-    class Meta(BaseMeta):
+class TempCache(BaseMemoryModel):
+    class Meta(BaseMemoryMeta):
         db_table = 'cache_temp'
 
     key = CharField(primary_key=True, column_name='key')
