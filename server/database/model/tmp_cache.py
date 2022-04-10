@@ -8,7 +8,7 @@ from ..meta import BaseMemoryModel, BaseMemoryMeta
 
 class TmpCache(BaseMemoryModel):
     class Meta(BaseMemoryMeta):
-        db_table = 'cache_temp'
+        db_table = 'cache_tmp'
 
     key = CharField(primary_key=True, column_name='key')
     value = LongBlogField(column_name='value')
