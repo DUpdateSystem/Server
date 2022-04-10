@@ -6,7 +6,7 @@ from .meta import local_cache_db, memory_db
 
 def init_database():
     connect_db(memory_db)
-    memory_db.create_tables([TmpCache])
+    memory_db.create_tables([TmpCache, ])
     close_db(memory_db)
 
     connect_db(local_cache_db)
@@ -19,5 +19,5 @@ def connect_db(db):
 
 
 def close_db(db):
-    if db.is_connection_usable():
+    if not db.is_connection_usable():
         db.close()
