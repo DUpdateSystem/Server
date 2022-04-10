@@ -24,12 +24,12 @@ class CacheManager:
         close_db(local_cache_db)
 
     @staticmethod
-    @db_fun
+    @db_fun()
     def add_release_cache(hub_uuid: str, auth: dict or None, app_id: dict, release: list):
         add_release_cache(hub_uuid, auth, app_id, release)
 
     @staticmethod
-    @db_fun
+    @db_fun()
     def get_release_cache(hub_uuid: str, auth: dict or None, app_id: dict) -> list or None:
         return get_release_cache(hub_uuid, auth, app_id)
 
