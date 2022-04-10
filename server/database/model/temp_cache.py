@@ -6,7 +6,7 @@ from ..field.blob import LongBlogField
 from ..meta import BaseMemoryModel, BaseMemoryMeta
 
 
-class TempCache(BaseMemoryModel):
+class TmpCache(BaseMemoryModel):
     class Meta(BaseMemoryMeta):
         db_table = 'cache_temp'
 

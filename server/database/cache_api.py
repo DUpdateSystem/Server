@@ -6,7 +6,7 @@ from config import auto_refresh_hour
 from utils.logging import logging
 from .model.hub_cache import HubCache
 from .model.release_cache import ReleaseCache
-from .model.temp_cache import TempCache
+from .model.temp_cache import TmpCache
 from utils.json import to_json
 
 data_expire_sec = auto_refresh_hour * 3600
@@ -65,7 +65,7 @@ def get_memory_cache(key: str) -> bytes or None:
 def __get_memory_cache(key: str) -> bytes or None:
     timestamp = time() - memory_cache_expire_sec
     try:
-        return TempCache.get((TempCache.key == key) & (TempCache.timestamp >= timestamp)).value
+        return TmpCache.get((TmpCache.key == key) & (TmpCache.timestamp >= timestamp)).value
     except DoesNotExist:
         return None
 
@@ -76,12 +76,12 @@ def add_memory_cache(key: str, value: bytes):
 
 def __add_memory_cache(key: str, value: bytes):
     try:
-        cache: TempCache = TempCache.get((TempCache.key == key))
+        cache: TmpCache = TmpCache.get((TmpCache.key == key))
         cache.value = value
         cache.update_timestamp()
         cache.save()
     except DoesNotExist:
-        TempCache.create(key=key, value=value)
+        TmpCache.create(key=key, value=value)
 
 
 def del_memory_cache(key: str):
@@ -90,6 +90,6 @@ def del_memory_cache(key: str):
 
 def __del_memory_cache(key: str):
     try:
-        TempCache.get((TempCache.key == key)).delete_instance()
+        TmpCache.get((TmpCache.key == key)).delete_instance()
     except DoesNotExist:
         pass
