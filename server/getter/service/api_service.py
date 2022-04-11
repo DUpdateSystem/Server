@@ -8,10 +8,9 @@ import pynng
 from config import node_activity_time, discovery_url
 from database.cache_manager import cache_manager
 from discovery.client_utils import register_service_address
-from discovery.muti_reqrep import a_get_req_with_id, send_rep_with_id
-from proxy.format.header_key import RELEASE_REQUEST, DOWNLOAD_REQUEST, CLOUD_CONFIG_REQUEST
-from proxy.format.zmq_request_format import load_release_request, load_download_request, load_cloud_config_request, \
-    check_time
+from nng_wrapper.format.header_key import RELEASE_REQUEST, DOWNLOAD_REQUEST, CLOUD_CONFIG_REQUEST
+from nng_wrapper.format.zmq_request_format import load_release_request, load_download_request, load_cloud_config_request
+from nng_wrapper.muti_reqrep import get_req_with_id, send_rep_with_id
 from utils.logging import logging
 from .api import get_cloud_config_str, get_single_release, get_download_info_list
 
@@ -51,12 +50,14 @@ async def __worker_routine(worker_url: str, lock: asyncio.Lock):
         socket.listen(worker_url)
         while True:
             try:
-                msg_id, request = await a_get_req_with_id(socket)
+                msg_id, request = await get_req_with_id(socket)
                 async with lock:
                     request_str = request.decode()
                     logging.info("getter req " + request_str)
                     value = await do_work(request_str)
                     response = json.dumps(value)
+            except TimeoutError:
+                logging.warning("timeout")
             except Exception as e:
                 logging.exception(e)
                 response = json.dumps(None)
@@ -65,8 +66,6 @@ async def __worker_routine(worker_url: str, lock: asyncio.Lock):
 
 
 async def do_work(request_str: str):
-    if not check_time(request_str):
-        return
     request_key = request_str[0]
     if request_key == RELEASE_REQUEST:
         args = load_release_request(request_str)

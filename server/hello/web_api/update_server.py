@@ -4,7 +4,7 @@ from uuid import UUID
 from quart import Blueprint, Response
 
 from discovery.worker_pool.caller import send_req
-from proxy.format.zmq_request_format import dump_release_request, dump_download_request, dump_cloud_config_request
+from nng_wrapper.format.zmq_request_format import dump_release_request, dump_download_request, dump_cloud_config_request
 from utils.logging import logging
 from .utils import path_to_dict, path_to_int_list, get_auth
 

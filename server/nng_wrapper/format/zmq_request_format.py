@@ -1,12 +1,6 @@
 import json
-import time
 
-from config import timeout_api
-from proxy.format.header_key import RELEASE_REQUEST, DOWNLOAD_REQUEST, CLOUD_CONFIG_REQUEST
-
-start_index = 1
-time_length = 19
-second_index = start_index + time_length
+from nng_wrapper.format.header_key import RELEASE_REQUEST, DOWNLOAD_REQUEST, CLOUD_CONFIG_REQUEST
 
 
 def dump_release_request(hub_uuid: str, auth: dict, app_id: dict, use_cache: bool):
@@ -16,7 +10,7 @@ def dump_release_request(hub_uuid: str, auth: dict, app_id: dict, use_cache: boo
         'use_cache': use_cache,
         'hub_uuid': hub_uuid,
     })
-    return f'{RELEASE_REQUEST}{get_localtime_str()}{body_json}'
+    return f'{RELEASE_REQUEST}{body_json}'
 
 
 def load_release_request(request: str) -> tuple[str, dict, dict, bool]:
@@ -31,7 +25,7 @@ def dump_download_request(hub_uuid: str, auth: dict, app_id: dict, asset_index: 
         'asset_index': asset_index,
         'hub_uuid': hub_uuid,
     })
-    return f'{DOWNLOAD_REQUEST}{get_localtime_str()}{body_json}'
+    return f'{DOWNLOAD_REQUEST}{body_json}'
 
 
 def load_download_request(request: str) -> tuple[str, dict, dict, list]:
@@ -44,7 +38,7 @@ def dump_cloud_config_request(dev_version: bool, migrate_master: bool):
         'dev': dev_version,
         'migrate': migrate_master,
     })
-    return f'{CLOUD_CONFIG_REQUEST}{get_localtime_str()}{body_json}'
+    return f'{CLOUD_CONFIG_REQUEST}{body_json}'
 
 
 def load_cloud_config_request(request: str) -> tuple[bool, bool]:
@@ -52,22 +46,5 @@ def load_cloud_config_request(request: str) -> tuple[bool, bool]:
     return body_json['dev'], body_json['migrate']
 
 
-time_temp = "%Y-%m-%d-%H:%M:%S"
-
-
 def get_body_json(request: str):
-    return json.loads(request[second_index:])
-
-
-def get_localtime_str() -> str:
-    return time.strftime(time_temp, time.localtime())
-
-
-def dump_time_str_to_int(time_str: str) -> float:
-    time_i = time.mktime(time.strptime(time_str, time_temp))
-    return time_i
-
-
-def check_time(request: str, timeout: int = timeout_api) -> bool:
-    time_str = request[start_index:second_index]
-    return dump_time_str_to_int(time_str) - time.time() <= timeout
+    return json.loads(request[1:])

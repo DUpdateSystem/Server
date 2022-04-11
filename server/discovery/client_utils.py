@@ -1,17 +1,11 @@
 import asyncio
-import time
 
 import pynng
 
 from config import node_activity_time
 from utils.logging import logging
 from .constant import GET_SERVICE_ADDRESS, REGISTER_SERVICE_ADDRESS
-from .muti_reqrep import send_req_with_id, get_rep_by_id
-
-
-def get_ttl_hash():
-    """Return the same value withing `seconds` time period"""
-    return round(time.time() / node_activity_time)
+from nng_wrapper.muti_reqrep import send_req_with_id, get_rep_by_id
 
 
 async def keep_register_service_address_list(address, self_address_list):
@@ -34,9 +28,7 @@ async def _register_service_address(sock, self_address):
     await send_req_with_id(sock, data)
 
 
-# noinspection PyUnusedLocal
-# @alru_cache(maxsize=1)
-async def get_service_address_list(address, list_size=0, ttl_hash=get_ttl_hash()) -> list[str]:
+async def get_service_address_list(address, list_size=0) -> list[str]:
     with pynng.Req0() as sock:
         sock.dial(address)
         if list_size:
