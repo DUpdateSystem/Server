@@ -13,6 +13,7 @@ RUN ./DockerfileRUN.sh && rm ./DockerfileRUN.sh
 COPY ./scripts/boot.sh ./
 COPY ./server/config.py ./
 COPY ./server/utils ./utils
+COPY ./server/nng_wrapper ./nng_wrapper
 COPY ./server/database ./database
 COPY ./server/hello ./hello
 COPY ./server/proxy ./proxy
