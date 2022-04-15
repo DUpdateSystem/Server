@@ -17,22 +17,24 @@ else:
     memory_cache_expire_sec = 30 * 60
 
 
-def get_release_cache(hub_uuid: str, auth: dict or None, app_id: dict) -> list or None:
+def get_release_cache(hub_uuid: str, auth: dict or None,
+                      app_id: dict) -> list or None:
     return __get_release_cache(hub_uuid, auth, app_id)
 
 
-def __get_release_cache(hub_uuid: str, auth: dict or None, app_id: dict) -> list or None:
+def __get_release_cache(hub_uuid: str, auth: dict or None,
+                        app_id: dict) -> list or None:
     timestamp = time() - data_expire_sec
     release_cache_list: list[ReleaseCache] = (
-        ReleaseCache.select(ReleaseCache).join(HubCache, on=(ReleaseCache.hub_info == HubCache.pair_id))
+        ReleaseCache.select(ReleaseCache).join(
+            HubCache, on=(ReleaseCache.hub_info == HubCache.pair_id))
         # on 子句可以删除，因 peewee 自动推算
         # 参考: https://docs.peewee-orm.com/en/latest/peewee/relationships.html#performing-simple-joins
         .where((ReleaseCache.app_id_str == to_json(app_id))
                & (HubCache.hub_uuid == hub_uuid)
                & (HubCache.auth_str == to_json(auth))
                # 检查数据是否过期
-               & (ReleaseCache.timestamp >= timestamp))
-    )
+               & (ReleaseCache.timestamp >= timestamp)))
     try:
         return release_cache_list[0].release
     except IndexError:
@@ -40,18 +42,22 @@ def __get_release_cache(hub_uuid: str, auth: dict or None, app_id: dict) -> list
         return None
 
 
-def add_release_cache(hub_uuid: str, auth: dict or None, app_id: dict, release: list):
+def add_release_cache(hub_uuid: str, auth: dict or None, app_id: dict,
+                      release: list):
     return __add_release_cache(hub_uuid, auth, app_id, release)
 
 
-def __add_release_cache(hub_uuid: str, auth: dict or None, app_id: dict, release: list):
+def __add_release_cache(hub_uuid: str, auth: dict or None, app_id: dict,
+                        release: list):
     try:
-        hub_info = HubCache.get((HubCache.hub_uuid == hub_uuid) & (HubCache.auth_str == to_json(auth)))
+        hub_info = HubCache.get((HubCache.hub_uuid == hub_uuid)
+                                & (HubCache.auth_str == to_json(auth)))
     except DoesNotExist:
         hub_info = HubCache.create(hub_uuid=hub_uuid, auth=auth)
     try:
-        release_cache = (ReleaseCache.get((ReleaseCache.hub_info == hub_info)
-                                          & (ReleaseCache.app_id_str == to_json(app_id))))
+        release_cache = (
+            ReleaseCache.get((ReleaseCache.hub_info == hub_info)
+                             & (ReleaseCache.app_id_str == to_json(app_id))))
         release_cache.release = release
         release_cache.save()
     except DoesNotExist:
@@ -65,7 +71,8 @@ def get_memory_cache(key: str) -> bytes or None:
 def __get_memory_cache(key: str) -> bytes or None:
     timestamp = time() - memory_cache_expire_sec
     try:
-        return TmpCache.get((TmpCache.key == key) & (TmpCache.timestamp >= timestamp)).value
+        return TmpCache.get((TmpCache.key == key)
+                            & (TmpCache.timestamp >= timestamp)).value
     except DoesNotExist:
         return None
 

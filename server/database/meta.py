@@ -1,7 +1,7 @@
 import re
 
 from peewee import Model
-from playhouse.pool import PooledMySQLDatabase
+from playhouse.pool import PooledMySQLDatabase, PooledSqliteExtDatabase
 from playhouse.shortcuts import ThreadSafeDatabaseMetadata
 
 from config import db_url, db_password
@@ -11,13 +11,22 @@ db_user, db_host, db_port = re.split('[@:]', db_url)
 db_url.split(':')
 db_name = 'upa-data'
 
-local_cache_db = PooledMySQLDatabase(db_name, host=db_host, port=int(db_port), user=db_user, password=db_password,
-                                     stale_timeout=300, max_connections=2048, autoconnect=True)
-
-# memory_db = PooledSqliteExtDatabase(':memory:', stale_timeout=300, max_connections=2048, autoconnect=True)
-memory_db = local_cache_db
+memory_db = PooledSqliteExtDatabase(':memory:',
+                                    stale_timeout=300,
+                                    max_connections=2048,
+                                    autoconnect=True)
 if debug_mode:
     local_cache_db = memory_db
+else:
+    local_cache_db = PooledMySQLDatabase(db_name,
+                                         host=db_host,
+                                         port=int(db_port),
+                                         user=db_user,
+                                         password=db_password,
+                                         stale_timeout=300,
+                                         max_connections=2048,
+                                         autoconnect=True)
+memory_db = local_cache_db
 
 
 class BaseMemoryMeta:
@@ -25,6 +34,7 @@ class BaseMemoryMeta:
 
 
 class BaseMemoryModel(Model):
+
     class Meta(BaseMemoryMeta):
         database = memory_db
         # Instruct peewee to use our thread-safe metadata implementation.
@@ -36,6 +46,7 @@ class BaseMeta:
 
 
 class BaseModel(Model):
+
     class Meta(BaseMeta):
         database = local_cache_db
         # Instruct peewee to use our thread-safe metadata implementation.

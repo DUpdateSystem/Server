@@ -1,12 +1,13 @@
 from time import time
 
-from peewee import *
+from peewee import CharField, IntegerField
 
 from ..field.blob import LongBlogField
 from ..meta import BaseMemoryModel, BaseMemoryMeta
 
 
 class TmpCache(BaseMemoryModel):
+
     class Meta(BaseMemoryMeta):
         db_table = 'cache_tmp'
 
