@@ -1,4 +1,4 @@
-beautifulsoup4==4.10.0
+beautifulsoup4==4.11.1
 colorlog==6.6.0
 pynng==0.7.1
 quart==0.17.0
