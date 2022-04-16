@@ -1,29 +1,11 @@
-import asyncio
-
 import pynng
 
-from config import node_activity_time
 from utils.logging import logging
 from .constant import GET_SERVICE_ADDRESS, REGISTER_SERVICE_ADDRESS
 from nng_wrapper.muti_reqrep import send_req_with_id, get_rep_by_id
 
 
-async def keep_register_service_address_list(address, self_address_list):
-    with pynng.Req0() as sock:
-        sock.dial(address)
-        while True:
-            for self_address in self_address_list:
-                await _register_service_address(sock, self_address)
-            await asyncio.sleep(node_activity_time / 2)
-
-
-async def register_service_address(address, self_address):
-    with pynng.Req0() as sock:
-        sock.dial(address)
-        await _register_service_address(sock, self_address)
-
-
-async def _register_service_address(sock, self_address):
+async def register_service_address(sock, self_address):
     data = f"{REGISTER_SERVICE_ADDRESS}{self_address}".encode()
     await send_req_with_id(sock, data)
 
