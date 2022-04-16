@@ -22,4 +22,4 @@ ipc_dir = Path('/tmp/upa')
 ipc_dir.mkdir(parents=True, exist_ok=True)
 
 worker_url = f'ipc:///{ipc_dir}/worker%d_%d.ipc'
-discovery_url = f'ipc:///tmp/upa/discovery.ipc'
+discovery_url = f'ipc:///{ipc_dir}/discovery.ipc'
