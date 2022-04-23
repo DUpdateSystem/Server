@@ -2,7 +2,7 @@ import time
 
 from pynng import Rep0, Socket
 
-from config import timeout_api
+from .constant import data_max_age_s
 
 time_length = 19
 time_temp = "%Y-%m-%d-%H:%M:%S"
@@ -17,7 +17,7 @@ def dump_time_str_to_int(time_str: str) -> float:
     return time_i
 
 
-def check_time(request: str, timeout: int = timeout_api) -> bool:
+def check_time(request: str, timeout: int = data_max_age_s) -> bool:
     time_str = request[:time_length]
     return dump_time_str_to_int(time_str) - time.time() <= timeout
 

@@ -11,13 +11,15 @@ services:
       options:
         max-size: "512m"
     command: hello
+    environment:
+      - discovery_url=tcp://upa-proxy:5256
+      - database_url=upa@upa-db:3306
+
     ports:
       - "5255:5255"
     depends_on:
       - upa-proxy
       - upa-getter
-    volumes:
-      - tmpdata:/tmp/upa
     networks:
       - upanet
   upa-proxy:
@@ -30,12 +32,9 @@ services:
       driver: "json-file"
       options:
         max-size: "512m"
-    command: discovery
+    command: discovery --bind 'tcp://upa-proxy:5256'
     expose:
-      - "5559"
-      - "5560"
-    volumes:
-      - tmpdata:/tmp/upa
+      - "1-65535:1-65535"
     networks:
       - upanet
   upa-getter:
@@ -48,9 +47,7 @@ services:
       driver: "json-file"
       options:
         max-size: "512m"
-    command: getter
-    volumes:
-      - tmpdata:/tmp/upa
+    command: getter -r 'tcp://upa-proxy:5256' -b 'tcp://upa-getter:(5257)' -db 'upa@upa-db:3306'
     networks:
       - upanet
     depends_on:
@@ -73,7 +70,5 @@ services:
 volumes:
   dbdata:
     name: upa-dbdata
-  tmpdata:
-    name: upa-tmp
 networks:
   upanet:

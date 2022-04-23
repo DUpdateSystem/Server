@@ -1,2 +1,8 @@
+import re
+
+
 def get_url_list(url_template: str, number: int):
-    return [url_template.replace('%d', str(i), 1) for i in range(number)]
+    port = int(re.search(r'\([0-9]+\)', url_template).group(0)[1:-1])
+    return [
+        url_template.replace(f'({port})', str(port + i)) for i in range(number)
+    ]

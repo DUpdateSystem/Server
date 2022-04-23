@@ -1,27 +1,16 @@
 import asyncio
 import random
-import sys
 import time
 
 import pynng
-
-from config import node_activity_time, discovery_url
 from nng_wrapper.muti_reqrep import get_req_with_id, send_rep_with_id
 from utils.logging import logging
-from .constant import GET_SERVICE_ADDRESS, REGISTER_SERVICE_ADDRESS
 
-node_listen_address = discovery_url
+from .config import node_activity_time
+from .constant import GET_SERVICE_ADDRESS, REGISTER_SERVICE_ADDRESS
 
 _service_address_map = {}
 __map_lock = asyncio.Lock()
-
-
-def __get_listen_address():
-    global node_listen_address
-    try:
-        node_listen_address = sys.argv[1]
-    except IndexError:
-        pass
 
 
 async def bind_node_service(listen_address):
@@ -75,17 +64,18 @@ async def _msg_handle(msg: str) -> bytes or None:
             list_size = int(body)
         service_address_list = await _get_service_address_list()
         if list_size:
-            service_address_list = random.choices(service_address_list, k=min(list_size, len(service_address_list)))
+            service_address_list = random.choices(
+                service_address_list,
+                k=min(list_size, len(service_address_list)))
         date = ' '.join(service_address_list)
         return date.encode()
     elif REGISTER_SERVICE_ADDRESS == key:
         _service_address_map[body] = time.time()
 
 
-async def _main():
+async def _main(node_listen_address: str):
     await bind_node_service(node_listen_address)
 
 
-def main():
-    __get_listen_address()
-    asyncio.run(_main())
+def main(node_listen_address: str):
+    asyncio.run(_main(node_listen_address))

@@ -1,35 +1,38 @@
-from threading import Thread, Event
 import asyncio
 import json
 import time
+from threading import Event, Thread
 
 import pynng
-
-from config import node_activity_time, discovery_url
 from database.cache_manager import cache_manager
 from discovery.client_utils import register_service_address
-from nng_wrapper.format.header_key import RELEASE_REQUEST, DOWNLOAD_REQUEST, CLOUD_CONFIG_REQUEST
-from nng_wrapper.format.zmq_request_format import load_release_request, load_download_request, load_cloud_config_request
+from nng_wrapper.format.header_key import (CLOUD_CONFIG_REQUEST,
+                                           DOWNLOAD_REQUEST, RELEASE_REQUEST)
+from nng_wrapper.format.zmq_request_format import (load_cloud_config_request,
+                                                   load_download_request,
+                                                   load_release_request)
 from nng_wrapper.muti_reqrep import get_req_with_id, send_rep_with_id
+from nng_wrapper.socket_builder import rep0, req0
 from utils.logging import logging
-from .api import get_cloud_config_str, get_single_release, get_download_info_list
-from nng_wrapper.constant import recv_timeout
 
-from nng_wrapper.socket_builder import req0, rep0
+from .api import (get_cloud_config_str, get_download_info_list,
+                  get_single_release)
 
 run_event = Event()
 
+node_activity_time = 15
 
-async def worker_run(worker_url: str):
+
+async def worker_run(discovery_url, worker_url: str):
     lock = asyncio.Lock()
     await asyncio.gather(
         _worker_routine(worker_url, lock),
-        _register_worker(worker_url, lock),
+        _register_worker(discovery_url, worker_url, lock),
     )
     logging.warning(f"stop: {worker_url}")
 
 
-async def _register_worker(worker_url, lock: asyncio.Lock):
+async def _register_worker(discovery_url, worker_url, lock: asyncio.Lock):
     time_s = 0
     while not run_event.is_set():
         if time.time() - time_s > node_activity_time:
@@ -112,22 +115,27 @@ async def get_cloud_config(dev_version: bool, migrate_master: bool):
     return cloud_config
 
 
-async def async_run(worker_url_list: str):
+async def async_run(discovery_url, worker_url_list):
     async_worker_list = []
     for worker_url in worker_url_list:
-        async_worker_list.append(worker_run(worker_url))
+        async_worker_list.append(worker_run(discovery_url, worker_url))
     await asyncio.gather(*async_worker_list)
 
 
-def _run(worker_url: str):
-    asyncio.run(async_run(worker_url))
+def _run(discovery_url, worker_url_list: str):
+    asyncio.run(async_run(discovery_url, worker_url_list))
 
 
-def run(worker_url_list) -> list[Thread]:
+def run(discovery_url, worker_url_list) -> list[Thread]:
     cache_manager.init()
     t_list = []
     for worker_async_url_list in worker_url_list:
-        t = Thread(target=_run, args=(worker_async_url_list, ), daemon=True)
+        t = Thread(target=_run,
+                   args=(
+                       discovery_url,
+                       worker_async_url_list,
+                   ),
+                   daemon=True)
         t.start()
         t_list.append(t)
     return t_list

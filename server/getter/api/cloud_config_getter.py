@@ -1,10 +1,12 @@
-from config import cloud_rule_hub_url
 from utils.logging import logging
 from utils.requests import get_response
+
+from ..config import cloud_rule_hub_url
 from .cloud_config_migration.migration import migrate_dev
 
 
-def get_cloud_config_str(dev_version: bool, migrate_master: bool) -> str or None:
+def get_cloud_config_str(dev_version: bool,
+                         migrate_master: bool) -> str or None:
     if dev_version and migrate_master:
         r_dev_version = False
     else:
@@ -24,7 +26,8 @@ def _get_cloud_config_str(dev_version: bool) -> str or None:
     return cloud_config_str
 
 
-def __get_cloud_config_str(dev_version: bool, use_self_worker: bool = True) -> str or None:
+def __get_cloud_config_str(dev_version: bool,
+                           use_self_worker: bool = True) -> str or None:
     if dev_version:
         rule_hub_url = "https://raw.githubusercontent.com/DUpdateSystem/UpgradeAll-rules/" \
                        "dev/rules/rules.json"

@@ -2,7 +2,7 @@ from hashlib import md5
 
 from pynng import Rep0, Req0
 
-from .reqrep import asend, arecv_msg
+from .reqrep import arecv_msg, asend
 
 
 async def send_rep_with_id(socket: Rep0, msg_id, rep_msg: bytes) -> str:

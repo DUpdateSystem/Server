@@ -4,8 +4,9 @@ from peewee import Model
 from playhouse.pool import PooledMySQLDatabase, PooledSqliteExtDatabase
 from playhouse.shortcuts import ThreadSafeDatabaseMetadata
 
-from config import db_url, db_password
 from config import debug_mode
+
+from .config import db_password, db_url
 
 db_user, db_host, db_port = re.split('[@:]', db_url)
 db_url.split(':')
