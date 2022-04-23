@@ -17,6 +17,7 @@ UpgradeAll 服务端代码仓库
 - [使用说明](#使用说明)
   - [运行这个项目](#运行这个项目)
     - [Docker Compose](#docker-compose)
+    - [Docker](#dockerpodman)
     - [手动安装并运行](#手动运行)
 - [相关仓库](#相关仓库)
 - [维护者](#维护者)
