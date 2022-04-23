@@ -79,7 +79,7 @@ $ curl -w "%{http_code}\n" localhost:5255/about # 测试服务端
 该方法只用于开发调试
 
 ##### 数据库
-部署方法与 Docker 一致
+部署方法与 [Docker](#数据库) 一致
 
 ##### 服务端
 
