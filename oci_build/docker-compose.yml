@@ -14,7 +14,6 @@ services:
     environment:
       - discovery_url=tcp://upa-proxy:5256
       - database_url=upa@upa-db:3306
-
     ports:
       - "5255:5255"
     depends_on:
@@ -22,6 +21,7 @@ services:
       - upa-getter
     networks:
       - upanet
+
   upa-proxy:
     container_name: upa-proxy
     image: xiangzhedev/upgradeall-server
@@ -33,10 +33,11 @@ services:
       options:
         max-size: "512m"
     command: discovery --bind 'tcp://upa-proxy:5256'
-    expose:
-      - "1-65535:1-65535"
     networks:
       - upanet
+    expose:
+      - "5256:5256"
+
   upa-getter:
     container_name: upa-getter
     image: xiangzhedev/upgradeall-server
@@ -48,11 +49,14 @@ services:
       options:
         max-size: "512m"
     command: getter -r 'tcp://upa-proxy:5256' -b 'tcp://upa-getter:(5257)' -db 'upa@upa-db:3306'
+    expose:
+      - "1-65535:1-65535"
     networks:
       - upanet
     depends_on:
       - upa-db
       - upa-proxy
+
   upa-db:
     container_name: upa-db
     image: mariadb
@@ -67,6 +71,7 @@ services:
       - dbdata:/var/lib/mysql
     networks:
       - upanet
+
 volumes:
   dbdata:
     name: upa-dbdata
