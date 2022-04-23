@@ -1,12 +1,20 @@
-import pynng
+from os import environ
+from urllib.parse import urlparse
 
+import pynng
+from nng_wrapper.muti_reqrep import get_rep_by_id, send_req_with_id
 from utils.logging import logging
+
 from .constant import GET_SERVICE_ADDRESS, REGISTER_SERVICE_ADDRESS
-from nng_wrapper.muti_reqrep import send_req_with_id, get_rep_by_id
 
 
 async def register_service_address(sock, self_address):
-    data = f"{REGISTER_SERVICE_ADDRESS}{self_address}".encode()
+    parsed = urlparse(self_address)
+    if 'ip' in environ:
+        parsed = parsed._replace(
+            netloc="{}:{}".format(environ['ip'], parsed.port))
+    address = parsed.geturl()
+    data = f"{REGISTER_SERVICE_ADDRESS}{address}".encode()
     await send_req_with_id(sock, data)
 
 
