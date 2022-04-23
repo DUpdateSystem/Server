@@ -46,14 +46,16 @@ $ cd server
 
 #### Docker Compose
 
+Most easy way!
+
 ```sh
 # 在项目根目录下
-$ docker-compose -f oci_build/docker-compose.yml up
+$ docker-compose -f ./oci_build/docker-compose.yml up
 ```
 
-#### 手动运行
+#### Docker/Podman
 
-该方法只用于开发调试
+该方法适合分布式部署
 
 ##### 数据库
 
@@ -64,26 +66,40 @@ $ docker-compose -f oci_build/docker-compose.yml up
 # 在项目根目录下
 $ docker run --rm --name=upa-db --env-file oci_build/db.env -v $PWD/db_data/:/var/lib/mysql -p 3306:3306 mariadb
 ```
+##### 服务端
+```sh
+$ podman run --rm --name=upa-proxy -p 5256:5256 upgradeall-server discovery --bind 'tcp://0.0.0.0:5256' # 启动服务发现
+$ podman run --rm --name=upa-getter --network=host -e ip='127.0.0.1' upgradeall-server getter -r 'tcp://127.0.0.1:5256' -b 'tcp://0.0.0.0:(5257)' -db 'upa@127.0.0.1:3306' # 启动后端
+$ podman run --rm --name=upa-hello --network=host -e discovery_url=tcp://127.0.0.1:5256 -e database_url=upa@127.0.0.1:3306 upgradeall-server hello # 启动 API 前端
+$ curl -w "%{http_code}\n" localhost:5255/about # 测试服务端
+```
 
-###### 服务端
+#### 手动运行
+
+该方法只用于开发调试
+
+##### 数据库
+部署方法与 Docker 一致
+
+##### 服务端
 
 1. 安装 Python 依赖
 
 ```sh
 # 在项目根目录下
-python3 -m venv venv
-source venv/bin/activate
-pip install -r server/requirements.txt
-deactivate
+$ python3 -m venv venv
+$ source venv/bin/activate
+$ pip install -r server/requirements.txt
+$ deactivate
 ```
 
 2. 部署
 
 ```sh
-# 在项目根目录下
-$ ../scripts/boot_dev.sh discovery # 启动服务发现
-$ ../scripts/boot_dev.sh getter    # 启动后端
-$ ../scripts/boot_dev.sh hello     # 启动 API 前端
+# 在 server 目录下
+$ ../scripts/boot_dev.sh discovery --bind 'tcp://127.0.0.1:5256' # 启动服务发现
+$ ../scripts/boot_dev.sh getter -r tcp://127.0.0.1:5256 -b 'tcp://127.0.0.1:(5257)' -db 'upa@127.0.0.1:3306' # 启动后端
+$ discovery_url='tcp://127.0.0.1:5256' database_url='upa@127.0.0.1:3306' ../scripts/boot_dev.sh hello # 启动 API 前端
 $ curl -w "%{http_code}\n" localhost:5255/about # 测试服务端
 ```
 
