@@ -17,7 +17,7 @@ UpgradeAll 服务端代码仓库
 - [使用说明](#使用说明)
   - [运行这个项目](#运行这个项目)
     - [Docker Compose](#docker-compose)
-    - [Docker](#dockerpodman)
+    - [Podman](#dockerpodman)
     - [手动安装并运行](#手动运行)
 - [相关仓库](#相关仓库)
 - [维护者](#维护者)
@@ -65,7 +65,7 @@ $ docker-compose -f ./oci_build/docker-compose.yml up
 
 ```sh
 # 在项目根目录下
-$ docker run --rm --name=upa-db --env-file oci_build/db.env -v $PWD/db_data/:/var/lib/mysql -p 3306:3306 mariadb
+$ podman run --rm --name=upa-db --env-file oci_build/db.env -v $PWD/db_data/:/var/lib/mysql -p 3306:3306 mariadb
 ```
 ##### 服务端
 ```sh
