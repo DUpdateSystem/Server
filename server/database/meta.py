@@ -14,7 +14,7 @@ db_name = 'upa-data'
 
 memory_db = PooledSqliteExtDatabase(':memory:',
                                     max_connections=2048,
-                                    autoconnect=True)
+                                    autoconnect=False)
 if debug_mode:
     local_cache_db = memory_db
 else:
@@ -24,7 +24,7 @@ else:
                                          user=db_user,
                                          password=db_password,
                                          max_connections=2048,
-                                         autoconnect=True)
+                                         autoconnect=False)
 memory_db = local_cache_db
 
 

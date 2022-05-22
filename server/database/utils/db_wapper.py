@@ -1,7 +1,7 @@
 from functools import wraps
 from threading import Lock
 
-from ..init import connect_db, close_db
+from ..init import close_db, connect_db
 from ..meta import local_cache_db
 
 db_lock = Lock()
