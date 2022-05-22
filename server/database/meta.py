@@ -13,7 +13,6 @@ db_url.split(':')
 db_name = 'upa-data'
 
 memory_db = PooledSqliteExtDatabase(':memory:',
-                                    stale_timeout=300,
                                     max_connections=2048,
                                     autoconnect=True)
 if debug_mode:
@@ -24,7 +23,6 @@ else:
                                          port=int(db_port),
                                          user=db_user,
                                          password=db_password,
-                                         stale_timeout=300,
                                          max_connections=2048,
                                          autoconnect=True)
 memory_db = local_cache_db
