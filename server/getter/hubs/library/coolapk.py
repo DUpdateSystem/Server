@@ -2,16 +2,21 @@ import base64
 import hashlib
 import time
 
-from requests import request, HTTPError
+from requests import HTTPError, request
 
 from utils.logging import logging
+
 from ..base_hub import BaseHub
-from ..hub_script_utils import android_app_key, get_session, get_url_from_release_fun
+from ..hub_script_utils import (android_app_key, get_session,
+                                get_url_from_release_fun)
 
 __session = get_session()
 
+request_timeout = 30
+
 
 class CoolApk(BaseHub):
+
     @staticmethod
     def get_uuid() -> str:
         return '1c010cc9-cff8-4461-8993-a86cd190d377'
@@ -30,11 +35,15 @@ class CoolApk(BaseHub):
         aid = detail['id']
         newest_version_number = detail['apkversionname']
         data.append({
-            "version_number": newest_version_number,
-            "change_log": detail['changelog'],
+            "version_number":
+            newest_version_number,
+            "change_log":
+            detail['changelog'],
             "assets": [{
-                "file_name": f"{package}-{newest_version_number}.apk",
-                "download_url": _get_redirect_download_url(_mk_download_url(aid, package)),
+                "file_name":
+                f"{package}-{newest_version_number}.apk",
+                "download_url":
+                _get_redirect_download_url(_mk_download_url(aid, package)),
             }]
         })
 
@@ -47,17 +56,26 @@ class CoolApk(BaseHub):
             version_number = h['versionName']
             version_id = h['versionId']
             data.append({
-                "version_number": version_number,
+                "version_number":
+                version_number,
                 "assets": [{
-                    "file_name": f"{package}-{version_number}.apk",
-                    "download_url": _get_history_download_url(aid, package, version_id),
+                    "file_name":
+                    f"{package}-{version_number}.apk",
+                    "download_url":
+                    _get_history_download_url(aid, package, version_id),
                 }]
             })
         return data
 
-    def get_download_info(self, app_id: dict, asset_index: list, auth: dict or None = None) -> dict or tuple or None:
+    def get_download_info(self,
+                          app_id: dict,
+                          asset_index: list,
+                          auth: dict or None = None) -> dict or tuple or None:
         hub_uuid = self.get_uuid()
-        download_url = get_url_from_release_fun(hub_uuid, app_id, asset_index, use_cache=True)
+        download_url = get_url_from_release_fun(hub_uuid,
+                                                app_id,
+                                                asset_index,
+                                                use_cache=True)
         try:
             r = _redirect(download_url, None)
             if 'Content-Type' not in r.headers \
@@ -67,7 +85,10 @@ class CoolApk(BaseHub):
             logging.debug("网址验证正确")
         except HTTPError:
             logging.debug("网址错误，尝试重新获取")
-            download_url = get_url_from_release_fun(hub_uuid, app_id, asset_index, use_cache=False)
+            download_url = get_url_from_release_fun(hub_uuid,
+                                                    app_id,
+                                                    asset_index,
+                                                    use_cache=False)
         return download_url
 
     def available_test_url(self) -> str:
@@ -86,7 +107,8 @@ def _mk_download_url(aid: str, app_package: str) -> str:
     return f"https://api.coolapk.com/v6/apk/download?pn={app_package}&aid={aid}"
 
 
-def _get_history_download_url(aid: str, app_package: str, version_id: str) -> str:
+def _get_history_download_url(aid: str, app_package: str,
+                              version_id: str) -> str:
     row_url = f"https://api.coolapk.com/v6/apk/downloadHistory?pn={app_package}&aid={aid}&versionId={version_id}&downloadFrom=coolapk"
     return _get_redirect_download_url(row_url)
 
@@ -97,7 +119,10 @@ def _get_redirect_download_url(url):
 
 
 def _redirect(url, headers) -> request:
-    r = __session.head(url, headers=headers, allow_redirects=True, timeout=15)
+    r = __session.head(url,
+                       headers=headers,
+                       allow_redirects=True,
+                       timeout=request_timeout)
     return r
 
 
@@ -107,7 +132,7 @@ __DEVICE_ID = "55077056-48ee-46c8-80a6-2a21a9c5b12b"
 
 def _request(url: str):
     headers = __mk_headers()
-    return __session.get(url, headers=headers, timeout=15)
+    return __session.get(url, headers=headers, timeout=request_timeout)
 
 
 def __get_app_token() -> str:
@@ -129,7 +154,8 @@ def __get_app_token() -> str:
 
 def __mk_headers() -> dict:
     return {
-        "User-Agent": "Dalvik/2.1.0 (Linux; U; Android 9; MI 8 SE MIUI/9.5.9) (#Build; Xiaomi; MI 8 SE; PKQ1.181121.001; 9) +CoolMarket/9.2.2-1905301",
+        "User-Agent":
+        "Dalvik/2.1.0 (Linux; U; Android 9; MI 8 SE MIUI/9.5.9) (#Build; Xiaomi; MI 8 SE; PKQ1.181121.001; 9) +CoolMarket/9.2.2-1905301",
         "X-App-Id": "com.coolapk.market",
         "X-Requested-With": "XMLHttpRequest",
         "X-Sdk-Int": "28",
@@ -137,7 +163,8 @@ def __mk_headers() -> dict:
         "X-Api-Version": "9",
         "X-App-Version": "9.2.2",
         "X-App-Code": "1903501",
-        "X-App-Device": "QRTBCOgkUTgsTat9WYphFI7kWbvFWaYByO1YjOCdjOxAjOxEkOFJjODlDI7ATNxMjM5MTOxcjMwAjN0AyOxEjNwgDNxITM2kDMzcTOgsTZzkTZlJ2MwUDNhJ2MyYzM",
+        "X-App-Device":
+        "QRTBCOgkUTgsTat9WYphFI7kWbvFWaYByO1YjOCdjOxAjOxEkOFJjODlDI7ATNxMjM5MTOxcjMwAjN0AyOxEjNwgDNxITM2kDMzcTOgsTZzkTZlJ2MwUDNhJ2MyYzM",
         "Host": "api.coolapk.com",
         "X-Dark-Mode": "0",
         "X-App-Token": __get_app_token(),
