@@ -2,13 +2,16 @@ import json
 from random import randrange
 
 import requests
-from google_play_scraper import exceptions, app
-from gpapi.googleplay import GooglePlayAPI as _GooglePlayAPI, \
-    PURCHASE_URL, ssl_verify, googleplay_pb2, LoginError, RequestError
+from google_play_scraper import app, exceptions
+from gpapi.googleplay import PURCHASE_URL
+from gpapi.googleplay import GooglePlayAPI as _GooglePlayAPI
+from gpapi.googleplay import (LoginError, RequestError, googleplay_pb2,
+                              ssl_verify)
+
+from utils.logging import logging
 
 from ..base_hub import BaseHub
-from ..hub_script_utils import android_app_key, get_tmp_cache, add_tmp_cache
-from utils.logging import logging
+from ..hub_script_utils import add_tmp_cache, android_app_key, get_tmp_cache
 
 _locale = "en_US"
 _timezone = "UTC"
@@ -20,6 +23,7 @@ _test_package = "com.google.android.webview"
 
 
 class GooglePlay(BaseHub):
+
     @staticmethod
     def get_uuid() -> str:
         return '65c2f60c-7d08-48b8-b4ba-ac6ee924f6fa'
@@ -28,12 +32,11 @@ class GooglePlay(BaseHub):
         mail = account['mail']
         passwd = account['passwd']
         api = self.__init_google_play_by_account(mail, passwd)
-        return {
-            "gsfId": api.gsfId,
-            "ac2dmToken": api.authSubToken
-        }
+        return {"gsfId": api.gsfId, "ac2dmToken": api.authSubToken}
 
-    def get_release(self, app_id: dict, auth: dict or None = None) -> list or None:
+    def get_release(self,
+                    app_id: dict,
+                    auth: dict or None = None) -> list or None:
         package = app_id[android_app_key]
         lang = 'zh_CN'
         country = 'us'
@@ -52,19 +55,28 @@ class GooglePlay(BaseHub):
             release['change_log'] = result['recentChangesHTML']
         except KeyError:
             pass
-        return [release, ]
+        return [
+            release,
+        ]
 
     def _get_release_list(self, app_id_list: list, auth: dict or None = None):
-        for app_id in [app_id for app_id in app_id_list if android_app_key not in app_id]:
+        for app_id in [
+                app_id for app_id in app_id_list
+                if android_app_key not in app_id
+        ]:
             yield app_id, []
             app_id_list.remove(app_id)
-        for lice in [app_id_list[i: i + 50] for i in range(0, len(app_id_list), 50)]:
+        for lice in [
+                app_id_list[i:i + 50] for i in range(0, len(app_id_list), 50)
+        ]:
             for app_id, release_list in self.__get_release_list(lice, auth):
                 yield app_id, release_list
 
     def __get_release_list(self, app_id_list: list, auth: dict or None = None):
         # 这里有一处字典转换
-        package_list = [_test_package] + [app_id[android_app_key] for app_id in app_id_list]
+        package_list = [_test_package] + [
+            app_id[android_app_key] for app_id in app_id_list
+        ]
         package_list = set(package_list)
         package_list = list(package_list)
         # noinspection PyBroadException
@@ -103,13 +115,24 @@ class GooglePlay(BaseHub):
                     }
                     if 'recentChangesHtml' in details:
                         release['change_log'] = details['recentChangesHtml']
-                    release_list = [release, ]
+                    release_list = [
+                        release,
+                    ]
                 except Exception:
                     release_list = None
                 if app_id in app_id_list:
                     yield app_id, release_list
 
-    def get_download_info(self, app_id: dict, asset_index: list, auth: dict or None = None) -> tuple or None:
+    def get_download_info(self,
+                          app_id: dict,
+                          asset_index: list,
+                          auth: dict or None = None) -> tuple or None:
+        pass
+
+    def _get_download_info(self,
+                           app_id: dict,
+                           asset_index: list,
+                           auth: dict or None = None) -> tuple or None:
         if android_app_key not in app_id:
             return None
         download_list = []
@@ -127,24 +150,31 @@ class GooglePlay(BaseHub):
                 api = self.__get_def_google_play(True)
                 download = self.__auto_download(doc_id, api)
         main_apk_file = download['file']
-        download_list.append({"name": f'{doc_id}.apk',
-                              "url": main_apk_file['url'],
-                              "headers": main_apk_file['headers'],
-                              "cookies": main_apk_file['cookies']})
+        download_list.append({
+            "name": f'{doc_id}.apk',
+            "url": main_apk_file['url'],
+            "headers": main_apk_file['headers'],
+            "cookies": main_apk_file['cookies']
+        })
         splits_apk_file = download['splits']
         for apk in splits_apk_file:
             apk_file = apk['file']
-            download_list.append({"name": f"{apk['name']}.apk",
-                                  "url": apk_file['url'],
-                                  "headers": apk_file['headers'],
-                                  "cookies": apk_file['cookies']})
+            download_list.append({
+                "name": f"{apk['name']}.apk",
+                "url": apk_file['url'],
+                "headers": apk_file['headers'],
+                "cookies": apk_file['cookies']
+            })
         for obb in download['additionalData']:
             obb_file = obb['file']
-            obb_file_name = obb['type'] + '.' + str(obb['versionCode']) + '.' + download['docId'] + '.obb'
-            download_list.append({"name": obb_file_name,
-                                  "url": obb_file['url'],
-                                  "headers": obb_file['headers'],
-                                  "cookies": obb_file['cookies']})
+            obb_file_name = obb['type'] + '.' + str(
+                obb['versionCode']) + '.' + download['docId'] + '.obb'
+            download_list.append({
+                "name": obb_file_name,
+                "url": obb_file['url'],
+                "headers": obb_file['headers'],
+                "cookies": obb_file['cookies']
+            })
         return download_list
 
     @staticmethod
@@ -165,7 +195,8 @@ class GooglePlay(BaseHub):
                 gsf_id, auth_sub_token = auth
             else:
                 return self.__get_def_google_play()
-        return self.__init_google_play_by_gsfid_and_token(auth_sub_token, gsf_id)
+        return self.__init_google_play_by_gsfid_and_token(
+            auth_sub_token, gsf_id)
 
     def __get_def_google_play(self, random=False) -> _GooglePlayAPI:
         position = 0
@@ -174,26 +205,40 @@ class GooglePlay(BaseHub):
             position = -1
         email, token = _get_aurora_token(position)
         api = self.__init_google_play_by_email_and_token(email, token)
-        add_tmp_cache(_auth_cache_key, json.dumps({"gsfId": api.gsfId, "ac2dmToken": api.authSubToken}).encode())
+        add_tmp_cache(
+            _auth_cache_key,
+            json.dumps({
+                "gsfId": api.gsfId,
+                "ac2dmToken": api.authSubToken
+            }).encode())
         logging.info("GooglePlay: Renew Auth")
         return api
 
     @staticmethod
-    def __init_google_play_by_account(mail: str, passwd: str) -> _GooglePlayAPI:
-        api = GooglePlayAPI(locale=_locale, timezone=_timezone, device_codename=_device_codename)
+    def __init_google_play_by_account(mail: str,
+                                      passwd: str) -> _GooglePlayAPI:
+        api = GooglePlayAPI(locale=_locale,
+                            timezone=_timezone,
+                            device_codename=_device_codename)
         api.login(mail, passwd)
         return api
 
     @staticmethod
-    def __init_google_play_by_gsfid_and_token(auth_sub_token: str, gsf_id: int) -> _GooglePlayAPI:
-        api = GooglePlayAPI(locale=_locale, timezone=_timezone, device_codename=_device_codename)
+    def __init_google_play_by_gsfid_and_token(auth_sub_token: str,
+                                              gsf_id: int) -> _GooglePlayAPI:
+        api = GooglePlayAPI(locale=_locale,
+                            timezone=_timezone,
+                            device_codename=_device_codename)
         api.gsfId = gsf_id
         api.setAuthSubToken(auth_sub_token)
         return api
 
     @staticmethod
-    def __init_google_play_by_email_and_token(email: str, ac2dm_token: str) -> _GooglePlayAPI:
-        api = GooglePlayAPI(locale=_locale, timezone=_timezone, device_codename=_device_codename)
+    def __init_google_play_by_email_and_token(
+            email: str, ac2dm_token: str) -> _GooglePlayAPI:
+        api = GooglePlayAPI(locale=_locale,
+                            timezone=_timezone,
+                            device_codename=_device_codename)
         api.gsfId = api.checkin(email, ac2dm_token)
         api.setAuthSubToken(ac2dm_token)
         api.uploadDeviceConfig()
@@ -220,7 +265,7 @@ class GooglePlay(BaseHub):
 
 
 # 使用了 Aurora 公共帐号接口，感谢 AuroraStore 项目及其开发者 whyorean
-_aurora_token_api_url_list = ("http://goolag.store:1337/api/auth",)
+_aurora_token_api_url_list = ("https://auroraoss.com/api/auth", )
 
 
 def _get_aurora_token(index: int) -> tuple:
@@ -252,13 +297,18 @@ class GooglePlayAPI(_GooglePlayAPI):
         if self.device_config_token is not None:
             headers["X-DFE-Device-Config-Token"] = self.device_config_token
         if self.deviceCheckinConsistencyToken is not None:
-            headers["X-DFE-Device-Checkin-Consistency-Token"] = self.deviceCheckinConsistencyToken
+            headers[
+                "X-DFE-Device-Checkin-Consistency-Token"] = self.deviceCheckinConsistencyToken
         if self.dfeCookie is not None:
             headers["X-DFE-Cookie"] = self.dfeCookie
         return headers
 
     # noinspection PyPep8Naming
-    def download(self, packageName, versionCode=None, offerType=1, expansion_files=False):
+    def download(self,
+                 packageName,
+                 versionCode=None,
+                 offerType=1,
+                 expansion_files=False):
         """
         避免 Unexpected end-group tag. 错误
         参考：https://github.com/NoMore201/googleplay-api/issues/132
@@ -269,15 +319,20 @@ class GooglePlayAPI(_GooglePlayAPI):
 
         if versionCode is None:
             # pick up latest version
-            appDetails = self.details(packageName).get('details').get('appDetails')
+            appDetails = self.details(packageName).get('details').get(
+                'appDetails')
             versionCode = appDetails.get('versionCode')
 
         headers = self.getHeaders()
-        params = {'ot': str(offerType),
-                  'doc': packageName,
-                  'vc': str(versionCode)}
-        response = requests.post(PURCHASE_URL, headers=headers,
-                                 params=params, verify=ssl_verify,
+        params = {
+            'ot': str(offerType),
+            'doc': packageName,
+            'vc': str(versionCode)
+        }
+        response = requests.post(PURCHASE_URL,
+                                 headers=headers,
+                                 params=params,
+                                 verify=ssl_verify,
                                  timeout=60,
                                  proxies=self.proxies_config)
 
@@ -286,13 +341,12 @@ class GooglePlayAPI(_GooglePlayAPI):
             raise RequestError(response.commands.displayErrorMessage)
         else:
             dlToken = response.payload.buyResponse.downloadToken
-            return self.delivery(packageName, versionCode, offerType, dlToken,
+            return self.delivery(packageName,
+                                 versionCode,
+                                 offerType,
+                                 dlToken,
                                  expansion_files=expansion_files)
 
     def _deliver_data(self, url, cookies):
         headers = self.getHeaders()
-        return {
-            "url": url,
-            "headers": headers,
-            "cookies": cookies
-        }
+        return {"url": url, "headers": headers, "cookies": cookies}
