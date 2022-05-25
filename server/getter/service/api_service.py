@@ -105,8 +105,7 @@ async def get_release(hub_uuid: str,
 
 async def get_download_info(hub_uuid: str, auth: dict, app_id: list,
                             asset_index: list):
-    download_info = await get_download_info_list(hub_uuid, auth, app_id,
-                                                 asset_index)
+    download_info = get_download_info_list(hub_uuid, auth, app_id, asset_index)
     return download_info
 
 
