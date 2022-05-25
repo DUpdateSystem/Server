@@ -127,12 +127,6 @@ class GooglePlay(BaseHub):
                           app_id: dict,
                           asset_index: list,
                           auth: dict or None = None) -> tuple or None:
-        pass
-
-    def _get_download_info(self,
-                           app_id: dict,
-                           asset_index: list,
-                           auth: dict or None = None) -> tuple or None:
         if android_app_key not in app_id:
             return None
         download_list = []
