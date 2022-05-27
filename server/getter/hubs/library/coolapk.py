@@ -30,11 +30,18 @@ class CoolApk(BaseHub):
         # print(request_json)  # 数据测试代码
         if 'status' in request_json and request_json['status'] < 0:
             return []
-        data = []
+        try:
+            return self.__get_release_data(request_json, package)
+        except Exception as e:
+            logging.exception(e)
+            logging.info(f"package: {package}, request_json: {request_json}")
+
+    @staticmethod
+    def __get_release_data(request_json: dict, package: str):
         detail = request_json['data']
         aid = detail['id']
         newest_version_number = detail['apkversionname']
-        data.append({
+        data = [{
             "version_number":
             newest_version_number,
             "change_log":
@@ -45,7 +52,7 @@ class CoolApk(BaseHub):
                 "download_url":
                 _get_redirect_download_url(_mk_download_url(aid, package)),
             }]
-        })
+        }]
 
         url = _mk_history_url(aid)
         request_json = _request(url).json()
