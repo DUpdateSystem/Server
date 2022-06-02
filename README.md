@@ -69,9 +69,9 @@ $ podman run --rm --name=upa-db --env-file oci_build/db.env -v $PWD/db_data/:/va
 ```
 ##### 服务端
 ```sh
-$ podman run --rm --name=upa-proxy -p 5256:5256 upgradeall-server discovery --bind 'tcp://0.0.0.0:5256' # 启动服务发现
-$ podman run --rm --name=upa-getter --network=host -e ip='127.0.0.1' upgradeall-server getter -r 'tcp://127.0.0.1:5256' -b 'tcp://0.0.0.0:(5257)' -db 'upa@127.0.0.1:3306' # 启动后端
-$ podman run --rm --name=upa-hello --network=host -e discovery_url=tcp://127.0.0.1:5256 -e database_url=upa@127.0.0.1:3306 upgradeall-server hello # 启动 API 前端
+$ podman run --rm --name=upa-proxy -p 5256:5256 xiangzhedev/upgradeall-server discovery --bind 'tcp://0.0.0.0:5256' # 启动服务发现
+$ podman run --rm --name=upa-getter --network=host -e ip='127.0.0.1' xiangzhedev/upgradeall-server getter -r 'tcp://127.0.0.1:5256' -b 'tcp://0.0.0.0:(5257)' -db 'upa@127.0.0.1:3306' # 启动后端
+$ podman run --rm --name=upa-hello --network=host -e discovery_url=tcp://127.0.0.1:5256 -e database_url=upa@127.0.0.1:3306 xiangzhedev/upgradeall-server hello # 启动 API 前端
 $ curl -w "%{http_code}\n" localhost:5255/about # 测试服务端
 ```
 
