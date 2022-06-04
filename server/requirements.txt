@@ -8,9 +8,10 @@ PyMySQL==1.0.2
 html5lib==1.1
 schedule==1.1.0
 requests==2.27.1
-async_lru==1.0.2
+async_lru==1.0.3
 requests[socks]
 setuptools-rust
 
 gplaycli==3.29
-google-play-scraper==1.0.3
+google-play-scraper==1.1.0
+protobuf==4.21.1
