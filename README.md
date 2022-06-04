@@ -52,6 +52,8 @@ Most easy way!
 ```sh
 # 在项目根目录下
 $ docker-compose -f ./oci_build/docker-compose.yml up
+# 更新/重启服务
+$ cd ./oci_build && docker compose pull && docker compose down && docker compose up -d
 ```
 
 #### Docker/Podman
