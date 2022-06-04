@@ -14,4 +14,4 @@ setuptools-rust
 
 gplaycli==3.29
 google-play-scraper==1.1.0
-protobuf==4.21.1
+protobuf==3.20.1
