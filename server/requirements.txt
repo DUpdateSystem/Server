@@ -13,4 +13,4 @@ requests[socks]
 setuptools-rust
 
 google-play-scraper==1.1.0
-cryptography==37.0.2
+cryptography==39.0.1
