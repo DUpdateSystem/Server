@@ -36,7 +36,7 @@ services:
     networks:
       - upanet
     expose:
-      - "5256:5256"
+      - "5256/tcp"
 
   upa-getter:
     container_name: upa-getter
@@ -49,8 +49,6 @@ services:
       options:
         max-size: "512m"
     command: getter -r 'tcp://upa-proxy:5256' -b 'tcp://upa-getter:(5257)' -db 'upa@upa-db:3306'
-    expose:
-      - "1-65535:1-65535"
     networks:
       - upanet
     depends_on:
