@@ -7,6 +7,12 @@ on:
     branches:
     - master
     workflow_dispatch:
+
+# Serialize master publishes, including manually dispatched builds and reruns.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
 jobs:
   Build:
     runs-on: 
@@ -31,5 +37,11 @@ jobs:
 
     - name: Push to DockerHub
       if: github.ref == 'refs/heads/master' && github.event_name != 'pull_request'
+      shell: bash
       run: |
+          master_head=$(git ls-remote --exit-code origin refs/heads/master | cut -f1)
+          if [[ "$GITHUB_SHA" != "$master_head" ]]; then
+              echo "Skipping publish: master is now $master_head, not $GITHUB_SHA."
+              exit 0
+          fi
           docker push xiangzhedev/upgradeall-server:latest
