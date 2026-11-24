@@ -1,5 +1,5 @@
 from hashlib import md5
-from quart import Quart, request, Request, Response
+from quart import Quart, request, Response
 from database.cache_manager import cache_manager
 
 
@@ -8,25 +8,23 @@ def regist_cache(app: Quart):
     app.after_request(set_cache)
 
 
-def check_cache_hash(path, cache_hash) -> bool:
-    return cache_manager.get_tmp_cache(path).decode() == cache_hash
+def cache_key() -> str | None:
+    if request.blueprint != "update_server_page" or request.headers.get("Authorization"):
+        return None
+    return md5(request.path.encode()).hexdigest()
 
 
 def check_cache():
-    try:
-        path = request.path
-        path_hash = md5(path.encode()).digest()
-        cache_hash = request.headers.get("cache_hash")
-        if check_cache_hash(path_hash, cache_hash):
-            return Request(204)
-    except ValueError:
-        return
+    key = cache_key()
+    cache_hash = request.headers.get("cache_hash")
+    if key and cache_hash:
+        cached = cache_manager.get_tmp_cache(key)
+        if cached is not None and cached.hex() == cache_hash:
+            return "", 204
 
 
 async def set_cache(response: Response):
-    path = request.path
-    res_data = await response.get_data()
-    path_hash = md5(path.encode()).hexdigest()
-    cache_hash = md5(res_data).digest()
-    cache_manager.add_tmp_cache(path_hash, cache_hash)
+    key = cache_key()
+    if key and response.status_code == 200:
+        cache_manager.add_tmp_cache(key, md5(await response.get_data()).digest())
     return response

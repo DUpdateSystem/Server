@@ -1,8 +1,8 @@
 beautifulsoup4==4.11.1
 colorlog==6.6.0
 pynng==0.7.1
-quart==0.17.0
-hypercorn==0.13.2
+quart==0.20.0
+hypercorn==0.18.0
 peewee==3.14.10
 PyMySQL==1.0.2
 html5lib==1.1
