@@ -7,7 +7,7 @@ peewee==3.14.10
 PyMySQL==1.0.2
 html5lib==1.1
 schedule==1.1.0
-requests==2.27.1
+requests==2.33.0
 async_lru==1.0.3
 requests[socks]
 setuptools-rust
