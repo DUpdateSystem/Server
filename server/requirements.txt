@@ -4,7 +4,7 @@ pynng==0.7.1
 quart==0.20.0
 hypercorn==0.18.0
 peewee==3.14.10
-PyMySQL==1.0.2
+PyMySQL==1.1.1
 html5lib==1.1
 schedule==1.1.0
 requests==2.33.0
